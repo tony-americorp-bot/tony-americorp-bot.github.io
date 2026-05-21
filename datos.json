@@ -1,5 +1,15 @@
 {
-  "ultima_actualizacion": "2026-05-21T16:30:00.413987",
+  "ultima_actualizacion": "2026-05-21T16:30:13.661367",
+  "archivo_csv": "medidor_energia_2026-05-21.csv",
+  "columnas_detectadas": [
+    "timestamp",
+    "voltaje_r",
+    "voltaje_s",
+    "voltaje_t",
+    "corriente_r",
+    "corriente_s",
+    "corriente_t"
+  ],
   "total_registros": 14,
   "historial": [
     {
