@@ -1,226 +1,156 @@
 {
-  "ultima_actualizacion": "2026-05-21T16:32:23.224800",
-  "archivo_csv": "medidor_energia_2026-05-21.csv",
-  "columnas_detectadas": [
-    "timestamp",
-    "voltaje_r",
-    "voltaje_s",
-    "voltaje_t",
-    "corriente_r",
-    "corriente_s",
-    "corriente_t"
-  ],
+  "ultima_actualizacion": "2026-05-21T16:33:10.470156",
   "total_registros": 14,
   "historial": [
     {
       "timestamp": "2026-05-21 20:44:50",
-      "voltajes": {
-        "r": 223.4601,
-        "s": 223.8222,
-        "t": 223.6894
-      },
-      "corrientes": {
-        "r": 108.6622,
-        "s": 109.4428,
-        "t": 108.7901
-      },
+      "voltaje_r": 223.4601,
+      "voltaje_s": 223.8222,
+      "voltaje_t": 223.6894,
+      "corriente_r": 108.6622,
+      "corriente_s": 109.4428,
+      "corriente_t": 108.7901,
       "potencia_kw": 73.11
     },
     {
       "timestamp": "2026-05-21 20:45:41",
-      "voltajes": {
-        "r": 222.0001,
-        "s": 222.4926,
-        "t": 222.3241
-      },
-      "corrientes": {
-        "r": 107.7152,
-        "s": 108.5846,
-        "t": 108.0204
-      },
+      "voltaje_r": 222.0001,
+      "voltaje_s": 222.4926,
+      "voltaje_t": 222.3241,
+      "corriente_r": 107.7152,
+      "corriente_s": 108.5846,
+      "corriente_t": 108.0204,
       "potencia_kw": 72.09
     },
     {
       "timestamp": "2026-05-21 20:45:55",
-      "voltajes": {
-        "r": 221.7678,
-        "s": 221.8425,
-        "t": 221.7473
-      },
-      "corrientes": {
-        "r": 107.6413,
-        "s": 108.5564,
-        "t": 107.9637
-      },
+      "voltaje_r": 221.7678,
+      "voltaje_s": 221.8425,
+      "voltaje_t": 221.7473,
+      "corriente_r": 107.6413,
+      "corriente_s": 108.5564,
+      "corriente_t": 107.9637,
       "potencia_kw": 71.89
     },
     {
       "timestamp": "2026-05-21 20:45:56",
-      "voltajes": {
-        "r": 222.5299,
-        "s": 222.724,
-        "t": 222.6666
-      },
-      "corrientes": {
-        "r": 107.9818,
-        "s": 108.8356,
-        "t": 108.2107
-      },
+      "voltaje_r": 222.5299,
+      "voltaje_s": 222.724,
+      "voltaje_t": 222.6666,
+      "corriente_r": 107.9818,
+      "corriente_s": 108.8356,
+      "corriente_t": 108.2107,
       "potencia_kw": 72.36
     },
     {
       "timestamp": "2026-05-21 20:45:56",
-      "voltajes": {
-        "r": 222.5299,
-        "s": 222.724,
-        "t": 222.6666
-      },
-      "corrientes": {
-        "r": 107.9818,
-        "s": 108.8356,
-        "t": 108.2107
-      },
+      "voltaje_r": 222.5299,
+      "voltaje_s": 222.724,
+      "voltaje_t": 222.6666,
+      "corriente_r": 107.9818,
+      "corriente_s": 108.8356,
+      "corriente_t": 108.2107,
       "potencia_kw": 72.36
     },
     {
       "timestamp": "2026-05-21 20:45:57",
-      "voltajes": {
-        "r": 222.5299,
-        "s": 222.724,
-        "t": 222.6666
-      },
-      "corrientes": {
-        "r": 107.9818,
-        "s": 108.8356,
-        "t": 108.2107
-      },
+      "voltaje_r": 222.5299,
+      "voltaje_s": 222.724,
+      "voltaje_t": 222.6666,
+      "corriente_r": 107.9818,
+      "corriente_s": 108.8356,
+      "corriente_t": 108.2107,
       "potencia_kw": 72.36
     },
     {
       "timestamp": "2026-05-21 20:45:57",
-      "voltajes": {
-        "r": 222.8267,
-        "s": 222.8477,
-        "t": 222.853
-      },
-      "corrientes": {
-        "r": 107.1994,
-        "s": 107.7248,
-        "t": 107.4265
-      },
+      "voltaje_r": 222.8267,
+      "voltaje_s": 222.8477,
+      "voltaje_t": 222.853,
+      "corriente_r": 107.1994,
+      "corriente_s": 107.7248,
+      "corriente_t": 107.4265,
       "potencia_kw": 71.83
     },
     {
       "timestamp": "2026-05-21 20:45:58",
-      "voltajes": {
-        "r": 222.8267,
-        "s": 222.8477,
-        "t": 222.853
-      },
-      "corrientes": {
-        "r": 107.1994,
-        "s": 107.7248,
-        "t": 107.4265
-      },
+      "voltaje_r": 222.8267,
+      "voltaje_s": 222.8477,
+      "voltaje_t": 222.853,
+      "corriente_r": 107.1994,
+      "corriente_s": 107.7248,
+      "corriente_t": 107.4265,
       "potencia_kw": 71.83
     },
     {
       "timestamp": "2026-05-21 20:45:58",
-      "voltajes": {
-        "r": 222.8267,
-        "s": 222.8477,
-        "t": 222.853
-      },
-      "corrientes": {
-        "r": 107.1994,
-        "s": 107.7248,
-        "t": 107.4265
-      },
+      "voltaje_r": 222.8267,
+      "voltaje_s": 222.8477,
+      "voltaje_t": 222.853,
+      "corriente_r": 107.1994,
+      "corriente_s": 107.7248,
+      "corriente_t": 107.4265,
       "potencia_kw": 71.83
     },
     {
       "timestamp": "2026-05-21 20:45:58",
-      "voltajes": {
-        "r": 224.2698,
-        "s": 224.3522,
-        "t": 224.1256
-      },
-      "corrientes": {
-        "r": 105.1967,
-        "s": 105.7806,
-        "t": 105.2899
-      },
+      "voltaje_r": 224.2698,
+      "voltaje_s": 224.3522,
+      "voltaje_t": 224.1256,
+      "corriente_r": 105.1967,
+      "corriente_s": 105.7806,
+      "corriente_t": 105.2899,
       "potencia_kw": 70.92
     },
     {
       "timestamp": "2026-05-21 20:46:41",
-      "voltajes": {
-        "r": 222.6606,
-        "s": 222.9171,
-        "t": 222.7469
-      },
-      "corrientes": {
-        "r": 107.0865,
-        "s": 107.8898,
-        "t": 107.3041
-      },
+      "voltaje_r": 222.6606,
+      "voltaje_s": 222.9171,
+      "voltaje_t": 222.7469,
+      "corriente_r": 107.0865,
+      "corriente_s": 107.8898,
+      "corriente_t": 107.3041,
       "potencia_kw": 71.8
     },
     {
       "timestamp": "2026-05-21 20:47:41",
-      "voltajes": {
-        "r": 223.1388,
-        "s": 223.2792,
-        "t": 223.1183
-      },
-      "corrientes": {
-        "r": 105.7683,
-        "s": 106.5112,
-        "t": 105.9605
-      },
+      "voltaje_r": 223.1388,
+      "voltaje_s": 223.2792,
+      "voltaje_t": 223.1183,
+      "corriente_r": 105.7683,
+      "corriente_s": 106.5112,
+      "corriente_t": 105.9605,
       "potencia_kw": 71.02
     },
     {
       "timestamp": "2026-05-21 20:48:41",
-      "voltajes": {
-        "r": 223.5824,
-        "s": 224.1124,
-        "t": 223.831
-      },
-      "corrientes": {
-        "r": 105.7039,
-        "s": 106.5681,
-        "t": 105.9742
-      },
+      "voltaje_r": 223.5824,
+      "voltaje_s": 224.1124,
+      "voltaje_t": 223.831,
+      "corriente_r": 105.7039,
+      "corriente_s": 106.5681,
+      "corriente_t": 105.9742,
       "potencia_kw": 71.24
     },
     {
       "timestamp": "2026-05-21 20:49:41",
-      "voltajes": {
-        "r": 222.1008,
-        "s": 222.2586,
-        "t": 222.095
-      },
-      "corrientes": {
-        "r": 107.4217,
-        "s": 108.1456,
-        "t": 107.6101
-      },
+      "voltaje_r": 222.1008,
+      "voltaje_s": 222.2586,
+      "voltaje_t": 222.095,
+      "corriente_r": 107.4217,
+      "corriente_s": 108.1456,
+      "corriente_t": 107.6101,
       "potencia_kw": 71.79
     }
   ],
   "ultimo": {
     "timestamp": "2026-05-21 20:49:41",
-    "voltajes": {
-      "r": 222.1008,
-      "s": 222.2586,
-      "t": 222.095
-    },
-    "corrientes": {
-      "r": 107.4217,
-      "s": 108.1456,
-      "t": 107.6101
-    },
+    "voltaje_r": 222.1008,
+    "voltaje_s": 222.2586,
+    "voltaje_t": 222.095,
+    "corriente_r": 107.4217,
+    "corriente_s": 108.1456,
+    "corriente_t": 107.6101,
     "potencia_kw": 71.79
   }
 }
