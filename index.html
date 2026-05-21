@@ -5,28 +5,45 @@
     <title>Monitor Planta</title>
     <style>
         body { background: #071126; color: white; font-family: Arial; padding: 20px; text-align: center; }
-        .dato { font-size: 48px; color: #facc15; margin: 20px; }
-        .normal { font-size: 24px; margin: 10px; }
-        .verde { color: #22c55e; }
+        .panel { background: #111827; border-radius: 20px; padding: 20px; max-width: 500px; margin: auto; }
+        .fecha { color: #22c55e; font-size: 14px; margin: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .item { background: #0f172a; padding: 10px; border-radius: 10px; }
+        .label { font-size: 11px; color: #94a3b8; }
+        .numero { font-size: 24px; font-weight: bold; color: #facc15; }
+        .estado { margin-top: 20px; font-size: 12px; color: #22c55e; }
     </style>
 </head>
 <body>
-    <h1>⚡ MONITOREO PLANTA</h1>
-    <div class="dato" id="potencia">--- kW</div>
-    <div class="normal" id="fecha">---</div>
-    <div class="normal">Voltajes: <span id="voltajes">---</span></div>
-    <div class="normal">Corrientes: <span id="corrientes">---</span></div>
-    <div class="verde" id="estado">Esperando datos...</div>
+    <div class="panel">
+        <h2>📊 MONITOREO PLANTA</h2>
+        <div class="fecha" id="fecha">---</div>
+        
+        <div class="grid">
+            <div class="item"><div class="label">VOLTAJE R</div><div class="numero" id="vR">--- V</div></div>
+            <div class="item"><div class="label">VOLTAJE S</div><div class="numero" id="vS">--- V</div></div>
+            <div class="item"><div class="label">VOLTAJE T</div><div class="numero" id="vT">--- V</div></div>
+            <div class="item"><div class="label">CORRIENTE R</div><div class="numero" id="aR">--- A</div></div>
+            <div class="item"><div class="label">CORRIENTE S</div><div class="numero" id="aS">--- A</div></div>
+            <div class="item"><div class="label">CORRIENTE T</div><div class="numero" id="aT">--- A</div></div>
+        </div>
+        
+        <div class="estado" id="estado">🔄 Conectando...</div>
+    </div>
 
     <script>
         async function cargar() {
             try {
                 const res = await fetch('datos.json?t=' + Date.now());
                 const d = await res.json();
-                document.getElementById('potencia').innerHTML = d.potencia_kw + ' kW';
+                
                 document.getElementById('fecha').innerHTML = '📅 ' + d.fecha_hora;
-                document.getElementById('voltajes').innerHTML = `${d.voltaje_r} / ${d.voltaje_s} / ${d.voltaje_t} V`;
-                document.getElementById('corrientes').innerHTML = `${d.corriente_r} / ${d.corriente_s} / ${d.corriente_t} A`;
+                document.getElementById('vR').innerHTML = d.voltaje_r + ' V';
+                document.getElementById('vS').innerHTML = d.voltaje_s + ' V';
+                document.getElementById('vT').innerHTML = d.voltaje_t + ' V';
+                document.getElementById('aR').innerHTML = d.corriente_r + ' A';
+                document.getElementById('aS').innerHTML = d.corriente_s + ' A';
+                document.getElementById('aT').innerHTML = d.corriente_t + ' A';
                 document.getElementById('estado').innerHTML = '✅ Actualizado: ' + new Date().toLocaleTimeString();
             } catch(e) {
                 document.getElementById('estado').innerHTML = '❌ Error: ' + e.message;
