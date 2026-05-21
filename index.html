@@ -126,7 +126,7 @@ h1{
     </div>
 
     <div class="actualizado">
-        Última actualización web:
+        Última actualización:
         <span id="actualizado">--</span>
     </div>
 
@@ -145,22 +145,14 @@ async function cargarDatos() {
             }
         );
 
-        if (!response.ok) {
-            throw new Error("No se pudo cargar datos.json");
-        }
-
         const d = await response.json();
 
-        // =========================
         // REGISTRO
-        // =========================
 
         document.getElementById('registro').innerText =
             d.registro_actual + " / " + d.total_registros;
 
-        // =========================
         // VOLTAJES
-        // =========================
 
         document.getElementById('vR').innerText =
             d.voltaje_r + ' V';
@@ -171,9 +163,7 @@ async function cargarDatos() {
         document.getElementById('vT').innerText =
             d.voltaje_t + ' V';
 
-        // =========================
         // CORRIENTES
-        // =========================
 
         document.getElementById('aR').innerText =
             d.corriente_r + ' A';
@@ -184,9 +174,7 @@ async function cargarDatos() {
         document.getElementById('aT').innerText =
             d.corriente_t + ' A';
 
-        // =========================
         // FECHAS
-        // =========================
 
         document.getElementById('fecha').innerText =
             d.fecha_hora;
@@ -194,21 +182,21 @@ async function cargarDatos() {
         document.getElementById('actualizado').innerText =
             d.actualizado;
 
-        console.log("Datos actualizados");
+        console.log("DATOS ACTUALIZADOS");
 
-    } catch (err) {
+    } catch (error) {
 
-        console.error(err);
+        console.error(error);
 
     }
 
 }
 
-// cargar inmediatamente
+// CARGA INICIAL
 cargarDatos();
 
-// actualizar cada 10 segundos
-setInterval(cargarDatos, 10000);
+// ACTUALIZAR CADA 30 SEGUNDOS
+setInterval(cargarDatos, 30000);
 
 </script>
 
