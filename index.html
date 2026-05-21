@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoreo Planta</title>
+
+    <style>
+
+        body{
+            background:#111;
+            color:white;
+            font-family:Arial;
+            text-align:center;
+            margin-top:100px;
+        }
+
+        .card{
+            background:#222;
+            width:400px;
+            margin:auto;
+            padding:30px;
+            border-radius:20px;
+        }
+
+        h1{
+            color:#00ff88;
+        }
+
+        .valor{
+            font-size:60px;
+            margin:20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h1>MONITOREO PLANTA</h1>
+
+        <div id="tag"></div>
+
+        <div class="valor" id="valor">0</div>
+
+        <div id="hora"></div>
+
+    </div>
+
+<script>
+
+async function actualizar(){
+
+    const respuesta = await fetch("variables.json");
+
+    const datos = await respuesta.json();
+
+    document.getElementById("tag").innerText = datos.tag;
+
+    document.getElementById("valor").innerText = datos.valor;
+
+    document.getElementById("hora").innerText = datos.timestamp;
+
+}
+
+actualizar();
+
+setInterval(actualizar,30000);
+
+</script>
+
+</body>
+</html>
