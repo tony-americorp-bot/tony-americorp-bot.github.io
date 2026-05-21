@@ -3,80 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoreo Planta | Datos en Vivo</title>
+    <title>Historial Completo | Planta en Vivo</title>
     <style>
         body {
             background: #071126;
-            font-family: Arial, sans-serif;
-            color: white;
+            font-family: 'Inter', Arial, sans-serif;
+            color: #e2e8f0;
             padding: 20px;
         }
-        .card {
+        h1 {
+            color: #facc15;
+            margin-bottom: 10px;
+        }
+        .stats {
             background: #111827;
             border-radius: 20px;
             padding: 20px;
-            margin: 10px 0;
+            margin-bottom: 20px;
+            border: 1px solid #1e293b;
         }
-        .valor {
-            font-size: 32px;
+        .ultimo {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .ultimo .valor {
+            font-size: 36px;
             font-weight: bold;
-            color: #facc15;
+            color: #22c55e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f172a;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        th {
+            background: #1e293b;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #1e293b;
+            font-size: 13px;
+        }
+        tr:hover {
+            background: #1e293b;
         }
         .actualizado {
-            color: #22c55e;
-            font-size: 12px;
             margin-top: 20px;
+            font-size: 12px;
+            color: #22c55e;
+            text-align: center;
+        }
+        .badge {
+            background: #22c55e20;
+            color: #22c55e;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        @media (max-width: 768px) {
+            th, td { font-size: 10px; padding: 6px; }
+            .ultimo .valor { font-size: 24px; }
         }
     </style>
 </head>
 <body>
-    <h1>📊 MONITOREO ENERGÉTICO</h1>
-    
-    <div class="card">
-        <h2>⚡ Potencia Total</h2>
-        <div class="valor" id="potencia">--- kW</div>
-    </div>
-    
-    <div class="card">
-        <h2>🔌 Voltajes por Fase</h2>
-        <div class="valor" id="voltajes">---</div>
-    </div>
-    
-    <div class="card">
-        <h2>💡 Corrientes por Fase</h2>
-        <div class="valor" id="corrientes">---</div>
-    </div>
-    
-    <div class="card">
-        <h2>🕐 Última actualización</h2>
-        <div id="timestamp">---</div>
-    </div>
-    
-    <div class="actualizado" id="status">
-        🔄 Actualizando cada 30 segundos...
-    </div>
 
-    <script>
-        async function cargarDatos() {
-            try {
-                const respuesta = await fetch('datos.json?t=' + Date.now());
-                const datos = await respuesta.json();
-                
-                document.getElementById('potencia').innerText = datos.potencia_kw + ' kW';
-                document.getElementById('voltajes').innerHTML = 
-                    `R: ${datos.voltajes.r}V &nbsp;|&nbsp; S: ${datos.voltajes.s}V &nbsp;|&nbsp; T: ${datos.voltajes.t}V`;
-                document.getElementById('corrientes').innerHTML = 
-                    `R: ${datos.corrientes.r}A &nbsp;|&nbsp; S: ${datos.corrientes.s}A &nbsp;|&nbsp; T: ${datos.corrientes.t}A`;
-                document.getElementById('timestamp').innerText = datos.timestamp;
-                document.getElementById('status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()}`;
-                
-            } catch (error) {
-                document.getElementById('status').innerHTML = `❌ Error: ${error.message}`;
+<h1>📊 MONITOREO PLANTA MINERA</h1>
+
+<div class="stats">
+    📈 <span id="totalRegistros">0</span> registros históricos
+    <span style="float: right;">🕐 Actualización automática cada 30s</span>
+</div>
+
+<div class="ultimo">
+    <strong>⚡ ÚLTIMA LECTURA</strong><br>
+    <div class="valor" id="potencia">--- kW</div>
+    <div id="ultimoTimestamp" style="margin-top: 8px; font-size: 14px;"></div>
+    <div style="margin-top: 8px; display: flex; gap: 15px; flex-wrap: wrap;">
+        <span>🔌 Voltajes: <strong id="voltajes">---</strong></span>
+        <span>💡 Corrientes: <strong id="corrientes">---</strong></span>
+    </div>
+</div>
+
+<h3>📜 HISTORIAL COMPLETO</h3>
+<div style="overflow-x: auto;">
+    <table id="tablaHistorial">
+        <thead>
+            <tr>
+                <th>Fecha/Hora</th>
+                <th>Voltaje R (V)</th>
+                <th>Voltaje S (V)</th>
+                <th>Voltaje T (V)</th>
+                <th>Corriente R (A)</th>
+                <th>Corriente S (A)</th>
+                <th>Corriente T (A)</th>
+                <th>Potencia (kW)</th>
+            </tr>
+        </thead>
+        <tbody id="historialBody">
+            <tr><td colspan="8">Cargando datos...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="actualizado" id="status">
+    🔄 Conectando...
+</div>
+
+<script>
+    let todosLosDatos = [];
+
+    async function cargarDatos() {
+        try {
+            const respuesta = await fetch('datos.json?t=' + Date.now());
+            const data = await respuesta.json();
+            
+            todosLosDatos = data.historial || [];
+            
+            // Actualizar estadísticas
+            document.getElementById('totalRegistros').innerText = data.total_registros || 0;
+            
+            // Mostrar último registro
+            if (todosLosDatos.length > 0) {
+                const ultimo = todosLosDatos[todosLosDatos.length - 1];
+                document.getElementById('potencia').innerHTML = ultimo.potencia_kw + ' <span style="font-size: 16px;">kW</span>';
+                document.getElementById('ultimoTimestamp').innerHTML = `📅 ${ultimo.timestamp}`;
+                document.getElementById('voltajes').innerHTML = `${ultimo.voltajes.r} / ${ultimo.voltajes.s} / ${ultimo.voltajes.t}`;
+                document.getElementById('corrientes').innerHTML = `${ultimo.corrientes.r} / ${ultimo.corrientes.s} / ${ultimo.corrientes.t}`;
             }
+            
+            // Mostrar TODO el historial en la tabla
+            const tbody = document.getElementById('historialBody');
+            tbody.innerHTML = '';
+            
+            // Mostrar desde el más RECIENTE al más ANTIGUO
+            const historialReciente = [...todosLosDatos].reverse();
+            
+            for (const registro of historialReciente) {
+                const fila = tbody.insertRow();
+                fila.insertCell(0).innerText = registro.timestamp;
+                fila.insertCell(1).innerText = registro.voltajes.r.toFixed(1);
+                fila.insertCell(2).innerText = registro.voltajes.s.toFixed(1);
+                fila.insertCell(3).innerText = registro.voltajes.t.toFixed(1);
+                fila.insertCell(4).innerText = registro.corrientes.r.toFixed(1);
+                fila.insertCell(5).innerText = registro.corrientes.s.toFixed(1);
+                fila.insertCell(6).innerText = registro.corrientes.t.toFixed(1);
+                fila.insertCell(7).innerHTML = `<strong>${registro.potencia_kw}</strong>`;
+            }
+            
+            document.getElementById('status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()} | ${todosLosDatos.length} registros`;
+            
+        } catch (error) {
+            document.getElementById('status').innerHTML = `❌ Error: ${error.message}`;
+            console.error(error);
         }
-        
-        cargarDatos();
-        setInterval(cargarDatos, 30000);
-    </script>
+    }
+    
+    // Cargar al inicio
+    cargarDatos();
+    
+    // Actualizar cada 30 segundos
+    setInterval(cargarDatos, 30000);
+</script>
+
 </body>
 </html>
