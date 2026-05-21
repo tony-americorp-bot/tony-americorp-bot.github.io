@@ -1,56 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Monitor Planta</title>
-    <style>
-        body { background: #071126; color: white; font-family: Arial; padding: 20px; text-align: center; }
-        .panel { background: #111827; border-radius: 20px; padding: 20px; max-width: 500px; margin: auto; }
-        .fecha { color: #22c55e; font-size: 14px; margin: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .item { background: #0f172a; padding: 10px; border-radius: 10px; }
-        .label { font-size: 11px; color: #94a3b8; }
-        .numero { font-size: 24px; font-weight: bold; color: #facc15; }
-        .estado { margin-top: 20px; font-size: 12px; color: #22c55e; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Monitoreo Planta</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    background:#0f172a;
+    color:white;
+    font-family:Arial;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:#1e293b;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
+
+.label{
+    font-size:18px;
+    color:#94a3b8;
+}
+
+.value{
+    font-size:35px;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+.fecha{
+    margin-top:30px;
+    text-align:center;
+    font-size:18px;
+    color:#cbd5e1;
+}
+
+.estado{
+    text-align:center;
+    margin-top:10px;
+    color:#22c55e;
+}
+
+</style>
 </head>
+
 <body>
-    <div class="panel">
-        <h2>📊 MONITOREO PLANTA</h2>
-        <div class="fecha" id="fecha">---</div>
-        
-        <div class="grid">
-            <div class="item"><div class="label">VOLTAJE R</div><div class="numero" id="vR">--- V</div></div>
-            <div class="item"><div class="label">VOLTAJE S</div><div class="numero" id="vS">--- V</div></div>
-            <div class="item"><div class="label">VOLTAJE T</div><div class="numero" id="vT">--- V</div></div>
-            <div class="item"><div class="label">CORRIENTE R</div><div class="numero" id="aR">--- A</div></div>
-            <div class="item"><div class="label">CORRIENTE S</div><div class="numero" id="aS">--- A</div></div>
-            <div class="item"><div class="label">CORRIENTE T</div><div class="numero" id="aT">--- A</div></div>
-        </div>
-        
-        <div class="estado" id="estado">🔄 Conectando...</div>
+
+<h1>⚡ Monitoreo Energía Planta</h1>
+
+<div class="grid">
+
+    <div class="card">
+        <div class="label">Voltaje R</div>
+        <div class="value" id="vR">--</div>
     </div>
 
-    <script>
-        async function cargar() {
-            try {
-                const res = await fetch('datos.json?t=' + Date.now());
-                const d = await res.json();
-                
-                document.getElementById('fecha').innerHTML = '📅 ' + d.fecha_hora;
-                document.getElementById('vR').innerHTML = d.voltaje_r + ' V';
-                document.getElementById('vS').innerHTML = d.voltaje_s + ' V';
-                document.getElementById('vT').innerHTML = d.voltaje_t + ' V';
-                document.getElementById('aR').innerHTML = d.corriente_r + ' A';
-                document.getElementById('aS').innerHTML = d.corriente_s + ' A';
-                document.getElementById('aT').innerHTML = d.corriente_t + ' A';
-                document.getElementById('estado').innerHTML = '✅ Actualizado: ' + new Date().toLocaleTimeString();
-            } catch(e) {
-                document.getElementById('estado').innerHTML = '❌ Error: ' + e.message;
+    <div class="card">
+        <div class="label">Voltaje S</div>
+        <div class="value" id="vS">--</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Voltaje T</div>
+        <div class="value" id="vT">--</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Corriente R</div>
+        <div class="value" id="aR">--</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Corriente S</div>
+        <div class="value" id="aS">--</div>
+    </div>
+
+    <div class="card">
+        <div class="label">Corriente T</div>
+        <div class="value" id="aT">--</div>
+    </div>
+
+</div>
+
+<div class="fecha">
+    Fecha CSV:
+    <span id="fecha">--</span>
+</div>
+
+<div class="estado">
+    Última actualización web:
+    <span id="actualizado">--</span>
+</div>
+
+<script>
+
+async function cargarDatos() {
+
+    try {
+
+        const response = await fetch(
+            'datos.json?t=' + new Date().getTime(),
+            {
+                cache: "no-store"
             }
+        );
+
+        if (!response.ok) {
+            throw new Error("No se pudo cargar datos.json");
         }
-        cargar();
-        setInterval(cargar, 30000);
-    </script>
+
+        const d = await response.json();
+
+        document.getElementById('vR').innerText = d.voltaje_r + ' V';
+        document.getElementById('vS').innerText = d.voltaje_s + ' V';
+        document.getElementById('vT').innerText = d.voltaje_t + ' V';
+
+        document.getElementById('aR').innerText = d.corriente_r + ' A';
+        document.getElementById('aS').innerText = d.corriente_s + ' A';
+        document.getElementById('aT').innerText = d.corriente_t + ' A';
+
+        document.getElementById('fecha').innerText = d.fecha_hora;
+        document.getElementById('actualizado').innerText = d.actualizado;
+
+        console.log("Datos actualizados");
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
+
+cargarDatos();
+
+setInterval(cargarDatos, 30000);
+
+</script>
+
 </body>
 </html>
