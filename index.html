@@ -1,96 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Planta Minera | Datos en Vivo</title>
+    <title>Monitor Planta</title>
     <style>
-        body { background: #071126; font-family: Arial, sans-serif; color: white; padding: 20px; }
-        .card { background: #111827; border-radius: 20px; padding: 20px; margin: 10px 0; border: 1px solid #1e293b; }
-        .valor { font-size: 42px; font-weight: bold; color: #facc15; }
-        table { width: 100%; border-collapse: collapse; background: #0f172a; border-radius: 16px; }
-        th { background: #1e293b; padding: 12px; text-align: left; }
-        td { padding: 8px 12px; border-bottom: 1px solid #1e293b; }
+        body { background: #071126; color: white; font-family: Arial; padding: 20px; text-align: center; }
+        .dato { font-size: 48px; color: #facc15; margin: 20px; }
+        .normal { font-size: 24px; margin: 10px; }
         .verde { color: #22c55e; }
-        .actualizado { margin-top: 20px; font-size: 12px; color: #22c55e; text-align: center; }
     </style>
 </head>
 <body>
+    <h1>⚡ MONITOREO PLANTA</h1>
+    <div class="dato" id="potencia">--- kW</div>
+    <div class="normal" id="fecha">---</div>
+    <div class="normal">Voltajes: <span id="voltajes">---</span></div>
+    <div class="normal">Corrientes: <span id="corrientes">---</span></div>
+    <div class="verde" id="estado">Esperando datos...</div>
 
-<h1>📊 MONITOREO PLANTA MINERA</h1>
-
-<div class="card">
-    <strong>⚡ ÚLTIMA LECTURA</strong>
-    <div class="valor" id="potencia">--- kW</div>
-    <div id="ultimoTimestamp" class="verde" style="margin-top: 10px;"></div>
-</div>
-
-<div class="card">
-    <strong>🔌 VOLTAJES (R/S/T)</strong>
-    <div id="voltajes" style="font-size: 20px;">---</div>
-</div>
-
-<div class="card">
-    <strong>💡 CORRIENTES (R/S/T)</strong>
-    <div id="corrientes" style="font-size: 20px;">---</div>
-</div>
-
-<div class="card">
-    <strong>📜 HISTORIAL COMPLETO</strong>
-    <div style="overflow-x: auto; margin-top: 15px;">
-        <table id="tabla">
-            <thead>
-                <tr><th>Fecha/Hora</th><th>V R</th><th>V S</th><th>V T</th><th>A R</th><th>A S</th><th>A T</th><th>kW</th></tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-        </table>
-    </div>
-</div>
-
-<div class="actualizado" id="status">🔄 Conectando...</div>
-
-<script>
-    async function cargarDatos() {
-        try {
-            const res = await fetch('datos.json?t=' + Date.now());
-            const data = await res.json();
-            
-            if (data.historial && data.historial.length > 0) {
-                const ultimo = data.historial[data.historial.length - 1];
-                const total = data.historial.length;
-                
-                document.getElementById('potencia').innerHTML = ultimo.potencia_kw + ' <span style="font-size:18px;">kW</span>';
-                document.getElementById('ultimoTimestamp').innerHTML = `📅 ${ultimo.timestamp} | Total: ${total} registros`;
-                document.getElementById('voltajes').innerHTML = `${ultimo.voltaje_r} V / ${ultimo.voltaje_s} V / ${ultimo.voltaje_t} V`;
-                document.getElementById('corrientes').innerHTML = `${ultimo.corriente_r} A / ${ultimo.corriente_s} A / ${ultimo.corriente_t} A`;
-                
-                // Tabla con TODO el historial (más reciente primero)
-                const tbody = document.getElementById('tbody');
-                tbody.innerHTML = '';
-                const historialRev = [...data.historial].reverse();
-                for (const r of historialRev) {
-                    const fila = tbody.insertRow();
-                    fila.insertCell(0).innerText = r.timestamp;
-                    fila.insertCell(1).innerText = r.voltaje_r.toFixed(1);
-                    fila.insertCell(2).innerText = r.voltaje_s.toFixed(1);
-                    fila.insertCell(3).innerText = r.voltaje_t.toFixed(1);
-                    fila.insertCell(4).innerText = r.corriente_r.toFixed(1);
-                    fila.insertCell(5).innerText = r.corriente_s.toFixed(1);
-                    fila.insertCell(6).innerText = r.corriente_t.toFixed(1);
-                    fila.insertCell(7).innerHTML = `<strong>${r.potencia_kw}</strong>`;
-                }
-                
-                document.getElementById('status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()} | ${total} registros`;
-            } else {
-                document.getElementById('status').innerHTML = `❌ No hay datos: ${data.error || 'vacío'}`;
+    <script>
+        async function cargar() {
+            try {
+                const res = await fetch('datos.json?t=' + Date.now());
+                const d = await res.json();
+                document.getElementById('potencia').innerHTML = d.potencia_kw + ' kW';
+                document.getElementById('fecha').innerHTML = '📅 ' + d.fecha_hora;
+                document.getElementById('voltajes').innerHTML = `${d.voltaje_r} / ${d.voltaje_s} / ${d.voltaje_t} V`;
+                document.getElementById('corrientes').innerHTML = `${d.corriente_r} / ${d.corriente_s} / ${d.corriente_t} A`;
+                document.getElementById('estado').innerHTML = '✅ Actualizado: ' + new Date().toLocaleTimeString();
+            } catch(e) {
+                document.getElementById('estado').innerHTML = '❌ Error: ' + e.message;
             }
-        } catch(e) {
-            document.getElementById('status').innerHTML = `❌ Error: ${e.message}`;
         }
-    }
-    
-    cargarDatos();
-    setInterval(cargarDatos, 30000);
-</script>
-
+        cargar();
+        setInterval(cargar, 30000);
+    </script>
 </body>
 </html>
