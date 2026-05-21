@@ -1,12 +1,12 @@
 {
-    "registro_actual": 14,
+    "registro_actual": 1,
     "total_registros": 14,
-    "fecha_hora": "2026-05-21 20:49:41",
-    "voltaje_r": 222.1,
-    "voltaje_s": 222.26,
-    "voltaje_t": 222.09,
-    "corriente_r": 107.42,
-    "corriente_s": 108.15,
-    "corriente_t": 107.61,
-    "actualizado": "2026-05-21 17:46:29"
+    "fecha_hora": "2026-05-21 20:44:50",
+    "voltaje_r": 223.4601,
+    "voltaje_s": 223.8222,
+    "voltaje_t": 223.6894,
+    "corriente_r": 108.6622,
+    "corriente_s": 109.4428,
+    "corriente_t": 108.7901,
+    "actualizado": "17:46:55"
 }

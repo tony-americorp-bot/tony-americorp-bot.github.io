@@ -4,54 +4,61 @@ import time
 import subprocess
 from datetime import datetime
 
-# =====================================
-# CONFIGURACIÓN
-# =====================================
+# =========================================
+# CONFIG
+# =========================================
 
 CSV_FILE = r"C:\planta_monitor\medidor_energia_2026-05-21.csv"
 JSON_FILE = r"C:\planta_monitor\datos.json"
 REPO_DIR = r"C:\planta_monitor"
 
-INTERVALO = 10  # segundos
+INTERVALO = 10
 
-# =====================================
-# LEER CSV COMPLETO
-# =====================================
+# =========================================
+# LEER CSV
+# =========================================
 
 df = pd.read_csv(CSV_FILE)
 
-total_registros = len(df)
+TOTAL = len(df)
 
-print(f"TOTAL REGISTROS: {total_registros}")
+print(f"TOTAL FILAS: {TOTAL}")
 
 indice = 0
 
-# =====================================
-# LOOP PRINCIPAL
-# =====================================
+# =========================================
+# LOOP
+# =========================================
 
 while True:
 
     try:
 
+        # =====================================
+        # TOMAR FILA ACTUAL
+        # =====================================
+
         fila = df.iloc[indice]
+
+        print("\n========================")
+        print(f"MOSTRANDO FILA: {indice + 1}")
 
         datos = {
 
             "registro_actual": indice + 1,
-            "total_registros": total_registros,
+            "total_registros": TOTAL,
 
             "fecha_hora": str(fila["timestamp"]),
 
-            "voltaje_r": round(float(fila["voltaje_r"]), 2),
-            "voltaje_s": round(float(fila["voltaje_s"]), 2),
-            "voltaje_t": round(float(fila["voltaje_t"]), 2),
+            "voltaje_r": float(fila["voltaje_r"]),
+            "voltaje_s": float(fila["voltaje_s"]),
+            "voltaje_t": float(fila["voltaje_t"]),
 
-            "corriente_r": round(float(fila["corriente_r"]), 2),
-            "corriente_s": round(float(fila["corriente_s"]), 2),
-            "corriente_t": round(float(fila["corriente_t"]), 2),
+            "corriente_r": float(fila["corriente_r"]),
+            "corriente_s": float(fila["corriente_s"]),
+            "corriente_t": float(fila["corriente_t"]),
 
-            "actualizado": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            "actualizado": datetime.now().strftime("%H:%M:%S")
         }
 
         # =====================================
@@ -59,9 +66,10 @@ while True:
         # =====================================
 
         with open(JSON_FILE, "w", encoding="utf-8") as f:
+
             json.dump(datos, f, indent=4)
 
-        print(f"REGISTRO ENVIADO: {indice + 1}")
+        print("JSON ACTUALIZADO")
 
         # =====================================
         # GIT ADD
@@ -73,31 +81,47 @@ while True:
         )
 
         # =====================================
-        # GIT COMMIT
+        # COMMIT
         # =====================================
 
         subprocess.run(
-            ["git", "commit", "-m", f"registro {indice + 1}"],
+            [
+                "git",
+                "commit",
+                "-m",
+                f"registro_{indice+1}"
+            ],
             cwd=REPO_DIR
         )
 
         # =====================================
-        # GIT PUSH
+        # PUSH
         # =====================================
 
         subprocess.run(
-            ["git", "push", "origin", "main"],
+            [
+                "git",
+                "push",
+                "origin",
+                "main"
+            ],
             cwd=REPO_DIR
         )
+
+        print("PUSH OK")
 
         # =====================================
         # SIGUIENTE FILA
         # =====================================
 
-        indice += 1
+        indice = indice + 1
 
-        if indice >= total_registros:
+        # VOLVER AL INICIO
+        if indice >= TOTAL:
+
             indice = 0
+
+        print(f"SIGUIENTE FILA: {indice + 1}")
 
     except Exception as e:
 
