@@ -1,69 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Monitoreo Planta</title>
+<title>Monitoreo Energía Planta</title>
 
 <style>
 
 body{
     margin:0;
     padding:20px;
-    background:#0f172a;
+    background:#08122c;
     color:white;
-    font-family:Arial;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 h1{
     text-align:center;
+    margin-bottom:10px;
+    font-size:55px;
+}
+
+.registro{
+    text-align:center;
+    font-size:24px;
     margin-bottom:30px;
+    color:#00e5ff;
 }
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
     gap:20px;
 }
 
 .card{
-    background:#1e293b;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 0 10px rgba(0,0,0,0.4);
+    background:#1e2a44;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 0 15px rgba(0,0,0,0.4);
 }
 
 .label{
-    font-size:18px;
-    color:#94a3b8;
-}
-
-.value{
-    font-size:35px;
-    margin-top:10px;
-    font-weight:bold;
-}
-
-.fecha{
-    margin-top:30px;
-    text-align:center;
-    font-size:18px;
+    font-size:22px;
     color:#cbd5e1;
 }
 
-.estado{
+.value{
+    font-size:55px;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+.footer{
     text-align:center;
-    margin-top:10px;
+    margin-top:40px;
+    font-size:28px;
+}
+
+.fecha{
+    margin-top:15px;
+    color:white;
+}
+
+.actualizado{
+    margin-top:15px;
     color:#22c55e;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <h1>⚡ Monitoreo Energía Planta</h1>
+
+<div class="registro">
+    Registro:
+    <span id="registro">--</span>
+</div>
 
 <div class="grid">
 
@@ -99,14 +118,18 @@ h1{
 
 </div>
 
-<div class="fecha">
-    Fecha CSV:
-    <span id="fecha">--</span>
-</div>
+<div class="footer">
 
-<div class="estado">
-    Última actualización web:
-    <span id="actualizado">--</span>
+    <div class="fecha">
+        Fecha CSV:
+        <span id="fecha">--</span>
+    </div>
+
+    <div class="actualizado">
+        Última actualización web:
+        <span id="actualizado">--</span>
+    </div>
+
 </div>
 
 <script>
@@ -128,16 +151,48 @@ async function cargarDatos() {
 
         const d = await response.json();
 
-        document.getElementById('vR').innerText = d.voltaje_r + ' V';
-        document.getElementById('vS').innerText = d.voltaje_s + ' V';
-        document.getElementById('vT').innerText = d.voltaje_t + ' V';
+        // =========================
+        // REGISTRO
+        // =========================
 
-        document.getElementById('aR').innerText = d.corriente_r + ' A';
-        document.getElementById('aS').innerText = d.corriente_s + ' A';
-        document.getElementById('aT').innerText = d.corriente_t + ' A';
+        document.getElementById('registro').innerText =
+            d.registro_actual + " / " + d.total_registros;
 
-        document.getElementById('fecha').innerText = d.fecha_hora;
-        document.getElementById('actualizado').innerText = d.actualizado;
+        // =========================
+        // VOLTAJES
+        // =========================
+
+        document.getElementById('vR').innerText =
+            d.voltaje_r + ' V';
+
+        document.getElementById('vS').innerText =
+            d.voltaje_s + ' V';
+
+        document.getElementById('vT').innerText =
+            d.voltaje_t + ' V';
+
+        // =========================
+        // CORRIENTES
+        // =========================
+
+        document.getElementById('aR').innerText =
+            d.corriente_r + ' A';
+
+        document.getElementById('aS').innerText =
+            d.corriente_s + ' A';
+
+        document.getElementById('aT').innerText =
+            d.corriente_t + ' A';
+
+        // =========================
+        // FECHAS
+        // =========================
+
+        document.getElementById('fecha').innerText =
+            d.fecha_hora;
+
+        document.getElementById('actualizado').innerText =
+            d.actualizado;
 
         console.log("Datos actualizados");
 
@@ -149,11 +204,14 @@ async function cargarDatos() {
 
 }
 
+// cargar inmediatamente
 cargarDatos();
 
-setInterval(cargarDatos, 30000);
+// actualizar cada 10 segundos
+setInterval(cargarDatos, 10000);
 
 </script>
 
 </body>
+
 </html>
