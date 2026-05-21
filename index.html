@@ -2,175 +2,93 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial Completo | Planta en Vivo</title>
+    <title>Planta Minera | Datos en Vivo</title>
     <style>
-        body {
-            background: #071126;
-            font-family: 'Inter', Arial, sans-serif;
-            color: #e2e8f0;
-            padding: 20px;
-        }
-        h1 {
-            color: #facc15;
-            margin-bottom: 10px;
-        }
-        .stats {
-            background: #111827;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #1e293b;
-        }
-        .ultimo {
-            background: #1e293b;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .ultimo .valor {
-            font-size: 36px;
-            font-weight: bold;
-            color: #22c55e;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #0f172a;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        th {
-            background: #1e293b;
-            padding: 12px;
-            text-align: left;
-            font-size: 12px;
-            color: #94a3b8;
-        }
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #1e293b;
-            font-size: 13px;
-        }
-        tr:hover {
-            background: #1e293b;
-        }
-        .actualizado {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #22c55e;
-            text-align: center;
-        }
-        .badge {
-            background: #22c55e20;
-            color: #22c55e;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 11px;
-        }
-        @media (max-width: 768px) {
-            th, td { font-size: 10px; padding: 6px; }
-            .ultimo .valor { font-size: 24px; }
-        }
+        body { background: #071126; font-family: Arial, sans-serif; color: white; padding: 20px; }
+        .card { background: #111827; border-radius: 20px; padding: 20px; margin: 10px 0; border: 1px solid #1e293b; }
+        .valor { font-size: 42px; font-weight: bold; color: #facc15; }
+        table { width: 100%; border-collapse: collapse; background: #0f172a; border-radius: 16px; }
+        th { background: #1e293b; padding: 12px; text-align: left; }
+        td { padding: 8px 12px; border-bottom: 1px solid #1e293b; }
+        .verde { color: #22c55e; }
+        .actualizado { margin-top: 20px; font-size: 12px; color: #22c55e; text-align: center; }
     </style>
 </head>
 <body>
 
 <h1>📊 MONITOREO PLANTA MINERA</h1>
 
-<div class="stats">
-    📈 <span id="totalRegistros">0</span> registros históricos
-    <span style="float: right;">🕐 Actualización automática cada 30s</span>
+<div class="card">
+    <strong>⚡ ÚLTIMA LECTURA</strong>
+    <div class="valor" id="potencia">--- kW</div>
+    <div id="ultimoTimestamp" class="verde" style="margin-top: 10px;"></div>
 </div>
 
-<div class="ultimo">
-    <strong>⚡ ÚLTIMA LECTURA</strong><br>
-    <div class="valor" id="potencia">--- kW</div>
-    <div id="ultimoTimestamp" style="margin-top: 8px; font-size: 14px;"></div>
-    <div style="margin-top: 8px; display: flex; gap: 15px; flex-wrap: wrap;">
-        <span>🔌 Voltajes: <strong id="voltajes">---</strong></span>
-        <span>💡 Corrientes: <strong id="corrientes">---</strong></span>
+<div class="card">
+    <strong>🔌 VOLTAJES (R/S/T)</strong>
+    <div id="voltajes" style="font-size: 20px;">---</div>
+</div>
+
+<div class="card">
+    <strong>💡 CORRIENTES (R/S/T)</strong>
+    <div id="corrientes" style="font-size: 20px;">---</div>
+</div>
+
+<div class="card">
+    <strong>📜 HISTORIAL COMPLETO</strong>
+    <div style="overflow-x: auto; margin-top: 15px;">
+        <table id="tabla">
+            <thead>
+                <tr><th>Fecha/Hora</th><th>V R</th><th>V S</th><th>V T</th><th>A R</th><th>A S</th><th>A T</th><th>kW</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
     </div>
 </div>
 
-<h3>📜 HISTORIAL COMPLETO</h3>
-<div style="overflow-x: auto;">
-    <table id="tablaHistorial">
-        <thead>
-            <tr>
-                <th>Fecha/Hora</th>
-                <th>Voltaje R (V)</th>
-                <th>Voltaje S (V)</th>
-                <th>Voltaje T (V)</th>
-                <th>Corriente R (A)</th>
-                <th>Corriente S (A)</th>
-                <th>Corriente T (A)</th>
-                <th>Potencia (kW)</th>
-            </tr>
-        </thead>
-        <tbody id="historialBody">
-            <tr><td colspan="8">Cargando datos...</td></tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="actualizado" id="status">
-    🔄 Conectando...
-</div>
+<div class="actualizado" id="status">🔄 Conectando...</div>
 
 <script>
-    let todosLosDatos = [];
-
     async function cargarDatos() {
         try {
-            const respuesta = await fetch('datos.json?t=' + Date.now());
-            const data = await respuesta.json();
+            const res = await fetch('datos.json?t=' + Date.now());
+            const data = await res.json();
             
-            todosLosDatos = data.historial || [];
-            
-            // Actualizar estadísticas
-            document.getElementById('totalRegistros').innerText = data.total_registros || 0;
-            
-            // Mostrar último registro
-            if (todosLosDatos.length > 0) {
-                const ultimo = todosLosDatos[todosLosDatos.length - 1];
-                document.getElementById('potencia').innerHTML = ultimo.potencia_kw + ' <span style="font-size: 16px;">kW</span>';
-                document.getElementById('ultimoTimestamp').innerHTML = `📅 ${ultimo.timestamp}`;
-                document.getElementById('voltajes').innerHTML = `${ultimo.voltajes.r} / ${ultimo.voltajes.s} / ${ultimo.voltajes.t}`;
-                document.getElementById('corrientes').innerHTML = `${ultimo.corrientes.r} / ${ultimo.corrientes.s} / ${ultimo.corrientes.t}`;
+            if (data.historial && data.historial.length > 0) {
+                const ultimo = data.historial[data.historial.length - 1];
+                const total = data.historial.length;
+                
+                document.getElementById('potencia').innerHTML = ultimo.potencia_kw + ' <span style="font-size:18px;">kW</span>';
+                document.getElementById('ultimoTimestamp').innerHTML = `📅 ${ultimo.timestamp} | Total: ${total} registros`;
+                document.getElementById('voltajes').innerHTML = `${ultimo.voltaje_r} V / ${ultimo.voltaje_s} V / ${ultimo.voltaje_t} V`;
+                document.getElementById('corrientes').innerHTML = `${ultimo.corriente_r} A / ${ultimo.corriente_s} A / ${ultimo.corriente_t} A`;
+                
+                // Tabla con TODO el historial (más reciente primero)
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = '';
+                const historialRev = [...data.historial].reverse();
+                for (const r of historialRev) {
+                    const fila = tbody.insertRow();
+                    fila.insertCell(0).innerText = r.timestamp;
+                    fila.insertCell(1).innerText = r.voltaje_r.toFixed(1);
+                    fila.insertCell(2).innerText = r.voltaje_s.toFixed(1);
+                    fila.insertCell(3).innerText = r.voltaje_t.toFixed(1);
+                    fila.insertCell(4).innerText = r.corriente_r.toFixed(1);
+                    fila.insertCell(5).innerText = r.corriente_s.toFixed(1);
+                    fila.insertCell(6).innerText = r.corriente_t.toFixed(1);
+                    fila.insertCell(7).innerHTML = `<strong>${r.potencia_kw}</strong>`;
+                }
+                
+                document.getElementById('status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()} | ${total} registros`;
+            } else {
+                document.getElementById('status').innerHTML = `❌ No hay datos: ${data.error || 'vacío'}`;
             }
-            
-            // Mostrar TODO el historial en la tabla
-            const tbody = document.getElementById('historialBody');
-            tbody.innerHTML = '';
-            
-            // Mostrar desde el más RECIENTE al más ANTIGUO
-            const historialReciente = [...todosLosDatos].reverse();
-            
-            for (const registro of historialReciente) {
-                const fila = tbody.insertRow();
-                fila.insertCell(0).innerText = registro.timestamp;
-                fila.insertCell(1).innerText = registro.voltajes.r.toFixed(1);
-                fila.insertCell(2).innerText = registro.voltajes.s.toFixed(1);
-                fila.insertCell(3).innerText = registro.voltajes.t.toFixed(1);
-                fila.insertCell(4).innerText = registro.corrientes.r.toFixed(1);
-                fila.insertCell(5).innerText = registro.corrientes.s.toFixed(1);
-                fila.insertCell(6).innerText = registro.corrientes.t.toFixed(1);
-                fila.insertCell(7).innerHTML = `<strong>${registro.potencia_kw}</strong>`;
-            }
-            
-            document.getElementById('status').innerHTML = `✅ Actualizado: ${new Date().toLocaleTimeString()} | ${todosLosDatos.length} registros`;
-            
-        } catch (error) {
-            document.getElementById('status').innerHTML = `❌ Error: ${error.message}`;
-            console.error(error);
+        } catch(e) {
+            document.getElementById('status').innerHTML = `❌ Error: ${e.message}`;
         }
     }
     
-    // Cargar al inicio
     cargarDatos();
-    
-    // Actualizar cada 30 segundos
     setInterval(cargarDatos, 30000);
 </script>
 
