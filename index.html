@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Industrial Minero | Monitoreo Real</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#071126;
+    font-family:'Inter',sans-serif;
+    color:#e2e8f0;
+    padding:20px;
+    overflow-x:hidden;
+}
+
+.dashboard{
+    max-width:1500px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:1fr 1.3fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:#111827;
+    border:1px solid #1e293b;
+    border-radius:24px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.section-title{
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#94a3b8;
+    margin-bottom:20px;
+}
+
+.machine-img{
+    width:90px;
+    margin-bottom:16px;
+}
+
+.specs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:24px;
+}
+
+.spec{
+    background:#0f172a;
+    border-radius:14px;
+    padding:14px;
+}
+
+.spec-label{
+    font-size:11px;
+    color:#94a3b8;
+    margin-bottom:5px;
+    text-transform:uppercase;
+}
+
+.spec-value{
+    font-size:18px;
+    font-weight:700;
+}
+
+.status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.led{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    animation:pulse 3s infinite ease-in-out;
+}
+
+.green{
+    background:#22c55e;
+    box-shadow:0 0 10px #22c55e;
+}
+
+.yellow{
+    background:#facc15;
+    box-shadow:0 0 10px #facc15;
+}
+
+.red{
+    background:#ef4444;
+    box-shadow:0 0 10px #ef4444;
+}
+
+@keyframes pulse{
+    0%{ opacity:1; transform:scale(1); }
+    50%{ opacity:.4; transform:scale(.92); }
+    100%{ opacity:1; transform:scale(1); }
+}
+
+.btn-group{
+    display:flex;
+    gap:12px;
+    margin-top:24px;
+}
+
+.btn{
+    flex:1;
+    background:#1d4ed8;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:12px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.btn:hover{
+    background:#2563eb;
+}
+
+.gauge-wrapper{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding-top:5px;
+    overflow:hidden;
+}
+
+.gauge{
+    position:relative;
+    width:460px;
+    height:240px;
+}
+
+.gauge-ring{
+    position:absolute;
+    width:460px;
+    height:460px;
+    border-radius:50%;
+    background:conic-gradient(from 240deg, #22c55e 0deg, #22c55e 80deg, #eab308 130deg, #f97316 185deg, #ef4444 240deg, transparent 240deg);
+    clip-path:inset(0 0 50% 0);
+}
+
+.gauge-inner{
+    position:absolute;
+    width:350px;
+    height:350px;
+    left:55px;
+    top:55px;
+    background:#081225;
+    border-radius:50%;
+    border:4px solid #1e293b;
+    clip-path:inset(0 0 50% 0);
+}
+
+.label{
+    position:absolute;
+    color:#e2e8f0;
+    font-size:18px;
+    font-weight:800;
+    text-shadow:0 0 3px black;
+}
+
+.l0{ left:18px; top:182px; }
+.l5{ left:50px; top:100px; }
+.l10{ left:130px; top:38px; }
+.l15{ left:218px; top:10px; }
+.l20{ right:130px; top:38px; }
+.l25{ right:50px; top:100px; }
+.l30{ right:18px; top:182px; }
+
+.needle{
+    position:absolute;
+    width:8px;
+    height:165px;
+    background:linear-gradient(to top, #dc2626, #ff3b3b);
+    border-radius:20px;
+    left:50%;
+    bottom:18px;
+    transform-origin:50% 100%;
+    transform:translateX(-50%) rotate(0deg);
+    z-index:40;
+    box-shadow:0 0 18px rgba(255,0,0,.45);
+    transition:transform .3s ease-out;
+}
+
+.needle-center{
+    position:absolute;
+    width:42px;
+    height:42px;
+    background:#cbd5e1;
+    border:6px solid #475569;
+    border-radius:50%;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    z-index:50;
+}
+
+.value-box{
+    margin-top:8px;
+    width:240px;
+    background:#0f172a;
+    border:2px solid #334155;
+    border-radius:18px;
+    padding:14px;
+    text-align:center;
+}
+
+.value-number{
+    font-size:54px;
+    font-weight:900;
+    color:#facc15;
+    line-height:1;
+    transition:color .2s;
+}
+
+.value-text{
+    margin-top:6px;
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.fan-section{
+    margin-top:30px;
+    border-top:1px solid #1e293b;
+    padding-top:24px;
+    text-align:center;
+}
+
+.fan-container{
+    width:130px;
+    height:130px;
+    margin:auto;
+    position:relative;
+}
+
+.fan{
+    width:130px;
+    height:130px;
+    position:absolute;
+    inset:0;
+}
+
+.blade{
+    position:absolute;
+    width:130px;
+    height:14px;
+    top:58px;
+    left:0;
+    border-radius:30px;
+    background:linear-gradient(90deg, #334155, #94a3b8, #334155);
+}
+
+.blade-0{ transform:rotate(0deg); }
+.blade-1{ transform:rotate(60deg); }
+.blade-2{ transform:rotate(120deg); }
+.blade-3{ transform:rotate(180deg); }
+.blade-4{ transform:rotate(240deg); }
+.blade-5{ transform:rotate(300deg); }
+
+.fan-center{
+    position:absolute;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#cbd5e1;
+    border:4px solid #475569;
+    top:48px;
+    left:48px;
+    z-index:30;
+}
+
+.fan-status{
+    margin-top:12px;
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.usage{
+    margin-bottom:30px;
+}
+
+.usage-label{
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.big-value{
+    font-size:48px;
+    font-weight:900;
+}
+
+.bottom{
+    max-width:1500px;
+    margin:20px auto 0;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:20px;
+}
+
+.metric{
+    background:#111827;
+    border:1px solid #1e293b;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+}
+
+.metric-icon{
+    font-size:30px;
+    margin-bottom:12px;
+}
+
+.metric-title{
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+@media(max-width:1200px){
+    .dashboard{ grid-template-columns:1fr; }
+    .bottom{ grid-template-columns:1fr 1fr; }
+}
+
+@media(max-width:768px){
+    body{ padding:14px; }
+    .card{ padding:18px; }
+    .gauge{ transform:scale(.78); transform-origin:top center; margin-bottom:-40px; }
+    .bottom{ grid-template-columns:1fr; }
+    .btn-group{ flex-direction:column; }
+    .big-value{ font-size:38px; }
+    .status-row{ padding:12px 0; }
+}
+
+@media(max-width:520px){
+    .gauge{ transform:scale(.60); transform-origin:top center; margin-bottom:-80px; }
+    .spec-value{ font-size:15px; }
+    .value-number{ font-size:42px; }
+    .metric{ padding:16px; }
+    .status-row{ padding:10px 0; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<div class="card">
+
+<img class="machine-img" src="https://cdn-icons-png.flaticon.com/512/2942/2942789.png">
+
+<div class="section-title">SISTEMA DE FILTRACIÓN MINERA</div>
+
+<div class="specs">
+<div class="spec"><div class="spec-label">Modelo</div><div class="spec-value">GSX-15P</div></div>
+<div class="spec"><div class="spec-label">Caudal</div><div class="spec-value">15,000 m³/h</div></div>
+<div class="spec"><div class="spec-label">Válvula</div><div class="spec-value">1 1/2"</div></div>
+<div class="spec"><div class="spec-label">Aplicación</div><div class="spec-value">HVOF</div></div>
+</div>
+
+<div class="section-title">ESTADO OPERACIONAL</div>
+
+<div class="status-row">
+    <span>Sistema General</span>
+    <div style="display:flex;gap:10px;align-items:center;">
+        <div class="led green"></div>
+        <span>Operativo</span>
+    </div>
+</div>
+
+<div class="status-row">
+    <span>Próximo mantenimiento</span>
+    <strong>04 Mayo 2027</strong>
+</div>
+
+<div class="status-row">
+    <span>Horas Totales</span>
+    <strong id="totalHours">0.0 hr</strong>
+</div>
+
+<div class="btn-group">
+<button class="btn">NOTIFICACIONES</button>
+<button class="btn">SOPORTE</button>
+</div>
+
+</div>
+
+<div class="card">
+<div class="section-title">PRESIÓN DIFERENCIAL</div>
+
+<div class="gauge-wrapper">
+
+<div class="gauge">
+<div class="gauge-ring"></div>
+<div class="gauge-inner"></div>
+
+<div class="label l0">0</div>
+<div class="label l5">5</div>
+<div class="label l10">10</div>
+<div class="label l15">15</div>
+<div class="label l20">20</div>
+<div class="label l25">25</div>
+<div class="label l30">30</div>
+
+<div class="needle" id="needle"></div>
+<div class="needle-center"></div>
+
+</div>
+
+<div class="value-box">
+<div class="value-number" id="pressureValue">0.0</div>
+<div class="value-text">PSI • Caída de presión filtros</div>
+</div>
+
+</div>
+
+<div class="fan-section">
+
+<div class="fan-container">
+
+<div class="fan" id="fan">
+
+<div class="blade blade-0"></div>
+<div class="blade blade-1"></div>
+<div class="blade blade-2"></div>
+<div class="blade blade-3"></div>
+<div class="blade blade-4"></div>
+<div class="blade blade-5"></div>
+
+<div class="fan-center"></div>
+
+</div>
+
+</div>
+
+<div class="fan-status">EXTRACTOR PRINCIPAL</div>
+
+<div style="margin-top:10px; font-weight:800; color:#22c55e; font-size:22px;">
+<span id="rpmValue">0</span> RPM
+</div>
+
+</div>
+</div>
+
+<div class="card">
+
+<div class="section-title">CONSUMOS Y OPERACIÓN</div>
+
+<div class="usage">
+<div class="usage-label">Energía eléctrica</div>
+<div class="big-value" id="energyValue">0</div>
+<span>kWh · últimos 30 días</span>
+</div>
+
+<div class="usage">
+<div class="usage-label">Aire comprimido</div>
+<div class="big-value" id="airValue">0.00</div>
+<span>m³/min</span>
+</div>
+
+<div class="usage">
+<div class="usage-label">Última actualización</div>
+<div class="big-value" id="runtimeValue" style="font-size:22px;">--</div>
+<span>Timestamp SCADA</span>
+</div>
+
+</div>
+</div>
+
+<div class="bottom">
+
+<div class="metric">
+<div class="metric-icon">⬇️</div>
+<div class="metric-title">Estado Descarga</div>
+<div class="led green" style="margin:auto;"></div>
+</div>
+
+<div class="metric">
+<div class="metric-icon">⚙️</div>
+<div class="metric-title">Válvula Pulso</div>
+<div class="led green" style="margin:auto;"></div>
+</div>
+
+<div class="metric">
+<div class="metric-icon">💨</div>
+<div class="metric-title">Presión Inlet</div>
+<div class="led yellow" style="margin:auto;"></div>
+<div style="margin-top:10px;" id="inletValue">0.0 kPa</div>
+</div>
+
+<div class="metric">
+<div class="metric-icon">🌡️</div>
+<div class="metric-title">Temperatura</div>
+<div class="led green" id="tempLed" style="margin:auto;"></div>
+<div style="margin-top:10px;" id="tempValue">0.0 °C</div>
+</div>
+
+<div class="metric">
+<div class="metric-icon">🛡️</div>
+<div class="metric-title">Emisión Polvo</div>
+<div class="led green" style="margin:auto;"></div>
+<div style="margin-top:10px;">&lt; 2 mg/m³</div>
+</div>
+
+</div>
+
+<script>
+
+function psiToAngle(psi){
+
+    psi = Math.max(0, Math.min(30, psi));
+
+    return -90 + (psi / 30) * 180;
+}
+
+const needle = document.getElementById("needle");
+const pressureValue = document.getElementById("pressureValue");
+const rpmValue = document.getElementById("rpmValue");
+const energyValue = document.getElementById("energyValue");
+const airValue = document.getElementById("airValue");
+const inletValue = document.getElementById("inletValue");
+const tempValue = document.getElementById("tempValue");
+const tempLed = document.getElementById("tempLed");
+
+let smoothRPM = 0;
+
+async function updateUI(){
+
+    try{
+
+        const response =
+            await fetch("variables.json?t=" + Date.now());
+
+        const data =
+            await response.json();
+
+        const pressure = data.pressure || 0;
+        const rpm = data.rpm || 0;
+        const energy = data.energy || 0;
+        const air = data.air || 0;
+        const inlet = data.inlet || 0;
+        const temp = data.temp || 0;
+        const hours = data.hours || 0;
+        const timestamp = data.timestamp || "--";
+
+        smoothRPM = rpm;
+
+        const angle = psiToAngle(pressure);
+
+        needle.style.transform =
+            `translateX(-50%) rotate(${angle}deg)`;
+
+        pressureValue.innerText =
+            pressure.toFixed(1);
+
+        if (pressure < 12){
+            pressureValue.style.color = "#22c55e";
+        }
+        else if (pressure < 22){
+            pressureValue.style.color = "#facc15";
+        }
+        else{
+            pressureValue.style.color = "#f97316";
+        }
+
+        rpmValue.innerText =
+            Math.round(rpm);
+
+        energyValue.innerText =
+            Math.round(energy);
+
+        airValue.innerText =
+            air.toFixed(2);
+
+        inletValue.innerText =
+            inlet.toFixed(1) + " kPa";
+
+        tempValue.innerText =
+            temp.toFixed(1) + " °C";
+
+        document.getElementById("totalHours").innerText =
+            hours.toFixed(1) + " hr";
+
+        document.getElementById("runtimeValue").innerText =
+            timestamp;
+
+        if (temp > 28){
+            tempLed.className = "led red";
+        }
+        else if (temp > 25){
+            tempLed.className = "led yellow";
+        }
+        else{
+            tempLed.className = "led green";
+        }
+
+    }
+    catch(error){
+
+        console.log("Error leyendo variables.json");
+
+    }
+}
+
+let fanAngle = 0;
+let lastFanTime = 0;
+
+const fan = document.getElementById("fan");
+
+function animateFan(now){
+
+    if (!lastFanTime)
+        lastFanTime = now;
+
+    const delta =
+        Math.min(50, now - lastFanTime);
+
+    if (delta > 0){
+
+        const speed =
+            (smoothRPM / 1750) * 300;
+
+        fanAngle =
+            (fanAngle + speed * (delta / 1000)) % 360;
+
+        fan.style.transform =
+            `rotate(${fanAngle}deg)`;
+    }
+
+    lastFanTime = now;
+
+    requestAnimationFrame(animateFan);
+}
+
+requestAnimationFrame(animateFan);
+
+updateUI();
+
+setInterval(updateUI, 30000);
+
+</script>
+
+</body>
+</html>
