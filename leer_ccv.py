@@ -12,7 +12,7 @@ CSV_FILE = r"C:\planta_monitor\medidor_energia_2026-05-21.csv"
 JSON_FILE = r"C:\planta_monitor\datos.json"
 REPO_DIR = r"C:\planta_monitor"
 
-INTERVALO = 30  # segundos
+INTERVALO = 60  # segundos
 
 # =========================================
 # LEER CSV
