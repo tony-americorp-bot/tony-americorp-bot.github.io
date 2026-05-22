@@ -1,5 +1,5 @@
 {
-    "registro_actual": 4,
+    "registro_actual": 5,
     "total_registros": 14,
     "fecha_hora": "2026-05-21 20:45:56",
     "voltaje_r": 222.53,
@@ -8,5 +8,5 @@
     "corriente_r": 107.98,
     "corriente_s": 108.84,
     "corriente_t": 108.21,
-    "actualizado": "2026-05-21 23:33:33"
+    "actualizado": "2026-05-21 23:34:35"
 }
