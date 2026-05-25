@@ -5,9 +5,9 @@ import time
 import subprocess
 from datetime import datetime
 
-CARPETA = r"C:\planta_monitor"
-JSON_FILE = r"C:\planta_monitor\datos.json"
-CSV_FILE = r"C:\planta_monitor\medidor_energia_2026-05-21.csv"
+CARPETA = r"C:\scada_monitor"
+JSON_FILE = r"C:\scada_monitor\datos.json"
+CSV_FILE = r"C:\scada_monitor\medidor_energia_2026-05-21.csv"
 
 def leer_todo_csv():
     """Lee TODAS las filas del CSV"""

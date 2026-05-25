@@ -8,13 +8,13 @@ from datetime import datetime
 # CONFIGURACIÓN
 # =========================================
 
-CSV_FILE = r"C:\planta_monitor\csv\medidor_actual.csv"
+CSV_FILE = r"C:\scada_monitor\csv\medidor_actual.csv"
 
-JSON_FILE = r"C:\planta_monitor\datos.json"
+JSON_FILE = r"C:\scada_monitor\datos.json"
 
-TIMESTAMP_FILE = r"C:\planta_monitor\ultimo_timestamp.txt"
+TIMESTAMP_FILE = r"C:\scada_monitor\ultimo_timestamp.txt"
 
-REPO_DIR = r"C:\planta_monitor"
+REPO_DIR = r"C:\scada_monitor"
 
 INTERVALO = 60
 

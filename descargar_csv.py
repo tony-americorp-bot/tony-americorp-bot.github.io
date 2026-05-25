@@ -8,7 +8,7 @@ from datetime import datetime
 
 URL = "http://13.222.228.90:1880/descargar-csv"
 
-DESTINO = r"C:\planta_monitor\csv\medidor_actual.csv"
+DESTINO = r"C:\scada_monitor\csv\medidor_actual.csv"
 
 INTERVALO = 60  # segundos
 
