@@ -289,6 +289,11 @@ body{
     box-shadow:0 1px 4px rgba(0,0,0,0.15);
 }
 
+.alarma-resuelta{
+    border-left:6px solid #00c853;
+    opacity:0.7;
+}
+
 .alarma-fecha{
     font-size:12px;
     color:#616161;
@@ -397,11 +402,11 @@ body{
                 🚨 Alarmas
             </div>
 
-            <div class="menu-item">
+            <div class="menu-item" onclick="alert('Próximamente')">
                 📈 Tendencias
             </div>
 
-            <div class="menu-item">
+            <div class="menu-item" onclick="alert('Próximamente')">
                 ⚙️ Configuración
             </div>
 
@@ -854,7 +859,6 @@ body{
 /* ================= VARIABLES ================= */
 
 let alarmasVista = [];
-let idsMostrados = [];
 
 /* ================= MENU ================= */
 
@@ -881,76 +885,86 @@ actualizarFechaHora();
 /* ================= STORAGE ================= */
 
 function obtenerHistorico(){
-
     const datos = localStorage.getItem("scada_alarms");
-
     return datos ? JSON.parse(datos) : [];
-
 }
 
 function guardarHistorico(arr){
-
-    localStorage.setItem(
-        "scada_alarms",
-        JSON.stringify(arr)
-    );
-
+    localStorage.setItem("scada_alarms", JSON.stringify(arr));
 }
 
-/* ================= AGREGAR ALARMA ================= */
-
-function agregarAlarma(tag,mensaje){
+/* ================= FUNCION PRINCIPAL: ACTUALIZAR ALARMA ================= */
+// Esta función maneja la lógica: crear nueva alarma SI NO EXISTE, o resolverla si ya pasó la condición
+function actualizarAlarma(tag, mensajeBase, condicionActiva, valorActual){
 
     let historico = obtenerHistorico();
-
-    const ahora = new Date();
-
-    const fecha =
-        ahora.toLocaleDateString('es-PE') +
-        " " +
-        ahora.toLocaleTimeString('es-PE');
-
-    const idUnico =
-        tag + "_" + mensaje;
-
-    /* EVITAR DUPLICADOS */
-
-    const existe = historico.some(a =>
-        a.idUnico === idUnico
+    const idUnico = tag + "_" + mensajeBase;
+    
+    // Buscar si existe una alarma ACTIVA (no resuelta) para este tag y mensaje
+    const alarmaExistenteActiva = historico.find(a => 
+        a.idUnico === idUnico && a.resuelta !== true
     );
-
-    if(existe){
-        return;
+    
+    if(condicionActiva){
+        // La condición de alarma está ACTIVA
+        if(!alarmaExistenteActiva){
+            // No existe alarma activa → CREAR NUEVA
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString('es-PE') + " " + ahora.toLocaleTimeString('es-PE');
+            
+            const nueva = {
+                id: Date.now(),
+                idUnico: idUnico,
+                fecha: fecha,
+                tag: tag,
+                mensaje: mensajeBase + ": " + valorActual,
+                revisada: false,
+                resuelta: false,
+                timestamp: ahora.getTime()
+            };
+            
+            historico.unshift(nueva);
+            guardarHistorico(historico);
+            
+            console.log(`🔔 NUEVA ALARMA: ${tag} - ${mensajeBase}`);
+        }else{
+            // La alarma ya existe activa, solo actualizamos el mensaje si es diferente
+            const nuevoMensaje = mensajeBase + ": " + valorActual;
+            if(alarmaExistenteActiva.mensaje !== nuevoMensaje){
+                alarmaExistenteActiva.mensaje = nuevoMensaje;
+                alarmaExistenteActiva.fecha = new Date().toLocaleDateString('es-PE') + " " + new Date().toLocaleTimeString('es-PE');
+                guardarHistorico(historico);
+                console.log(`🔄 ACTUALIZADA: ${tag} - ${mensajeBase} → ${valorActual}`);
+            }
+        }
+    }else{
+        // La condición de alarma ya NO está activa
+        if(alarmaExistenteActiva && !alarmaExistenteActiva.resuelta){
+            // Marcar la alarma como RESUELTA
+            alarmaExistenteActiva.resuelta = true;
+            guardarHistorico(historico);
+            console.log(`✅ RESUELTA: ${tag} - ${mensajeBase}`);
+        }
     }
+    
+    // Actualizar la vista y contadores
+    cargarAlarmasActivasEnVista();
+}
 
-    const nueva = {
+/* ================= CARGAR SOLO ALARMAS ACTIVAS EN VISTA ================= */
 
-        id:Date.now(),
-        idUnico:idUnico,
-        fecha:fecha,
-        tag:tag,
-        mensaje:mensaje,
-        revisada:false
-
-    };
-
-    historico.unshift(nueva);
-
-    guardarHistorico(historico);
-
-    alarmasVista.unshift(nueva);
-
+function cargarAlarmasActivasEnVista(){
+    const historico = obtenerHistorico();
+    // Solo mostrar alarmas NO RESUELTAS (activas)
+    alarmasVista = historico.filter(a => a.resuelta !== true);
     renderAlarmas();
-
 }
 
 /* ================= RENDER ================= */
 
 function renderAlarmas(){
 
-    const lista =
-        document.getElementById("listaAlarmas");
-
+    const lista = document.getElementById("listaAlarmas");
     lista.innerHTML = "";
 
     if(alarmasVista.length === 0){
@@ -960,7 +974,7 @@ function renderAlarmas(){
             <div class="alarma-item sin-alarmas">
 
                 <div class="alarma-texto">
-                    SISTEMA OPERANDO NORMALMENTE
+                    ✅ SISTEMA OPERANDO NORMALMENTE
                 </div>
 
             </div>
@@ -969,12 +983,17 @@ function renderAlarmas(){
 
     }else{
 
-        alarmasVista.forEach(al => {
+        // Mostrar las últimas 10 alarmas activas
+        const mostrar = alarmasVista.slice(0, 10);
+        
+        mostrar.forEach(al => {
 
-            const div =
-                document.createElement("div");
-
+            const div = document.createElement("div");
             div.className = "alarma-item";
+            
+            if(al.resuelta){
+                div.classList.add("alarma-resuelta");
+            }
 
             div.innerHTML = `
 
@@ -991,6 +1010,19 @@ function renderAlarmas(){
             lista.appendChild(div);
 
         });
+        
+        if(alarmasVista.length > 10){
+            const div = document.createElement("div");
+            div.className = "alarma-item";
+            div.style.background = "#e3f2fd";
+            div.style.borderLeftColor = "#1565c0";
+            div.innerHTML = `
+                <div class="alarma-texto">
+                    📋 + ${alarmasVista.length - 10} alarmas más. Haga clic en "VER HISTORIAL"
+                </div>
+            `;
+            lista.appendChild(div);
+        }
 
     }
 
@@ -1002,22 +1034,16 @@ function renderAlarmas(){
 
 function actualizarContadores(){
 
-    const historico =
-        obtenerHistorico();
+    const historico = obtenerHistorico();
+    
+    // Alarmas NO REVISADAS (solo las activas/no resueltas)
+    const noRevisadas = historico.filter(a => a.resuelta !== true && !a.revisada).length;
+    
+    // Alarmas REVISADAS (solo las activas/no resueltas)
+    const revisadasActivas = historico.filter(a => a.resuelta !== true && a.revisada).length;
 
-    const noRev =
-        historico.filter(a => !a.revisada).length;
-
-    const revisadas =
-        historico.filter(a => a.revisada).length;
-
-    document.getElementById(
-        "contadorAlarmas"
-    ).innerText = noRev;
-
-    document.getElementById(
-        "contadorRevisadas"
-    ).innerText = revisadas;
+    document.getElementById("contadorAlarmas").innerText = noRevisadas;
+    document.getElementById("contadorRevisadas").innerText = revisadasActivas;
 
 }
 
@@ -1025,29 +1051,28 @@ function actualizarContadores(){
 
 function marcarRevisadas(){
 
-    let historico =
-        obtenerHistorico();
+    let historico = obtenerHistorico();
 
     historico.forEach(a => {
-
-        a.revisada = true;
-
+        if(a.resuelta !== true){
+            a.revisada = true;
+        }
     });
 
     guardarHistorico(historico);
-
-    actualizarContadores();
+    cargarAlarmasActivasEnVista();
 
 }
 
 /* ================= LIMPIAR SOLO VISTA ================= */
 
 function limpiarVistaAlarmas(){
-
-    alarmasVista = [];
-
-    renderAlarmas();
-
+    // Esto solo limpia la vista visual, no los datos
+    document.getElementById("listaAlarmas").innerHTML = `
+        <div class="alarma-item sin-alarmas">
+            <div class="alarma-texto">✅ VISTA LIMPIADA</div>
+        </div>
+    `;
 }
 
 /* ================= DATOS ================= */
@@ -1109,77 +1134,77 @@ async function cargarDatos(){
         document.getElementById("volt6").innerText = d.corriente_s + " °C";
         document.getElementById("kw6").innerText = d.corriente_t + " RPM";
 
-        /* ================= ALARMAS ================= */
+        /* ================= ACTUALIZAR ALARMAS ================= */
+        
+        // 1. MT-001: Tensión alta (>450V)
+        const tensionAlta = d.voltaje_r > 450;
+        actualizarAlarma("MT-001", "TENSION ALTA", tensionAlta, d.voltaje_r + " V");
+        
+        // 2. MT-002: Corriente alta (>20A)
+        const corrienteAlta = d.corriente_r > 20;
+        actualizarAlarma("MT-002", "CORRIENTE ALTA", corrienteAlta, d.corriente_r + " A");
+        
+        // 3. VC-001: Vibración alta (>6 mm/s)
+        const vibracionAlta = d.voltaje_t > 6;
+        actualizarAlarma("VC-001", "VIBRACION ALTA", vibracionAlta, d.voltaje_t + " mm/s");
+        
+        // 4. VR-001: Frecuencia cero (<1)
+        const frecuenciaCero = d.corriente_s < 1;
+        actualizarAlarma("VR-001", "FRECUENCIA CERO", frecuenciaCero, d.corriente_s + " Hz");
+        
+        // 5. PIT-001: Presión baja (<80 psi)
+        const presionBaja = d.voltaje_s < 80;
+        actualizarAlarma("PIT-001", "PRESION BAJA", presionBaja, d.voltaje_s + " PSI");
+        
+        // 6. VFD-001: Temperatura alta (>65°C)
+        const tempAlta = d.voltaje_r > 65;
+        actualizarAlarma("VFD-001", "TEMPERATURA ALTA", tempAlta, d.voltaje_r + " °C");
+        
+        // ================= ACTUALIZAR ESTADOS VISUALES =================
+        
+        document.getElementById("estado1").className = tensionAlta ? "estado-equipo fallo" : "estado-equipo funcionando";
+        document.getElementById("estado1").innerText = tensionAlta ? "ALERTA" : "FUNCIONANDO";
+        
+        document.getElementById("estado2").className = corrienteAlta ? "estado-equipo fallo" : "estado-equipo funcionando";
+        document.getElementById("estado2").innerText = corrienteAlta ? "ALERTA" : "FUNCIONANDO";
+        
+        document.getElementById("estado3").className = vibracionAlta ? "estado-equipo fallo" : "estado-equipo funcionando";
+        document.getElementById("estado3").innerText = vibracionAlta ? "VIBRACION" : "FUNCIONANDO";
+        
+        document.getElementById("estado4").className = frecuenciaCero ? "estado-equipo detenido" : "estado-equipo funcionando";
+        document.getElementById("estado4").innerText = frecuenciaCero ? "DETENIDO" : "FUNCIONANDO";
+        
+        document.getElementById("estado5").className = presionBaja ? "estado-equipo fallo" : "estado-equipo funcionando";
+        document.getElementById("estado5").innerText = presionBaja ? "PRESION BAJA" : "FUNCIONANDO";
+        
+        document.getElementById("estado6").className = tempAlta ? "estado-equipo fallo" : "estado-equipo funcionando";
+        document.getElementById("estado6").innerText = tempAlta ? "SOBRETEMP" : "FUNCIONANDO";
 
-        if(d.voltaje_r > 450){
-
-            agregarAlarma(
-                "MT-001",
-                "TENSION ALTA : " + d.voltaje_r + " V"
-            );
-
-        }
-
-        if(d.corriente_r > 20){
-
-            agregarAlarma(
-                "MT-002",
-                "CORRIENTE ALTA : " + d.corriente_r + " A"
-            );
-
-        }
-
-        if(d.voltaje_t > 6){
-
-            agregarAlarma(
-                "VC-001",
-                "VIBRACION ALTA : " + d.voltaje_t + " mm/s"
-            );
-
-        }
-
-        if(d.corriente_s < 1){
-
-            agregarAlarma(
-                "VR-001",
-                "FRECUENCIA CERO"
-            );
-
-        }
-
-        if(d.voltaje_s < 80){
-
-            agregarAlarma(
-                "PIT-001",
-                "PRESION BAJA : " + d.voltaje_s + " PSI"
-            );
-
-        }
-
-        if(d.voltaje_r > 65){
-
-            agregarAlarma(
-                "VFD-001",
-                "TEMPERATURA ALTA : " + d.voltaje_r + " °C"
-            );
-
-        }
+        console.log("SCADA ACTUALIZADO - " + new Date().toLocaleTimeString());
 
     }catch(error){
-
-        console.log(error);
-
+        console.log("Error cargando datos:", error);
     }
 
 }
 
 /* ================= INICIO ================= */
 
-renderAlarmas();
+// Cargar alarmas activas desde storage
+cargarAlarmasActivasEnVista();
 
+// Cargar datos por primera vez
 cargarDatos();
 
-setInterval(cargarDatos,10000);
+// Actualizar cada 30 segundos (para que coincida con la frecuencia de tus datos)
+setInterval(cargarDatos, 30000);
+
+// Sincronizar entre pestañas
+window.addEventListener('storage', function(e) {
+    if(e.key === 'scada_alarms') {
+        cargarAlarmasActivasEnVista();
+    }
+});
 
 </script>
 
