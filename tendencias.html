@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TENDENCIAS SCADA</title>
+<title>TENDENCIAS MOTOR 1</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
@@ -47,51 +47,52 @@ body{
     font-weight:bold;
 }
 
-/* ================= CONTENEDOR ================= */
+/* ================= CONTENIDO ================= */
 
 .contenedor{
-    padding:20px;
     height:calc(100vh - 75px);
     overflow:auto;
+    padding:20px;
 }
 
-/* ================= CARD ================= */
+/* ================= GRID ================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* ================= CARDS ================= */
 
 .card{
     background:white;
     border-radius:12px;
-    padding:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.2);
+    padding:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.15);
 }
 
-/* ================= TITULO ================= */
-
 .titulo{
-    font-size:24px;
+    font-size:22px;
     font-weight:bold;
-    margin-bottom:20px;
+    margin-bottom:15px;
     color:#09234d;
 }
 
-/* ================= GRAFICA ================= */
+/* ================= GRAFICAS ================= */
 
 .chart-wrapper{
-    width:100%;
     overflow-x:auto;
     overflow-y:hidden;
-    border:1px solid #bdbdbd;
+    border:1px solid #ccc;
     border-radius:10px;
-    background:white;
-    padding:15px;
+    background:#fafafa;
+    padding:10px;
 }
 
 .chart-container{
-    width:3500px;
-    height:550px;
-}
-
-canvas{
-    background:#fafafa;
+    width:2500px;
+    height:300px;
 }
 
 /* ================= BOTONES ================= */
@@ -110,12 +111,10 @@ canvas{
     border-radius:8px;
     cursor:pointer;
     font-weight:bold;
-    transition:0.2s;
 }
 
 .btn:hover{
     background:#12356d;
-    transform:scale(1.02);
 }
 
 </style>
@@ -146,33 +145,95 @@ canvas{
 
 <div class="contenedor">
 
-    <div class="card">
+    <div class="grid">
 
-        <div class="titulo">
-            📈 VARIABLES MOTOR 1
-        </div>
+        <!-- VOLTAJE -->
 
-        <div class="chart-wrapper">
+        <div class="card">
 
-            <div class="chart-container">
+            <div class="titulo">
+                ⚡ VOLTAJE
+            </div>
 
-                <canvas id="grafica"></canvas>
+            <div class="chart-wrapper">
+
+                <div class="chart-container">
+
+                    <canvas id="grafVolt"></canvas>
+
+                </div>
 
             </div>
 
         </div>
 
-        <div class="botones">
+        <!-- CORRIENTE -->
 
-            <button class="btn" onclick="resetZoom()">
-                RESET ZOOM
-            </button>
+        <div class="card">
 
-            <button class="btn" onclick="window.location.href='index.html'">
-                ⬅ VOLVER
-            </button>
+            <div class="titulo">
+                🔌 CORRIENTE
+            </div>
+
+            <div class="chart-wrapper">
+
+                <div class="chart-container">
+
+                    <canvas id="grafAmp"></canvas>
+
+                </div>
+
+            </div>
 
         </div>
+
+        <!-- TEMPERATURA -->
+
+        <div class="card">
+
+            <div class="titulo">
+                🌡 TEMPERATURA
+            </div>
+
+            <div class="chart-wrapper">
+
+                <div class="chart-container">
+
+                    <canvas id="grafTemp"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- VIBRACION -->
+
+        <div class="card">
+
+            <div class="titulo">
+                📳 VIBRACIÓN
+            </div>
+
+            <div class="chart-wrapper">
+
+                <div class="chart-container">
+
+                    <canvas id="grafVib"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="botones">
+
+        <button class="btn" onclick="window.location.href='index.html'">
+            ⬅ VOLVER
+        </button>
 
     </div>
 
@@ -218,293 +279,239 @@ function guardarHistorico(datos){
 
 }
 
-/* ================= VARIABLES ================= */
+/* ================= HISTORICO ================= */
 
 let historico = obtenerHistorico();
 
-const labels = [];
+/* ================= FUNCION GRAFICA ================= */
 
-const voltajes = [];
-const corrientes = [];
-const temperaturas = [];
-const vibraciones = [];
+function crearGrafica(id,label,color){
 
-/* ================= CARGAR HISTORICO ================= */
+    return new Chart(
 
-historico.forEach(d => {
+        document.getElementById(id),
 
-    labels.push(d.fechaCompleta);
+        {
 
-    voltajes.push(d.voltaje);
+            type:'line',
 
-    corrientes.push(d.corriente);
+            data:{
 
-    temperaturas.push(d.temperatura);
+                labels:[],
 
-    vibraciones.push(d.vibracion);
+                datasets:[{
 
-});
+                    label:label,
 
-/* ================= GRAFICA ================= */
+                    data:[],
 
-const ctx =
-    document.getElementById('grafica');
+                    borderColor:color,
 
-const grafica = new Chart(ctx, {
+                    backgroundColor:'transparent',
 
-    type:'line',
+                    borderWidth:2,
 
-    data:{
+                    pointRadius:2,
 
-        labels:labels,
+                    pointHoverRadius:8,
 
-        datasets:[
+                    tension:0.3
 
-            {
-                label:'Voltaje (V)',
+                }]
 
-                data:voltajes,
-
-                borderColor:'#1565c0',
-
-                backgroundColor:'transparent',
-
-                borderWidth:2,
-
-                pointRadius:2,
-
-                pointHoverRadius:8,
-
-                tension:0.3
             },
 
-            {
-                label:'Corriente (A)',
+            options:{
 
-                data:corrientes,
+                responsive:true,
 
-                borderColor:'#00a844',
+                maintainAspectRatio:false,
 
-                backgroundColor:'transparent',
+                interaction:{
+                    mode:'nearest',
+                    intersect:false
+                },
 
-                borderWidth:2,
+                plugins:{
 
-                pointRadius:2,
+                    tooltip:{
 
-                pointHoverRadius:8,
+                        backgroundColor:'#09234d',
 
-                tension:0.3
-            },
+                        titleColor:'#ffffff',
 
-            {
-                label:'Temperatura (°C)',
+                        bodyColor:'#ffffff',
 
-                data:temperaturas,
+                        callbacks:{
 
-                borderColor:'#d50000',
+                            title:function(context){
 
-                backgroundColor:'transparent',
+                                return "";
 
-                borderWidth:2,
+                            },
 
-                pointRadius:2,
+                            label:function(context){
 
-                pointHoverRadius:8,
+                                return context.parsed.y
+                                    + " " + label;
 
-                tension:0.3
-            },
+                            },
 
-            {
-                label:'Vibración (mm/s)',
+                            afterBody:function(context){
 
-                data:vibraciones,
+                                return [
 
-                borderColor:'#ff9800',
+                                    "",
 
-                backgroundColor:'transparent',
+                                    context[0].label
 
-                borderWidth:2,
+                                ];
 
-                pointRadius:2,
+                            }
 
-                pointHoverRadius:8,
-
-                tension:0.3
-            }
-
-        ]
-
-    },
-
-    options:{
-
-        responsive:true,
-
-        maintainAspectRatio:false,
-
-        interaction:{
-            mode:'nearest',
-            intersect:false
-        },
-
-        plugins:{
-
-            legend:{
-                display:true
-            },
-
-            tooltip:{
-
-                enabled:true,
-
-                backgroundColor:'#09234d',
-
-                titleColor:'#ffffff',
-
-                bodyColor:'#ffffff',
-
-                displayColors:true,
-
-                callbacks:{
-
-                    title:function(context){
-
-                        return "";
+                        }
 
                     },
 
-                    label:function(context){
+                    zoom:{
 
-                        let unidad = "";
+                        pan:{
+                            enabled:true,
+                            mode:'x'
+                        },
 
-                        if(context.dataset.label.includes("Voltaje")){
-                            unidad = " V";
+                        zoom:{
+
+                            wheel:{
+                                enabled:true
+                            },
+
+                            pinch:{
+                                enabled:true
+                            },
+
+                            mode:'x'
+
                         }
-
-                        if(context.dataset.label.includes("Corriente")){
-                            unidad = " A";
-                        }
-
-                        if(context.dataset.label.includes("Temperatura")){
-                            unidad = " °C";
-                        }
-
-                        if(context.dataset.label.includes("Vibración")){
-                            unidad = " mm/s";
-                        }
-
-                        return context.parsed.y.toFixed(2)
-                            + unidad;
-
-                    },
-
-                    afterBody:function(context){
-
-                        return [
-
-                            "",
-
-                            context[0].label
-
-                        ];
 
                     }
 
-                }
-
-            },
-
-            zoom:{
-
-                pan:{
-                    enabled:true,
-                    mode:'x'
                 },
 
-                zoom:{
+                scales:{
 
-                    wheel:{
-                        enabled:true
+                    x:{
+                        ticks:{
+                            maxTicksLimit:15
+                        }
                     },
 
-                    pinch:{
-                        enabled:true
-                    },
-
-                    mode:'x'
+                    y:{
+                        beginAtZero:false
+                    }
 
                 }
-
-            }
-
-        },
-
-        scales:{
-
-            x:{
-
-                ticks:{
-                    maxTicksLimit:15
-                }
-
-            },
-
-            y:{
-
-                beginAtZero:false
 
             }
 
         }
 
-    }
-
-});
-
-/* ================= RESET ZOOM ================= */
-
-function resetZoom(){
-
-    grafica.resetZoom();
+    );
 
 }
 
-/* ================= ACTUALIZAR GRAFICA ================= */
+/* ================= CREAR GRAFICAS ================= */
 
-function actualizarGrafica(){
+const grafVolt =
+    crearGrafica(
+        'grafVolt',
+        'V',
+        '#1565c0'
+    );
 
-    const ultimos15 = historico.slice(-15);
+const grafAmp =
+    crearGrafica(
+        'grafAmp',
+        'A',
+        '#00a844'
+    );
 
-    labels.length = 0;
+const grafTemp =
+    crearGrafica(
+        'grafTemp',
+        '°C',
+        '#d50000'
+    );
 
-    voltajes.length = 0;
-    corrientes.length = 0;
-    temperaturas.length = 0;
-    vibraciones.length = 0;
+const grafVib =
+    crearGrafica(
+        'grafVib',
+        'mm/s',
+        '#ff9800'
+    );
 
-    ultimos15.forEach(d => {
+/* ================= ACTUALIZAR ================= */
 
-        labels.push(d.fechaCompleta);
+function actualizarGraficas(){
 
-        voltajes.push(d.voltaje);
+    const ultimos15 =
+        historico.slice(-15);
 
-        corrientes.push(d.corriente);
+    const labels =
+        ultimos15.map(
+            d => d.fechaCompleta
+        );
 
-        temperaturas.push(d.temperatura);
+    /* VOLTAJE */
 
-        vibraciones.push(d.vibracion);
+    grafVolt.data.labels = labels;
 
-    });
+    grafVolt.data.datasets[0].data =
 
-    grafica.update();
+        ultimos15.map(d => d.voltaje);
+
+    grafVolt.update();
+
+    /* CORRIENTE */
+
+    grafAmp.data.labels = labels;
+
+    grafAmp.data.datasets[0].data =
+
+        ultimos15.map(d => d.corriente);
+
+    grafAmp.update();
+
+    /* TEMPERATURA */
+
+    grafTemp.data.labels = labels;
+
+    grafTemp.data.datasets[0].data =
+
+        ultimos15.map(d => d.temperatura);
+
+    grafTemp.update();
+
+    /* VIBRACION */
+
+    grafVib.data.labels = labels;
+
+    grafVib.data.datasets[0].data =
+
+        ultimos15.map(d => d.vibracion);
+
+    grafVib.update();
 
     /* AUTO SCROLL */
 
-    const wrapper =
-        document.querySelector('.chart-wrapper');
+    document.querySelectorAll(
+        '.chart-wrapper'
+    ).forEach(wrapper => {
 
-    wrapper.scrollLeft =
-        wrapper.scrollWidth;
+        wrapper.scrollLeft =
+            wrapper.scrollWidth;
+
+    });
 
 }
 
@@ -534,8 +541,6 @@ async function cargarDatos(){
             + " " +
             ahora.toLocaleTimeString('es-PE');
 
-        /* ================= DATOS MOTOR 1 ================= */
-
         const nuevo = {
 
             fechaCompleta:fechaCompleta,
@@ -549,8 +554,6 @@ async function cargarDatos(){
             vibracion:Number(d.voltaje_t)
 
         };
-
-        /* ================= EVITAR DUPLICADOS ================= */
 
         const ultimo =
             historico[historico.length - 1];
@@ -566,7 +569,7 @@ async function cargarDatos(){
 
         }
 
-        actualizarGrafica();
+        actualizarGraficas();
 
     }
 
@@ -580,9 +583,7 @@ async function cargarDatos(){
 
 /* ================= INICIO ================= */
 
-actualizarGrafica();
-
-/* PRIMERA LECTURA */
+actualizarGraficas();
 
 cargarDatos();
 
