@@ -271,6 +271,21 @@ body{
     border-left:6px solid #00e676;
 }
 
+/* ===== INDICADOR CONTADOR ALARMAS ===== */
+.alarmas-badge {
+    position: relative;
+}
+
+.alarma-counter {
+    background: #d50000;
+    color: white;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
 </style>
 
 </head>
@@ -311,19 +326,19 @@ body{
 
         <div class="menu">
 
-            <div class="menu-item">
+            <div class="menu-item" onclick="cerrarMenuYRedirect('index.html')">
                 📊 Dashboard
             </div>
 
-            <div class="menu-item">
+            <div class="menu-item" onclick="cerrarMenuYRedirect('alarmas.html')">
                 🚨 Alarmas
             </div>
 
-            <div class="menu-item">
+            <div class="menu-item" onclick="alert('📈 Pantalla de tendencias - Próximamente')">
                 📈 Tendencias
             </div>
 
-            <div class="menu-item">
+            <div class="menu-item" onclick="alert('⚙️ Configuración - Próximamente')">
                 ⚙️ Configuración
             </div>
 
@@ -331,7 +346,7 @@ body{
 
         <div class="sidebar-imagen">
 
-            <img src="colector.png">
+            <img src="colector.png" alt="colector">
 
         </div>
 
@@ -345,7 +360,7 @@ body{
 
         <div class="equipo">
 
-            <div class="estado-equipo funcionando">
+            <div class="estado-equipo funcionando" id="estado1">
                 FUNCIONANDO
             </div>
 
@@ -376,7 +391,7 @@ body{
 
                 <div class="imagen-equipo">
 
-                    <img src="motor1.png">
+                    <img src="motor1.png" alt="motor1">
 
                     <span>MT-001</span>
 
@@ -409,7 +424,7 @@ body{
 
         <div class="equipo">
 
-            <div class="estado-equipo funcionando">
+            <div class="estado-equipo funcionando" id="estado2">
                 FUNCIONANDO
             </div>
 
@@ -440,7 +455,7 @@ body{
 
                 <div class="imagen-equipo">
 
-                    <img src="motor2.png">
+                    <img src="motor2.png" alt="motor2">
 
                     <span>MT-002</span>
 
@@ -473,7 +488,7 @@ body{
 
         <div class="equipo">
 
-            <div class="estado-equipo funcionando">
+            <div class="estado-equipo funcionando" id="estado3">
                 FUNCIONANDO
             </div>
 
@@ -504,7 +519,7 @@ body{
 
                 <div class="imagen-equipo">
 
-                    <img src="ventilador.png">
+                    <img src="ventilador.png" alt="ventilador">
 
                     <span>VC-001</span>
 
@@ -537,7 +552,7 @@ body{
 
         <div class="equipo">
 
-            <div class="estado-equipo detenido">
+            <div class="estado-equipo detenido" id="estado4">
                 DETENIDO
             </div>
 
@@ -568,7 +583,7 @@ body{
 
                 <div class="imagen-equipo">
 
-                    <img src="valvula.png">
+                    <img src="valvula.png" alt="valvula">
 
                     <span>VR-001</span>
 
@@ -601,7 +616,7 @@ body{
 
         <div class="equipo">
 
-            <div class="estado-equipo funcionando">
+            <div class="estado-equipo funcionando" id="estado5">
                 FUNCIONANDO
             </div>
 
@@ -632,7 +647,7 @@ body{
 
                 <div class="imagen-equipo">
 
-                    <img src="pit.png">
+                    <img src="pit.png" alt="pit">
 
                     <span>PIT-001</span>
 
@@ -665,7 +680,7 @@ body{
 
         <div class="equipo">
 
-            <div class="estado-equipo fallo">
+            <div class="estado-equipo fallo" id="estado6">
                 FALLO
             </div>
 
@@ -696,7 +711,7 @@ body{
 
                 <div class="imagen-equipo">
 
-                    <img src="vfd.png">
+                    <img src="vfd.png" alt="vfd">
 
                     <span>VFD-001</span>
 
@@ -715,7 +730,7 @@ body{
                     </div>
 
                     <div class="variable">
-                        kW<br>
+                        Velocidad<br>
                         <span id="kw6">--</span>
                     </div>
 
@@ -745,101 +760,145 @@ body{
 
 <script>
 
-/* ===== HISTORIAL ALARMAS ===== */
-
-let historialAlarmas = [];
+/* ===== ESTRUCTURA DE ALARMAS COMPARTIDA ===== */
+let alarmsArray = [];
 
 /* ===== MENU ===== */
 
 function toggleMenu(){
-
     const sidebar = document.getElementById("sidebar");
-
     sidebar.classList.toggle("activo");
+}
 
+function cerrarMenuYRedirect(url){
+    document.getElementById("sidebar").classList.remove("activo");
+    window.location.href = url;
 }
 
 /* ===== FECHA Y HORA ===== */
 
 function actualizarFechaHora(){
-
     const ahora = new Date();
-
     const hora = ahora.toLocaleTimeString();
-
     const fecha = ahora.toLocaleDateString();
-
-    document.getElementById("fechaHora").innerHTML =
-        hora + " | " + fecha;
-
+    document.getElementById("fechaHora").innerHTML = hora + " | " + fecha;
 }
 
 setInterval(actualizarFechaHora,1000);
-
 actualizarFechaHora();
 
+/* ===== FUNCION PARA GUARDAR EN LOCALSTORAGE ===== */
+function guardarAlarmasEnStorage(){
+    localStorage.setItem('scada_alarms', JSON.stringify(alarmsArray));
+}
+
+/* ===== FUNCION PARA CARGAR ALARMAS DESDE STORAGE ===== */
+function cargarAlarmasDesdeStorage(){
+    const stored = localStorage.getItem('scada_alarms');
+    if(stored){
+        try{
+            const parsed = JSON.parse(stored);
+            // Restaurar objetos Date
+            alarmsArray = parsed.map(a => ({
+                ...a,
+                timestamp: new Date(a.timestamp),
+                startTime: new Date(a.startTime)
+            }));
+            actualizarVistaAlarmas();
+        }catch(e){
+            console.error("Error al cargar alarmas:", e);
+        }
+    }
+}
+
 /* ===== ABRIR PAGINA ALARMAS ===== */
-
 function abrirAlarmas(){
-
-    alert("PRÓXIMA PÁGINA DE HISTORIAL DE ALARMAS");
-
+    window.location.href = "alarmas.html";
 }
 
-/* ===== FUNCION ALARMA ===== */
-
-function agregarAlarma(texto){
-
-    if(historialAlarmas.includes(texto)){
-        return;
+/* ===== FUNCION AGREGAR ALARMA MEJORADA ===== */
+function agregarAlarma(texto, tag = "SISTEMA", condition = "FUERA DE RANGO", severity = "alarm"){
+    
+    // Verificar si ya existe una alarma IDENTICA en los últimos 10 segundos
+    const ahora = new Date();
+    const ultimos10seg = alarmsArray.filter(a => (ahora - new Date(a.timestamp)) < 10000);
+    
+    if(ultimos10seg.some(a => a.message === texto && a.tag === tag)){
+        return; // Evitar duplicados
     }
-
-    historialAlarmas.unshift(texto);
-
-    if(historialAlarmas.length > 50){
-        historialAlarmas.pop();
+    
+    const newAlarm = {
+        id: Date.now() + Math.random() * 1000,
+        timestamp: ahora,
+        tag: tag,
+        condition: condition,
+        message: texto,
+        severity: severity,
+        reviewed: false,
+        active: true,
+        startTime: ahora
+    };
+    
+    alarmsArray.unshift(newAlarm);
+    
+    // Limitar a 200 alarmas para no saturar storage
+    if(alarmsArray.length > 200){
+        alarmsArray = alarmsArray.slice(0, 200);
     }
-
+    
+    guardarAlarmasEnStorage();
     actualizarVistaAlarmas();
-
+    
+    console.log(`🔔 ALARMA: ${texto} [${tag}] - ${severity}`);
 }
 
-/* ===== ACTUALIZAR VISTA ===== */
-
+/* ===== ACTUALIZAR VISTA DE ALARMAS EN DASHBOARD ===== */
 function actualizarVistaAlarmas(){
-
-    const lista =
-        document.getElementById("listaAlarmas");
-
+    const lista = document.getElementById("listaAlarmas");
     lista.innerHTML = "";
-
-    if(historialAlarmas.length === 0){
-
+    
+    // Mostrar solo las NO REVISADAS más recientes (máximo 5 en el dashboard)
+    const noRevisadas = alarmsArray.filter(a => !a.reviewed);
+    
+    if(noRevisadas.length === 0){
         lista.innerHTML = `
             <div class="alarma-item sin-alarmas">
-                SISTEMA OPERANDO NORMALMENTE
+                ✅ SISTEMA OPERANDO NORMALMENTE
             </div>
         `;
-
         return;
     }
-
-    historialAlarmas.forEach(al => {
-
+    
+    // Mostrar las 5 más recientes no revisadas
+    const ultimas5 = noRevisadas.slice(0, 5);
+    ultimas5.forEach(al => {
         const div = document.createElement("div");
-
         div.className = "alarma-item";
-
-        div.innerText = al;
-
+        // Mostrar diferente color según severidad
+        if(al.severity === 'trip'){
+            div.style.borderLeftColor = "#b71c1c";
+            div.style.background = "#4a0000";
+        }else if(al.severity === 'warning'){
+            div.style.borderLeftColor = "#ff8f00";
+            div.style.background = "#3d2a00";
+        }
+        div.innerText = `[${al.tag}] ${al.message}`;
         lista.appendChild(div);
-
     });
-
+    
+    // Si hay más de 5, mostrar indicador
+    if(noRevisadas.length > 5){
+        const div = document.createElement("div");
+        div.className = "alarma-item";
+        div.style.background = "#09234d";
+        div.style.borderLeftColor = "#1d4ed8";
+        div.style.textAlign = "center";
+        div.innerText = `+ ${noRevisadas.length - 5} alarmas más. Haga clic para ver todas.`;
+        lista.appendChild(div);
+    }
 }
 
-/* ===== CARGAR DATOS ===== */
-
+/* ===== CARGAR DATOS DESDE JSON ===== */
 async function cargarDatos(){
 
     try{
@@ -853,201 +912,168 @@ async function cargarDatos(){
 
         const d = await response.json();
 
-        /* ===== EQUIPO 1 ===== */
+        /* ===== EQUIPO 1 - MOTOR 1 ===== */
+        document.getElementById("rpm1").innerText = d.voltaje_r;
+        document.getElementById("temp1").innerText = d.voltaje_s + " °C";
+        document.getElementById("vib1").innerText = d.voltaje_t + " mm/s";
+        document.getElementById("amp1").innerText = d.corriente_r + " A";
+        document.getElementById("volt1").innerText = d.corriente_s + " V";
+        document.getElementById("kw1").innerText = d.corriente_t + " kW";
 
-        document.getElementById("rpm1").innerText =
-            d.voltaje_r;
+        /* ===== EQUIPO 2 - MOTOR 2 ===== */
+        document.getElementById("rpm2").innerText = d.voltaje_s;
+        document.getElementById("temp2").innerText = d.voltaje_t + " °C";
+        document.getElementById("vib2").innerText = d.voltaje_r + " mm/s";
+        document.getElementById("amp2").innerText = d.corriente_s + " A";
+        document.getElementById("volt2").innerText = d.corriente_t + " V";
+        document.getElementById("kw2").innerText = d.corriente_r + " kW";
 
-        document.getElementById("temp1").innerText =
-            d.voltaje_s + " °C";
+        /* ===== EQUIPO 3 - VENTILADOR ===== */
+        document.getElementById("rpm3").innerText = d.voltaje_t;
+        document.getElementById("temp3").innerText = d.voltaje_r + " °C";
+        document.getElementById("vib3").innerText = d.voltaje_s + " mm/s";
+        document.getElementById("amp3").innerText = d.corriente_t + " A";
+        document.getElementById("volt3").innerText = d.corriente_r + " V";
+        document.getElementById("kw3").innerText = d.corriente_s + " kW";
 
-        document.getElementById("vib1").innerText =
-            d.voltaje_t + " mm/s";
+        /* ===== EQUIPO 4 - VALVULA ===== */
+        document.getElementById("rpm4").innerText = d.voltaje_r;
+        document.getElementById("temp4").innerText = d.voltaje_s + " °C";
+        document.getElementById("vib4").innerText = d.voltaje_t + " mm/s";
+        document.getElementById("amp4").innerText = d.corriente_r + " A";
+        document.getElementById("volt4").innerText = d.corriente_s + " V";
+        document.getElementById("kw4").innerText = d.corriente_t + " kW";
 
-        document.getElementById("amp1").innerText =
-            d.corriente_r + " A";
+        /* ===== EQUIPO 5 - PIT ===== */
+        document.getElementById("rpm5").innerText = d.voltaje_s + " psi";
+        document.getElementById("temp5").innerText = d.voltaje_t + " "WC";
+        document.getElementById("vib5").innerText = "OK";
+        document.getElementById("amp5").innerText = d.corriente_s + " A";
+        document.getElementById("volt5").innerText = d.corriente_t + " V";
+        document.getElementById("kw5").innerText = "ACTIVA";
 
-        document.getElementById("volt1").innerText =
-            d.corriente_s + " V";
+        /* ===== EQUIPO 6 - VFD ===== */
+        document.getElementById("rpm6").innerText = d.voltaje_t + " V";
+        document.getElementById("temp6").innerText = d.voltaje_r + " °C";
+        document.getElementById("vib6").innerText = "540 V";
+        document.getElementById("amp6").innerText = "60 Hz";
+        document.getElementById("volt6").innerText = d.corriente_s + " °C";
+        document.getElementById("kw6").innerText = d.corriente_t + " rpm";
 
-        document.getElementById("kw1").innerText =
-            d.corriente_t + " kW";
-
-        /* ===== EQUIPO 2 ===== */
-
-        document.getElementById("rpm2").innerText =
-            d.voltaje_s;
-
-        document.getElementById("temp2").innerText =
-            d.voltaje_t + " °C";
-
-        document.getElementById("vib2").innerText =
-            d.voltaje_r + " mm/s";
-
-        document.getElementById("amp2").innerText =
-            d.corriente_s + " A";
-
-        document.getElementById("volt2").innerText =
-            d.corriente_t + " V";
-
-        document.getElementById("kw2").innerText =
-            d.corriente_r + " kW";
-
-        /* ===== EQUIPO 3 ===== */
-
-        document.getElementById("rpm3").innerText =
-            d.voltaje_t;
-
-        document.getElementById("temp3").innerText =
-            d.voltaje_r + " °C";
-
-        document.getElementById("vib3").innerText =
-            d.voltaje_s + " mm/s";
-
-        document.getElementById("amp3").innerText =
-            d.corriente_t + " A";
-
-        document.getElementById("volt3").innerText =
-            d.corriente_r + " V";
-
-        document.getElementById("kw3").innerText =
-            d.corriente_s + " kW";
-
-        /* ===== EQUIPO 4 ===== */
-
-        document.getElementById("rpm4").innerText =
-            d.voltaje_r;
-
-        document.getElementById("temp4").innerText =
-            d.voltaje_s + " °C";
-
-        document.getElementById("vib4").innerText =
-            d.voltaje_t + " mm/s";
-
-        document.getElementById("amp4").innerText =
-            d.corriente_r + " A";
-
-        document.getElementById("volt4").innerText =
-            d.corriente_s + " V";
-
-        document.getElementById("kw4").innerText =
-            d.corriente_t + " kW";
-
-        /* ===== EQUIPO 5 ===== */
-
-        document.getElementById("rpm5").innerText =
-            d.voltaje_s;
-
-        document.getElementById("temp5").innerText =
-            d.voltaje_t + " °C";
-
-        document.getElementById("vib5").innerText =
-            d.voltaje_r + " mm/s";
-
-        document.getElementById("amp5").innerText =
-            d.corriente_s + " A";
-
-        document.getElementById("volt5").innerText =
-            d.corriente_t + " V";
-
-        document.getElementById("kw5").innerText =
-            d.corriente_r + " kW";
-
-        /* ===== EQUIPO 6 ===== */
-
-        document.getElementById("rpm6").innerText =
-            d.voltaje_t;
-
-        document.getElementById("temp6").innerText =
-            d.voltaje_r + " °C";
-
-        document.getElementById("vib6").innerText =
-            d.voltaje_s + " mm/s";
-
-        document.getElementById("amp6").innerText =
-            d.corriente_t + " A";
-
-        document.getElementById("volt6").innerText =
-            d.corriente_r + " V";
-
-        document.getElementById("kw6").innerText =
-            d.corriente_s + " kW";
-
-        /* ===== ALARMAS ===== */
-
-        if(d.voltaje_r > 223.7){
-
-            agregarAlarma(
-                "🚨 MOTOR 1 | RPM ALTA | VALOR: "
-                + d.voltaje_r
-            );
-
+        /* ===== LÓGICA DE ALARMAS ===== */
+        
+        // MOTOR 1 - RPM ALTA (voltaje_r simula RPM)
+        if(d.voltaje_r > 1800){
+            agregarAlarma(`RPM ALTA: ${d.voltaje_r} RPM`, "MT-001", ">1800 RPM", "warning");
+            document.getElementById("estado1").className = "estado-equipo fallo";
+            document.getElementById("estado1").innerText = "ALERTA";
+        } else {
+            if(document.getElementById("estado1").innerText === "ALERTA"){
+                document.getElementById("estado1").className = "estado-equipo funcionando";
+                document.getElementById("estado1").innerText = "FUNCIONANDO";
+            }
+        }
+        
+        // MOTOR 2 - TEMPERATURA ALTA
+        if(d.voltaje_s > 85){
+            agregarAlarma(`TEMPERATURA ALTA: ${d.voltaje_s}°C`, "MT-002", ">85°C", "alarm");
+            document.getElementById("estado2").className = "estado-equipo fallo";
+            document.getElementById("estado2").innerText = "ALERTA";
+        } else {
+            if(document.getElementById("estado2").innerText === "ALERTA"){
+                document.getElementById("estado2").className = "estado-equipo funcionando";
+                document.getElementById("estado2").innerText = "FUNCIONANDO";
+            }
+        }
+        
+        // VENTILADOR - VIBRACIÓN ALTA
+        if(d.voltaje_t > 6.5){
+            agregarAlarma(`VIBRACIÓN ALTA: ${d.voltaje_t} mm/s`, "VC-001", ">6.5 mm/s", "trip");
+            document.getElementById("estado3").className = "estado-equipo fallo";
+            document.getElementById("estado3").innerText = "TRIP";
+        } else if(d.voltaje_t > 4.0){
+            agregarAlarma(`VIBRACIÓN ELEVADA: ${d.voltaje_t} mm/s`, "VC-001", ">4.0 mm/s", "warning");
+            document.getElementById("estado3").className = "estado-equipo fallo";
+            document.getElementById("estado3").innerText = "PRECAUCION";
+        } else {
+            if(document.getElementById("estado3").innerText !== "FUNCIONANDO"){
+                document.getElementById("estado3").className = "estado-equipo funcionando";
+                document.getElementById("estado3").innerText = "FUNCIONANDO";
+            }
+        }
+        
+        // VALVULA ROTATIVA - Corriente alta
+        if(d.corriente_r > 15){
+            agregarAlarma(`CORRIENTE ALTA: ${d.corriente_r} A`, "VR-001", ">15 A", "alarm");
+            document.getElementById("estado4").className = "estado-equipo fallo";
+            document.getElementById("estado4").innerText = "SOBRECARGA";
+        } else if(d.corriente_r < 0.5){
+            agregarAlarma(`POSIBLE BLOQUEO: Corriente baja ${d.corriente_r} A`, "VR-001", "<0.5 A", "trip");
+            document.getElementById("estado4").className = "estado-equipo detenido";
+            document.getElementById("estado4").innerText = "BLOQUEADO";
+        } else {
+            if(document.getElementById("estado4").innerText !== "FUNCIONANDO" && d.corriente_r > 1){
+                document.getElementById("estado4").className = "estado-equipo funcionando";
+                document.getElementById("estado4").innerText = "FUNCIONANDO";
+            }
+        }
+        
+        // PIT - Presión de aire
+        if(d.voltaje_s < 80){
+            agregarAlarma(`PRESIÓN DE AIRE BAJA: ${d.voltaje_s} psi`, "PIT-001", "<80 psi", "alarm");
+            document.getElementById("estado5").className = "estado-equipo fallo";
+            document.getElementById("estado5").innerText = "ALERTA";
+        } else {
+            if(document.getElementById("estado5").innerText === "ALERTA"){
+                document.getElementById("estado5").className = "estado-equipo funcionando";
+                document.getElementById("estado5").innerText = "FUNCIONANDO";
+            }
+        }
+        
+        // VFD - Temperatura alta
+        if(d.voltaje_r > 65){
+            agregarAlarma(`TEMPERATURA VFD ALTA: ${d.voltaje_r}°C`, "VFD-001", ">65°C", "alarm");
+            document.getElementById("estado6").className = "estado-equipo fallo";
+            document.getElementById("estado6").innerText = "SOBRETEMP";
+        } else if(d.voltaje_r > 50){
+            agregarAlarma(`TEMPERATURA VFD ELEVADA: ${d.voltaje_r}°C`, "VFD-001", ">50°C", "warning");
+        } else {
+            if(document.getElementById("estado6").innerText !== "FUNCIONANDO"){
+                document.getElementById("estado6").className = "estado-equipo funcionando";
+                document.getElementById("estado6").innerText = "FUNCIONANDO";
+            }
+        }
+        
+        // Alarma de presión diferencial (simulada)
+        const presionDif = d.voltaje_t;
+        if(presionDif > 6.0){
+            agregarAlarma(`PRESIÓN DIFERENCIAL CRÍTICA: ${presionDif} "WC`, "PDIT-001", ">6.0 "WC", "trip");
+        } else if(presionDif > 4.0){
+            agregarAlarma(`PRESIÓN DIFERENCIAL ALTA: ${presionDif} "WC`, "PDIT-001", ">4.0 "WC", "alarm");
         }
 
-        if(d.voltaje_s > 223.7){
-
-            agregarAlarma(
-                "🚨 MOTOR 2 | TEMPERATURA ALTA | VALOR: "
-                + d.voltaje_s
-            );
-
-        }
-
-        if(d.voltaje_t > 223.7){
-
-            agregarAlarma(
-                "🚨 VENTILADOR | VIBRACIÓN ALTA | VALOR: "
-                + d.voltaje_t
-            );
-
-        }
-
-        if(d.corriente_r > 106.5){
-
-            agregarAlarma(
-                "🚨 VALVULA ROTATIVA | AMP ALTA | VALOR: "
-                + d.corriente_r
-            );
-
-        }
-
-        if(d.corriente_s > 106.5){
-
-            agregarAlarma(
-                "🚨 PIT | VOLTAJE FUERA RANGO | VALOR: "
-                + d.corriente_s
-            );
-
-        }
-
-        if(d.corriente_t > 106.5){
-
-            agregarAlarma(
-                "🚨 VFD | POTENCIA ALTA | VALOR: "
-                + d.corriente_t
-            );
-
-        }
-
-        console.log("SCADA ACTUALIZADO");
+        console.log("SCADA ACTUALIZADO - " + new Date().toLocaleTimeString());
 
     }catch(error){
-
-        console.error(error);
-
+        console.error("Error cargando datos:", error);
     }
 
 }
 
-/* ===== CARGA INICIAL ===== */
-
+/* ===== INICIALIZACIÓN ===== */
+cargarAlarmasDesdeStorage();
 actualizarVistaAlarmas();
-
 cargarDatos();
 
-/* ===== ACTUALIZAR ===== */
+/* ===== ACTUALIZAR CADA 5 SEGUNDOS ===== */
+setInterval(cargarDatos, 5000);
 
-setInterval(cargarDatos,10000);
+/* ===== Sincronizar con cambios desde otras pestañas ===== */
+window.addEventListener('storage', function(e) {
+    if(e.key === 'scada_alarms') {
+        cargarAlarmasDesdeStorage();
+    }
+});
 
 </script>
 
