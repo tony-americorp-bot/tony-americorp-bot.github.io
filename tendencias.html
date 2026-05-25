@@ -22,8 +22,15 @@
 
 body{
     background:#d9d9d9;
-    height:100vh;
     overflow:hidden;
+}
+
+/* ================= CONTENEDOR ================= */
+
+.container{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
 }
 
 /* ================= TOPBAR ================= */
@@ -31,16 +38,25 @@ body{
 .topbar{
     height:75px;
     background:#09234d;
-    color:white;
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-content:space-between;
     padding:0 25px;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:100;
+    color:white;
+    position:relative;
+    z-index:1000;
+}
+
+.logo-area{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.hamburguesa{
+    font-size:30px;
+    cursor:pointer;
+    user-select:none;
 }
 
 .logo{
@@ -48,112 +64,135 @@ body{
     font-weight:bold;
 }
 
-.fecha{
+.fecha-hora{
     font-size:18px;
     font-weight:bold;
 }
 
-/* ================= CONTENEDOR PRINCIPAL ================= */
+/* ================= SIDEBAR ================= */
 
-.contenedor{
-    position:fixed;
+.sidebar{
+    position:absolute;
     top:75px;
     left:0;
-    right:0;
-    bottom:0;
+    width:260px;
+    background:#09234d;
+    color:white;
+    transform:translateX(-100%);
+    transition:0.3s;
+    z-index:999;
+    border-right:2px solid #1d4ed8;
+    border-bottom-right-radius:10px;
+}
+
+.sidebar.activo{
+    transform:translateX(0);
+}
+
+.menu{
+    padding-top:15px;
+}
+
+.menu-item{
+    padding:18px 25px;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.menu-item:hover{
+    background:#12356d;
+}
+
+.sidebar-imagen{
+    padding:20px;
+    text-align:center;
+}
+
+.sidebar-imagen img{
+    width:180px;
+    opacity:0.95;
+}
+
+/* ================= CONTENIDO ================= */
+
+.contenido{
+    flex:1;
     padding:20px;
     overflow:auto;
 }
 
-/* ================= GRID 2x2 ================= */
+/* ================= GRID ================= */
 
-.grid-tendencias{
+.grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:20px;
-    height:100%;
 }
 
-/* ================= CADA TARJETA ================= */
+/* ================= TARJETAS ================= */
 
-.card-tendencia{
+.card{
     background:white;
-    border-radius:12px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.15);
+    border:2px solid #b0b0b0;
+    border-radius:10px;
+    overflow:hidden;
+    height:360px;
     display:flex;
     flex-direction:column;
-    overflow:hidden;
-    min-height:0; /* IMPORTANTE para flex column */
 }
 
-.titulo-tendencia{
-    background:#09234d;
-    color:white;
-    padding:12px 20px;
-    font-size:18px;
+/* ================= TITULO ================= */
+
+.titulo{
+    background:#f5f5f5;
+    border-bottom:1px solid #d0d0d0;
+    padding:12px 15px;
+    font-size:17px;
     font-weight:bold;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-shrink:0;
+    color:#09234d;
 }
 
-.titulo-tendencia span{
-    font-size:14px;
-    color:#ffd700;
-}
+/* ================= GRAFICA ================= */
 
-/* ================= AREA DE GRAFICA ================= */
-
-.grafica-area{
+.grafica{
     flex:1;
-    padding:15px;
-    min-height:0; /* IMPORTANTE */
-    position:relative;
+    padding:10px;
 }
 
 .chart-wrapper{
     width:100%;
     height:100%;
-    position:relative;
     overflow-x:auto;
     overflow-y:hidden;
-    border:1px solid #e0e0e0;
+    border:1px solid #d0d0d0;
     border-radius:8px;
-    background:#fafafa;
+    background:white;
 }
 
 .chart-container{
-    min-width:800px;
+    width:1800px;
     height:100%;
-    min-height:250px;
-    position:relative;
 }
 
 canvas{
-    display:block;
     width:100% !important;
     height:100% !important;
 }
 
-/* ================= SCROLLBAR HORIZONTAL ================= */
+/* ================= SCROLL ================= */
 
 .chart-wrapper::-webkit-scrollbar{
     height:8px;
 }
 
-.chart-wrapper::-webkit-scrollbar-track{
-    background:#e0e0e0;
-    border-radius:4px;
-}
-
 .chart-wrapper::-webkit-scrollbar-thumb{
     background:#09234d;
-    border-radius:4px;
+    border-radius:10px;
 }
 
-.chart-wrapper::-webkit-scrollbar-thumb:hover{
-    background:#12356d;
+.chart-wrapper::-webkit-scrollbar-track{
+    background:#d0d0d0;
 }
 
 /* ================= BOTONES ================= */
@@ -162,66 +201,34 @@ canvas{
     margin-top:20px;
     display:flex;
     gap:15px;
-    justify-content:center;
 }
 
 .btn{
     background:#09234d;
     color:white;
     border:none;
-    padding:12px 24px;
+    padding:12px 20px;
     border-radius:8px;
     cursor:pointer;
     font-weight:bold;
-    font-size:14px;
-    transition:0.2s;
 }
 
 .btn:hover{
     background:#12356d;
-    transform:scale(1.02);
-}
-
-.btn-limpiar{
-    background:#d50000;
-}
-
-.btn-limpiar:hover{
-    background:#b71c1c;
 }
 
 /* ================= RESPONSIVE ================= */
 
-@media (max-width: 1200px) {
-    .grid-tendencias{
-        gap:15px;
-    }
-    
-    .titulo-tendencia{
-        font-size:16px;
-        padding:10px 15px;
-    }
-    
-    .chart-container{
-        min-width:600px;
-        min-height:200px;
-    }
-}
+@media(max-width:1100px){
 
-@media (max-width: 768px) {
-    .grid-tendencias{
-        gap:10px;
+    .grid{
+        grid-template-columns:1fr;
     }
-    
-    .titulo-tendencia{
-        font-size:14px;
-        padding:8px 12px;
+
+    .card{
+        height:320px;
     }
-    
-    .chart-container{
-        min-width:500px;
-        min-height:180px;
-    }
+
 }
 
 </style>
@@ -230,97 +237,198 @@ canvas{
 
 <body>
 
-<!-- ================= TOPBAR ================= -->
+<div class="container">
 
-<div class="topbar">
+    <!-- ================= TOPBAR ================= -->
 
-    <div class="logo">
-        AMERICORP
-    </div>
+    <div class="topbar">
 
-    <div>
-        📈 TENDENCIAS - MOTOR 1 (MT-001)
-    </div>
+        <div class="logo-area">
 
-    <div class="fecha" id="fechaHora">
-        --:--:--
-    </div>
+            <div class="hamburguesa"
+                 onclick="toggleMenu()">
 
-</div>
+                ☰
 
-<!-- ================= CONTENEDOR ================= -->
-
-<div class="contenedor">
-
-    <div class="grid-tendencias">
-
-        <!-- VOLTAJE - Superior Izquierdo -->
-        <div class="card-tendencia">
-            <div class="titulo-tendencia">
-                ⚡ VOLTAJE <span>(V)</span>
             </div>
-            <div class="grafica-area">
-                <div class="chart-wrapper" id="scrollVolt">
-                    <div class="chart-container">
-                        <canvas id="grafVolt"></canvas>
-                    </div>
-                </div>
+
+            <div class="logo">
+                AMERICORP
             </div>
+
         </div>
 
-        <!-- CORRIENTE - Superior Derecho -->
-        <div class="card-tendencia">
-            <div class="titulo-tendencia">
-                🔌 CORRIENTE <span>(A)</span>
-            </div>
-            <div class="grafica-area">
-                <div class="chart-wrapper" id="scrollAmp">
-                    <div class="chart-container">
-                        <canvas id="grafAmp"></canvas>
-                    </div>
-                </div>
-            </div>
+        <div>
+            PROYECTO: COLECTOR DE POLVO
         </div>
 
-        <!-- TEMPERATURA - Inferior Izquierdo -->
-        <div class="card-tendencia">
-            <div class="titulo-tendencia">
-                🌡 TEMPERATURA <span>(°C)</span>
-            </div>
-            <div class="grafica-area">
-                <div class="chart-wrapper" id="scrollTemp">
-                    <div class="chart-container">
-                        <canvas id="grafTemp"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="fecha-hora"
+             id="fechaHora">
 
-        <!-- VIBRACIÓN - Inferior Derecho -->
-        <div class="card-tendencia">
-            <div class="titulo-tendencia">
-                📳 VIBRACIÓN <span>(mm/s)</span>
-            </div>
-            <div class="grafica-area">
-                <div class="chart-wrapper" id="scrollVib">
-                    <div class="chart-container">
-                        <canvas id="grafVib"></canvas>
-                    </div>
-                </div>
-            </div>
+            --:--:--
+
         </div>
 
     </div>
 
-    <div class="botones">
+    <!-- ================= SIDEBAR ================= -->
 
-        <button class="btn" onclick="window.location.href='index.html'">
-            ⬅ VOLVER AL DASHBOARD
-        </button>
+    <div class="sidebar"
+         id="sidebar">
 
-        <button class="btn btn-limpiar" onclick="limpiarHistorico()">
-            🗑 LIMPIAR HISTÓRICO
-        </button>
+        <div class="menu">
+
+            <div class="menu-item"
+                 onclick="window.location.href='index.html'">
+
+                📊 Dashboard
+
+            </div>
+
+            <div class="menu-item"
+                 onclick="window.location.href='alarmas.html'">
+
+                🚨 Alarmas
+
+            </div>
+
+            <div class="menu-item">
+
+                📈 Tendencias
+
+            </div>
+
+        </div>
+
+        <div class="sidebar-imagen">
+
+            <img src="colector.png">
+
+        </div>
+
+    </div>
+
+    <!-- ================= CONTENIDO ================= -->
+
+    <div class="contenido">
+
+        <div class="grid">
+
+            <!-- VOLTAJE -->
+
+            <div class="card">
+
+                <div class="titulo">
+                    ⚡ VOLTAJE MOTOR 1
+                </div>
+
+                <div class="grafica">
+
+                    <div class="chart-wrapper">
+
+                        <div class="chart-container">
+
+                            <canvas id="grafVolt"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CORRIENTE -->
+
+            <div class="card">
+
+                <div class="titulo">
+                    🔌 CORRIENTE MOTOR 1
+                </div>
+
+                <div class="grafica">
+
+                    <div class="chart-wrapper">
+
+                        <div class="chart-container">
+
+                            <canvas id="grafAmp"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TEMPERATURA -->
+
+            <div class="card">
+
+                <div class="titulo">
+                    🌡 TEMPERATURA MOTOR 1
+                </div>
+
+                <div class="grafica">
+
+                    <div class="chart-wrapper">
+
+                        <div class="chart-container">
+
+                            <canvas id="grafTemp"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- VIBRACION -->
+
+            <div class="card">
+
+                <div class="titulo">
+                    📳 VIBRACIÓN MOTOR 1
+                </div>
+
+                <div class="grafica">
+
+                    <div class="chart-wrapper">
+
+                        <div class="chart-container">
+
+                            <canvas id="grafVib"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="botones">
+
+            <button class="btn"
+                    onclick="window.location.href='index.html'">
+
+                ⬅ VOLVER
+
+            </button>
+
+            <button class="btn"
+                    onclick="limpiarHistorico()">
+
+                🗑 LIMPIAR HISTÓRICO
+
+            </button>
+
+        </div>
 
     </div>
 
@@ -328,234 +436,275 @@ canvas{
 
 <script>
 
-/* ================= FECHA ================= */
+/* ================= MENU ================= */
 
-function actualizarFecha(){
+function toggleMenu(){
 
-    const ahora = new Date();
-
-    document.getElementById("fechaHora").innerHTML =
-        ahora.toLocaleTimeString('es-PE') + " | " + ahora.toLocaleDateString('es-PE');
+    document
+        .getElementById("sidebar")
+        .classList.toggle("activo");
 
 }
 
-setInterval(actualizarFecha,1000);
-actualizarFecha();
+/* ================= FECHA ================= */
+
+function actualizarFechaHora(){
+
+    const ahora = new Date();
+
+    document.getElementById(
+        "fechaHora"
+    ).innerHTML =
+
+        ahora.toLocaleTimeString('es-PE')
+        + " | " +
+        ahora.toLocaleDateString('es-PE');
+
+}
+
+setInterval(actualizarFechaHora,1000);
+
+actualizarFechaHora();
 
 /* ================= STORAGE ================= */
 
 function obtenerHistorico(){
-    const datos = localStorage.getItem("historico_motor1");
-    return datos ? JSON.parse(datos) : [];
+
+    const datos =
+        localStorage.getItem(
+            "historico_motor1"
+        );
+
+    return datos
+        ? JSON.parse(datos)
+        : [];
+
 }
 
 function guardarHistorico(datos){
-    localStorage.setItem("historico_motor1", JSON.stringify(datos));
+
+    localStorage.setItem(
+        "historico_motor1",
+        JSON.stringify(datos)
+    );
+
 }
 
 /* ================= HISTORICO ================= */
 
-let historico = obtenerHistorico();
+let historico =
+    obtenerHistorico();
 
-/* ================= FUNCION GRAFICA ================= */
+/* ================= CREAR GRAFICA ================= */
 
-function crearGrafica(id, label, color, unidad){
+function crearGrafica(
+    id,
+    titulo,
+    color,
+    unidad
+){
 
     return new Chart(
+
         document.getElementById(id),
+
         {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: label,
-                    data: [],
-                    borderColor: color,
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: color,
-                    pointBorderColor: 'white',
-                    pointBorderWidth: 1,
-                    tension: 0.2,
-                    fill: false
+
+            type:'line',
+
+            data:{
+
+                labels:[],
+
+                datasets:[{
+
+                    label:titulo,
+
+                    data:[],
+
+                    borderColor:color,
+
+                    borderWidth:2,
+
+                    pointRadius:2,
+
+                    pointHoverRadius:8,
+
+                    tension:0.3,
+
+                    fill:false
+
                 }]
+
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false
+
+            options:{
+
+                responsive:true,
+
+                maintainAspectRatio:false,
+
+                interaction:{
+                    mode:'nearest',
+                    intersect:false
                 },
-                plugins: {
-                    tooltip: {
-                        backgroundColor: '#09234d',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#ffd700',
-                        borderWidth: 1,
-                        callbacks: {
-                            title: function(context) {
+
+                plugins:{
+
+                    legend:{
+                        display:false
+                    },
+
+                    tooltip:{
+
+                        backgroundColor:'#09234d',
+
+                        callbacks:{
+
+                            title:function(context){
+
                                 return context[0].label;
+
                             },
-                            label: function(context) {
-                                return context.parsed.y.toFixed(2) + " " + unidad;
+
+                            label:function(context){
+
+                                return context.parsed.y.toFixed(2)
+                                    + " "
+                                    + unidad;
+
                             }
+
                         }
+
                     },
-                    zoom: {
-                        pan: {
-                            enabled: true,
-                            mode: 'x'
+
+                    zoom:{
+
+                        pan:{
+                            enabled:true,
+                            mode:'x'
                         },
-                        zoom: {
-                            wheel: {
-                                enabled: true
+
+                        zoom:{
+
+                            wheel:{
+                                enabled:true
                             },
-                            pinch: {
-                                enabled: true
+
+                            pinch:{
+                                enabled:true
                             },
-                            mode: 'x'
+
+                            mode:'x'
+
                         }
-                    },
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            boxWidth: 12,
-                            font: {
-                                size: 10
-                            }
-                        }
+
                     }
+
                 },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'TIEMPO',
-                            color: '#09234d',
-                            font: {
-                                weight: 'bold',
-                                size: 10
-                            }
-                        },
-                        ticks: {
-                            maxRotation: 45,
-                            minRotation: 45,
-                            autoSkip: true,
-                            maxTicksLimit: 8,
-                            font: {
-                                size: 9
-                            }
+
+                scales:{
+
+                    x:{
+
+                        ticks:{
+                            maxTicksLimit:15
                         }
+
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: unidad,
-                            color: '#09234d',
-                            font: {
-                                weight: 'bold',
-                                size: 10
-                            }
-                        },
-                        beginAtZero: false,
-                        grid: {
-                            color: '#e0e0e0'
-                        },
-                        ticks: {
-                            font: {
-                                size: 9
-                            }
-                        }
+
+                    y:{
+                        beginAtZero:false
                     }
-                },
-                layout: {
-                    padding: {
-                        top: 10,
-                        bottom: 5,
-                        left: 5,
-                        right: 5
-                    }
+
                 }
+
             }
+
         }
+
     );
+
 }
 
-/* ================= CREAR GRAFICAS ================= */
+/* ================= GRAFICAS ================= */
 
-const grafVolt = crearGrafica('grafVolt', 'VOLTAJE', '#1565c0', 'V');
-const grafAmp = crearGrafica('grafAmp', 'CORRIENTE', '#00a844', 'A');
-const grafTemp = crearGrafica('grafTemp', 'TEMPERATURA', '#d50000', '°C');
-const grafVib = crearGrafica('grafVib', 'VIBRACIÓN', '#ff9800', 'mm/s');
+const grafVolt =
+    crearGrafica(
+        "grafVolt",
+        "Voltaje",
+        "#1565c0",
+        "V"
+    );
 
-/* ================= SINCRONIZAR SCROLL (OPCIONAL) ================= */
+const grafAmp =
+    crearGrafica(
+        "grafAmp",
+        "Corriente",
+        "#00a844",
+        "A"
+    );
 
-function sincronizarScrolls(){
-    // Opcional: Si quieres que todos los scrolls se muevan juntos
-    const wrappers = document.querySelectorAll('.chart-wrapper');
-    let posicionMaxima = 0;
-    
-    wrappers.forEach(wrapper => {
-        if(wrapper.scrollLeft > posicionMaxima){
-            posicionMaxima = wrapper.scrollLeft;
-        }
-    });
-    
-    // Sincronizar todos al máximo
-    wrappers.forEach(wrapper => {
-        wrapper.scrollLeft = posicionMaxima;
-    });
-}
+const grafTemp =
+    crearGrafica(
+        "grafTemp",
+        "Temperatura",
+        "#d50000",
+        "°C"
+    );
 
-// Auto-scroll al final para cada gráfica individualmente
-function autoScrollACadaGrafica(){
-    const wrappers = document.querySelectorAll('.chart-wrapper');
-    wrappers.forEach(wrapper => {
-        wrapper.scrollLeft = wrapper.scrollWidth;
-    });
-}
+const grafVib =
+    crearGrafica(
+        "grafVib",
+        "Vibración",
+        "#ff9800",
+        "mm/s"
+    );
 
-/* ================= ACTUALIZAR GRAFICAS ================= */
+/* ================= ACTUALIZAR ================= */
 
 function actualizarGraficas(){
 
-    // Mostrar últimos 20 puntos para mejor visualización
-    const ultimos = historico.slice(-20);
-    
-    const labels = ultimos.map(d => {
-        const partes = d.fechaCompleta.split(' ');
-        if(partes.length === 2){
-            return partes[1]; // Solo mostrar la hora
-        }
-        return d.fechaCompleta;
-    });
-    
-    // Actualizar VOLTAJE
+    const ultimos15 =
+        historico.slice(-15);
+
+    const labels =
+        ultimos15.map(
+            d => d.fechaCompleta
+        );
+
     grafVolt.data.labels = labels;
-    grafVolt.data.datasets[0].data = ultimos.map(d => d.voltaje);
-    grafVolt.update('none');
-    
-    // Actualizar CORRIENTE
     grafAmp.data.labels = labels;
-    grafAmp.data.datasets[0].data = ultimos.map(d => d.corriente);
-    grafAmp.update('none');
-    
-    // Actualizar TEMPERATURA
     grafTemp.data.labels = labels;
-    grafTemp.data.datasets[0].data = ultimos.map(d => d.temperatura);
-    grafTemp.update('none');
-    
-    // Actualizar VIBRACION
     grafVib.data.labels = labels;
-    grafVib.data.datasets[0].data = ultimos.map(d => d.vibracion);
-    grafVib.update('none');
-    
-    // Auto-scroll al último dato en cada gráfica
-    autoScrollACadaGrafica();
+
+    grafVolt.data.datasets[0].data =
+        ultimos15.map(d => d.voltaje);
+
+    grafAmp.data.datasets[0].data =
+        ultimos15.map(d => d.corriente);
+
+    grafTemp.data.datasets[0].data =
+        ultimos15.map(d => d.temperatura);
+
+    grafVib.data.datasets[0].data =
+        ultimos15.map(d => d.vibracion);
+
+    grafVolt.update();
+    grafAmp.update();
+    grafTemp.update();
+    grafVib.update();
+
+    document.querySelectorAll(
+        ".chart-wrapper"
+    ).forEach(wrapper => {
+
+        wrapper.scrollLeft =
+            wrapper.scrollWidth;
+
+    });
+
 }
 
 /* ================= LEER DATOS ================= */
@@ -565,78 +714,109 @@ async function cargarDatos(){
     try{
 
         const response = await fetch(
-            'datos.json?t=' + new Date().getTime(),
-            { cache: 'no-store' }
+
+            'datos.json?t='
+            + new Date().getTime(),
+
+            {
+                cache:'no-store'
+            }
+
         );
 
-        const d = await response.json();
+        const d =
+            await response.json();
 
-        const ahora = new Date();
-        const fechaCompleta = ahora.toLocaleDateString('es-PE') + " " + ahora.toLocaleTimeString('es-PE');
+        const ahora =
+            new Date();
+
+        const fechaCompleta =
+
+            ahora.toLocaleDateString('es-PE')
+            + " " +
+            ahora.toLocaleTimeString('es-PE');
 
         const nuevo = {
-            fechaCompleta: fechaCompleta,
-            voltaje: Number(d.voltaje_r),
-            corriente: Number(d.corriente_r),
-            temperatura: Number(d.voltaje_s),
-            vibracion: Number(d.voltaje_t)
+
+            fechaCompleta:
+                fechaCompleta,
+
+            voltaje:
+                Number(d.voltaje_r),
+
+            corriente:
+                Number(d.corriente_r),
+
+            temperatura:
+                Number(d.voltaje_s),
+
+            vibracion:
+                Number(d.voltaje_t)
+
         };
 
-        const ultimo = historico[historico.length - 1];
+        const ultimo =
+            historico[
+                historico.length - 1
+            ];
 
-        // Evitar duplicados del mismo segundo
-        if(!ultimo || ultimo.fechaCompleta !== fechaCompleta){
+        if(
+            !ultimo ||
+            ultimo.fechaCompleta
+            !== fechaCompleta
+        ){
+
             historico.push(nuevo);
-            
-            // Limitar a 100 puntos máximos para rendimiento
-            if(historico.length > 100){
-                historico = historico.slice(-100);
+
+            if(historico.length > 500){
+
+                historico =
+                    historico.slice(-500);
+
             }
-            
-            guardarHistorico(historico);
+
+            guardarHistorico(
+                historico
+            );
+
             actualizarGraficas();
+
         }
 
-        console.log("✅ Datos actualizados: " + fechaCompleta);
+    }
 
-    } catch(error){
-        console.log("❌ Error cargando datos:", error);
+    catch(error){
+
+        console.log(error);
+
     }
 
 }
 
-/* ================= LIMPIAR HISTORICO ================= */
+/* ================= LIMPIAR ================= */
 
 function limpiarHistorico(){
-    if(confirm('⚠️ ¿Seguro que deseas borrar TODO el histórico de tendencias?\n\nEsta acción no se puede deshacer.')){
-        historico = [];
-        guardarHistorico(historico);
-        actualizarGraficas();
-        console.log("🗑 Histórico limpiado");
-    }
+
+    historico = [];
+
+    guardarHistorico([]);
+
+    actualizarGraficas();
+
 }
 
-/* ================= INICIALIZAR ================= */
+/* ================= INICIO ================= */
 
-// Cargar datos existentes
 actualizarGraficas();
 
-// Cargar datos actuales
 cargarDatos();
 
-// Actualizar cada 30 segundos
-setInterval(cargarDatos, 30000);
-
-// Sincronizar scrolls opcional (descomentar si quieres que todos se muevan juntos)
-// const wrappers = document.querySelectorAll('.chart-wrapper');
-// wrappers.forEach(wrapper => {
-//     wrapper.addEventListener('scroll', sincronizarScrolls);
-// });
-
-console.log("📊 Página de tendencias inicializada - Layout 2x2");
+setInterval(
+    cargarDatos,
+    60000
+);
 
 </script>
 
 </body>
-
 </html>
