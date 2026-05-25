@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SCADA COLECTOR - ALARMAS</title>
+<title>SCADA COLECTOR - HISTORIAL DE ALARMAS</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -24,13 +24,19 @@ body{
     overflow:hidden;
 }
 
+/* ========================= */
+/* CONTENEDOR */
+/* ========================= */
+
 .container{
     display:flex;
     flex-direction:column;
     height:100vh;
 }
 
-/* ===== TOPBAR ===== */
+/* ========================= */
+/* TOPBAR */
+/* ========================= */
 
 .topbar{
     height:75px;
@@ -51,6 +57,7 @@ body{
 .hamburguesa{
     font-size:30px;
     cursor:pointer;
+    user-select:none;
 }
 
 .logo{
@@ -63,7 +70,18 @@ body{
     font-weight:bold;
 }
 
-/* ===== SIDEBAR ===== */
+.btn-volver{
+    background:#1565c0;
+    color:white;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+/* ========================= */
+/* SIDEBAR */
+/* ========================= */
 
 .sidebar{
     position:absolute;
@@ -106,24 +124,28 @@ body{
     width:180px;
 }
 
-/* ===== MAIN ===== */
+/* ========================= */
+/* MAIN */
+/* ========================= */
 
-.main-content{
+.main{
     flex:1;
     padding:20px;
     overflow:auto;
 }
 
-/* ===== CONTADORES ===== */
+/* ========================= */
+/* CONTADORES */
+/* ========================= */
 
-.counters{
+.cards{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:20px;
     margin-bottom:20px;
 }
 
-.counter-box{
+.card{
     background:white;
     border-radius:12px;
     padding:20px;
@@ -131,30 +153,30 @@ body{
     border:2px solid #b0b0b0;
 }
 
-.counter-number{
+.card h2{
     font-size:42px;
-    font-weight:bold;
 }
 
-.counter-title{
+.card p{
     margin-top:10px;
-    font-size:14px;
     font-weight:bold;
 }
 
-.red{
+.rojo h2{
     color:#d50000;
 }
 
-.green{
+.verde h2{
     color:#00c853;
 }
 
-.blue{
+.azul h2{
     color:#09234d;
 }
 
-/* ===== TOOLBAR ===== */
+/* ========================= */
+/* BOTONES */
+/* ========================= */
 
 .toolbar{
     background:white;
@@ -168,67 +190,40 @@ body{
 }
 
 .btn{
-    padding:10px 18px;
     border:none;
+    padding:10px 16px;
     border-radius:8px;
-    font-weight:bold;
     cursor:pointer;
-    transition:0.2s;
+    font-weight:bold;
+    color:white;
 }
 
-.btn:hover{
-    transform:scale(1.02);
-}
-
-.btn-blue{
+.btn-primary{
     background:#1565c0;
-    color:white;
 }
 
-.btn-green{
+.btn-success{
     background:#00c853;
-    color:white;
 }
 
-.btn-red{
+.btn-warning{
+    background:#ff9800;
+}
+
+.btn-danger{
     background:#d50000;
-    color:white;
 }
 
-.btn-orange{
-    background:#ff8f00;
-    color:white;
-}
-
-/* ===== FILTROS ===== */
-
-.filters{
-    background:white;
-    border-radius:12px;
-    padding:15px;
-    margin-bottom:20px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    border:2px solid #b0b0b0;
-}
-
-.filters input,
-.filters select{
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    min-width:180px;
-}
-
-/* ===== TABLA ===== */
+/* ========================= */
+/* TABLA */
+/* ========================= */
 
 .table-container{
     background:white;
     border-radius:12px;
     border:2px solid #b0b0b0;
     overflow:auto;
-    max-height:60vh;
+    max-height:65vh;
 }
 
 table{
@@ -236,111 +231,84 @@ table{
     border-collapse:collapse;
 }
 
+thead{
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
 th{
     background:#09234d;
     color:white;
     padding:14px;
-    position:sticky;
-    top:0;
-    z-index:10;
+    text-align:left;
 }
 
 td{
     padding:12px;
-    border-bottom:1px solid #ddd;
+    border-bottom:1px solid #e0e0e0;
 }
 
 tr:hover{
     background:#f5f5f5;
 }
 
-.no-review{
-    background:#fff3f3;
-}
-
-.reviewed{
-    background:#f0f0f0;
-    color:#666;
-}
+/* ========================= */
+/* SEVERIDAD */
+/* ========================= */
 
 .trip{
-    border-left:6px solid #8b0000;
-}
-
-.alarm{
-    border-left:6px solid #d50000;
+    border-left:8px solid #d50000;
 }
 
 .warning{
-    border-left:6px solid #ff8f00;
+    border-left:8px solid #ff9800;
 }
+
+/* ========================= */
+/* ESTADO */
+/* ========================= */
 
 .badge{
     padding:5px 10px;
     border-radius:20px;
+    color:white;
     font-size:12px;
     font-weight:bold;
 }
 
-.badge-trip{
-    background:#8b0000;
-    color:white;
-}
-
-.badge-alarm{
-    background:#d50000;
-    color:white;
-}
-
 .badge-warning{
-    background:#ff8f00;
-    color:black;
+    background:#ff9800;
+}
+
+.badge-trip{
+    background:#d50000;
 }
 
 .badge-review{
     background:#00c853;
-    color:white;
 }
 
-.badge-noreview{
+.badge-unreview{
     background:#d50000;
-    color:white;
 }
 
-.checkbox{
+/* ========================= */
+/* CHECKBOX */
+/* ========================= */
+
+.alarm-check{
     width:18px;
     height:18px;
-    cursor:pointer;
 }
 
-/* ===== MODAL ===== */
+/* ========================= */
+/* PDF */
+/* ========================= */
 
-.modal{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.5);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:5000;
-}
-
-.modal-content{
+.pdf-export{
     background:white;
-    padding:30px;
-    border-radius:12px;
-    width:400px;
-    text-align:center;
-}
-
-.modal-buttons{
-    margin-top:20px;
-    display:flex;
-    justify-content:center;
-    gap:15px;
+    padding:20px;
 }
 
 </style>
@@ -351,7 +319,7 @@ tr:hover{
 
 <div class="container">
 
-    <!-- ===== TOPBAR ===== -->
+    <!-- TOPBAR -->
 
     <div class="topbar">
 
@@ -371,28 +339,42 @@ tr:hover{
             HISTORIAL DE ALARMAS
         </div>
 
-        <div class="fecha-hora" id="fechaHora">
-            --:--:--
+        <div style="display:flex;align-items:center;gap:15px;">
+
+            <div class="fecha-hora" id="fechaHora">
+                --:--:--
+            </div>
+
+            <a href="index.html" class="btn-volver">
+                ⬅ VOLVER
+            </a>
+
         </div>
 
     </div>
 
-    <!-- ===== SIDEBAR ===== -->
+    <!-- SIDEBAR -->
 
     <div class="sidebar" id="sidebar">
 
         <div class="menu">
 
-            <div class="menu-item" onclick="window.location.href='index.html'">
+            <div class="menu-item"
+                onclick="window.location.href='index.html'">
                 📊 Dashboard
             </div>
 
-            <div class="menu-item" style="background:#12356d;">
+            <div class="menu-item"
+                onclick="window.location.href='alarmas.html'">
                 🚨 Alarmas
             </div>
 
-            <div class="menu-item" onclick="window.location.href='tendencias.html'">
+            <div class="menu-item">
                 📈 Tendencias
+            </div>
+
+            <div class="menu-item">
+                ⚙️ Configuración
             </div>
 
         </div>
@@ -405,102 +387,84 @@ tr:hover{
 
     </div>
 
-    <!-- ===== MAIN ===== -->
+    <!-- MAIN -->
 
-    <div class="main-content">
+    <div class="main" id="pdfArea">
 
-        <!-- ===== CONTADORES ===== -->
+        <!-- CONTADORES -->
 
-        <div class="counters">
+        <div class="cards">
 
-            <div class="counter-box">
+            <div class="card rojo">
 
-                <div class="counter-number red" id="countNoReview">
+                <h2 id="noRevisadas">
                     0
-                </div>
+                </h2>
 
-                <div class="counter-title">
+                <p>
                     NO REVISADAS
-                </div>
+                </p>
 
             </div>
 
-            <div class="counter-box">
+            <div class="card verde">
 
-                <div class="counter-number green" id="countReviewed">
+                <h2 id="revisadas">
                     0
-                </div>
+                </h2>
 
-                <div class="counter-title">
+                <p>
                     REVISADAS
-                </div>
+                </p>
 
             </div>
 
-            <div class="counter-box">
+            <div class="card azul">
 
-                <div class="counter-number blue" id="countTotal">
+                <h2 id="totalAlarmas">
                     0
-                </div>
+                </h2>
 
-                <div class="counter-title">
-                    TOTAL
-                </div>
+                <p>
+                    TOTAL ALARMAS
+                </p>
 
             </div>
 
         </div>
 
-        <!-- ===== BOTONES ===== -->
+        <!-- TOOLBAR -->
 
         <div class="toolbar">
 
-            <button class="btn btn-green" onclick="revisarSeleccionadas()">
-                ✅ Revisar Seleccionadas
+            <button class="btn btn-success"
+                onclick="revisarSeleccionadas()">
+                ✅ REVISAR SELECCIONADAS
             </button>
 
-            <button class="btn btn-blue" onclick="revisarTodas()">
-                🔄 Revisar Todas
+            <button class="btn btn-primary"
+                onclick="revisarTodas()">
+                🔄 REVISAR TODAS
             </button>
 
-            <button class="btn btn-orange" onclick="borrarRevisadas()">
-                🗑️ Borrar Revisadas
+            <button class="btn btn-warning"
+                onclick="borrarRevisadas()">
+                🗑 BORRAR REVISADAS
             </button>
 
-            <button class="btn btn-red" onclick="borrarTodas()">
-                ❌ Borrar Todas
+            <button class="btn btn-danger"
+                onclick="borrarTodas()">
+                ❌ BORRAR TODAS
             </button>
 
-            <button class="btn btn-blue" onclick="exportarPDF()">
-                📄 Exportar PDF
-            </button>
-
-        </div>
-
-        <!-- ===== FILTROS ===== -->
-
-        <div class="filters">
-
-            <input type="text" id="filtroTag" placeholder="Filtrar TAG">
-
-            <input type="text" id="filtroMensaje" placeholder="Filtrar Mensaje">
-
-            <select id="filtroSeveridad">
-
-                <option value="">Todas Severidades</option>
-                <option value="trip">TRIP</option>
-                <option value="alarm">ALARMA</option>
-                <option value="warning">WARNING</option>
-
-            </select>
-
-            <button class="btn btn-blue" onclick="renderTabla()">
-                Aplicar
+            <button class="btn btn-primary"
+                onclick="exportarPDF()">
+                📄 EXPORTAR PDF
             </button>
 
         </div>
 
-        <!-- ===== TABLA ===== -->
+        <!-- TABLA -->
 
         <div class="table-container">
 
@@ -511,16 +475,29 @@ tr:hover{
                     <tr>
 
                         <th>
-                            <input type="checkbox" id="selectAll">
+                            <input type="checkbox"
+                                id="selectAll">
                         </th>
 
-                        <th>FECHA</th>
-                        <th>TAG</th>
-                        <th>CONDICIÓN</th>
-                        <th>SEVERIDAD</th>
-                        <th>MENSAJE</th>
-                        <th>ESTADO</th>
-                        <th>ACTIVA</th>
+                        <th>
+                            FECHA
+                        </th>
+
+                        <th>
+                            TAG
+                        </th>
+
+                        <th>
+                            MENSAJE
+                        </th>
+
+                        <th>
+                            SEVERIDAD
+                        </th>
+
+                        <th>
+                            ESTADO
+                        </th>
 
                     </tr>
 
@@ -538,307 +515,142 @@ tr:hover{
 
 </div>
 
-<!-- ===== MODAL ===== -->
-
-<div class="modal" id="modal">
-
-    <div class="modal-content">
-
-        <h3 id="modalText">
-            ¿Seguro?
-        </h3>
-
-        <div class="modal-buttons">
-
-            <button class="btn btn-blue" id="btnConfirmar">
-                Confirmar
-            </button>
-
-            <button class="btn btn-red" onclick="cerrarModal()">
-                Cancelar
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
 <script>
 
-/* ===== VARIABLES ===== */
-
-let alarms = [];
-
-/* ===== MENU ===== */
+/* ========================= */
+/* MENU */
+/* ========================= */
 
 function toggleMenu(){
 
-    document.getElementById("sidebar")
-    .classList.toggle("activo");
+    document
+    .getElementById("sidebar")
+    .classList
+    .toggle("activo");
 
 }
 
-/* ===== FECHA ===== */
+/* ========================= */
+/* FECHA Y HORA */
+/* ========================= */
 
 function actualizarFechaHora(){
 
     const ahora = new Date();
 
-    document.getElementById("fechaHora")
-    .innerHTML =
-    ahora.toLocaleTimeString() +
-    " | " +
-    ahora.toLocaleDateString();
+    document.getElementById("fechaHora").innerHTML =
+        ahora.toLocaleTimeString() +
+        " | " +
+        ahora.toLocaleDateString();
 
 }
 
 setInterval(actualizarFechaHora,1000);
-
 actualizarFechaHora();
 
-/* ===== CARGAR ===== */
+/* ========================= */
+/* ALARMAS */
+/* ========================= */
+
+let alarmas = [];
+
+/* ========================= */
+/* CARGAR */
+/* ========================= */
 
 function cargarAlarmas(){
 
-    const data =
-    localStorage.getItem("scada_alarms");
-
-    if(data){
-
-        alarms = JSON.parse(data);
-
-    }else{
-
-        alarms = [];
-
-    }
+    alarmas =
+        JSON.parse(
+            localStorage.getItem("scada_alarmas")
+        ) || [];
 
     renderTabla();
 
 }
 
-/* ===== GUARDAR ===== */
-
-function guardarAlarmas(){
-
-    localStorage.setItem(
-        "scada_alarms",
-        JSON.stringify(alarms)
-    );
-
-}
-
-/* ===== TIEMPO ACTIVA ===== */
-
-function tiempoActivo(fecha){
-
-    const inicio = new Date(fecha);
-
-    const ahora = new Date();
-
-    const segundos =
-    Math.floor((ahora - inicio)/1000);
-
-    const minutos =
-    Math.floor(segundos/60);
-
-    const horas =
-    Math.floor(minutos/60);
-
-    if(horas > 0){
-
-        return horas + "h " + (minutos%60) + "m";
-
-    }
-
-    if(minutos > 0){
-
-        return minutos + "m";
-
-    }
-
-    return segundos + "s";
-
-}
-
-/* ===== BADGE ===== */
-
-function badgeSeveridad(sev){
-
-    if(sev === "trip"){
-
-        return `
-        <span class="badge badge-trip">
-        🚨 TRIP
-        </span>
-        `;
-
-    }
-
-    if(sev === "alarm"){
-
-        return `
-        <span class="badge badge-alarm">
-        ⚠️ ALARMA
-        </span>
-        `;
-
-    }
-
-    return `
-    <span class="badge badge-warning">
-    ⚡ WARNING
-    </span>
-    `;
-
-}
-
-/* ===== RENDER ===== */
+/* ========================= */
+/* RENDER */
+/* ========================= */
 
 function renderTabla(){
 
     const tbody =
-    document.getElementById("tablaAlarmas");
+        document.getElementById("tablaAlarmas");
 
     tbody.innerHTML = "";
 
-    const filtroTag =
-    document.getElementById("filtroTag")
-    .value
-    .toLowerCase();
+    let noRev = 0;
+    let rev = 0;
 
-    const filtroMensaje =
-    document.getElementById("filtroMensaje")
-    .value
-    .toLowerCase();
+    alarmas.forEach((al,index)=>{
 
-    const filtroSeveridad =
-    document.getElementById("filtroSeveridad")
-    .value;
-
-    let filtradas =
-    [...alarms];
-
-    if(filtroTag){
-
-        filtradas =
-        filtradas.filter(a =>
-        a.tag.toLowerCase().includes(filtroTag));
-
-    }
-
-    if(filtroMensaje){
-
-        filtradas =
-        filtradas.filter(a =>
-        a.message.toLowerCase().includes(filtroMensaje));
-
-    }
-
-    if(filtroSeveridad){
-
-        filtradas =
-        filtradas.filter(a =>
-        a.severity === filtroSeveridad);
-
-    }
-
-    filtradas.sort((a,b)=>
-    new Date(b.timestamp) -
-    new Date(a.timestamp));
-
-    document.getElementById("countTotal")
-    .innerText = alarms.length;
-
-    document.getElementById("countNoReview")
-    .innerText =
-    alarms.filter(a => !a.reviewed).length;
-
-    document.getElementById("countReviewed")
-    .innerText =
-    alarms.filter(a => a.reviewed).length;
-
-    if(filtradas.length === 0){
-
-        tbody.innerHTML = `
-        <tr>
-            <td colspan="8"
-            style="text-align:center;padding:30px;">
-                NO EXISTEN ALARMAS
-            </td>
-        </tr>
-        `;
-
-        return;
-
-    }
-
-    filtradas.forEach(al => {
+        if(al.revisado){
+            rev++;
+        }else{
+            noRev++;
+        }
 
         const tr =
-        document.createElement("tr");
+            document.createElement("tr");
 
-        tr.classList.add(al.severity);
-
-        tr.classList.add(
-            al.reviewed ?
-            "reviewed" :
-            "no-review"
-        );
+        tr.className = al.severidad;
 
         tr.innerHTML = `
 
-        <td>
-            <input
-            type="checkbox"
-            class="checkbox"
-            data-id="${al.id}">
-        </td>
+            <td>
+                <input 
+                    type="checkbox"
+                    class="alarm-check"
+                    value="${index}">
+            </td>
 
-        <td>
-            ${new Date(al.timestamp)
-            .toLocaleString()}
-        </td>
+            <td>
+                ${al.fecha}
+            </td>
 
-        <td>
-            ${al.tag}
-        </td>
+            <td>
+                ${al.tag}
+            </td>
 
-        <td>
-            ${al.condition}
-        </td>
+            <td>
+                ${al.mensaje}
+            </td>
 
-        <td>
-            ${badgeSeveridad(al.severity)}
-        </td>
+            <td>
 
-        <td>
-            ${al.message}
-        </td>
+                <span class="
+                    badge
+                    ${al.severidad === 'trip'
+                        ? 'badge-trip'
+                        : 'badge-warning'}
+                ">
 
-        <td>
+                    ${al.severidad.toUpperCase()}
 
-            ${
-                al.reviewed
-                ?
+                </span>
 
-                `<span class="badge badge-review">
-                REVISADA
-                </span>`
+            </td>
 
-                :
+            <td>
 
-                `<span class="badge badge-noreview">
-                NO REVISADA
-                </span>`
-            }
+                ${
+                    al.revisado
 
-        </td>
+                    ?
 
-        <td>
-            ${tiempoActivo(al.startTime)}
-        </td>
+                    `<span class="badge badge-review">
+                        REVISADA
+                    </span>`
+
+                    :
+
+                    `<span class="badge badge-unreview">
+                        NO REVISADA
+                    </span>`
+                }
+
+            </td>
 
         `;
 
@@ -846,176 +658,194 @@ function renderTabla(){
 
     });
 
+    document.getElementById("noRevisadas")
+        .innerText = noRev;
+
+    document.getElementById("revisadas")
+        .innerText = rev;
+
+    document.getElementById("totalAlarmas")
+        .innerText = alarmas.length;
+
 }
 
-/* ===== CHECKBOX ===== */
-
-document.addEventListener("change",function(e){
-
-    if(e.target.id === "selectAll"){
-
-        document.querySelectorAll(".checkbox")
-        .forEach(cb => {
-
-            cb.checked =
-            e.target.checked;
-
-        });
-
-    }
-
-});
-
-/* ===== REVISAR ===== */
+/* ========================= */
+/* REVISAR SELECCIONADAS */
+/* ========================= */
 
 function revisarSeleccionadas(){
 
-    document.querySelectorAll(".checkbox")
-    .forEach(cb => {
+    const checks =
+        document.querySelectorAll(
+            ".alarm-check:checked"
+        );
 
-        if(cb.checked){
+    checks.forEach(c=>{
 
-            const id =
-            Number(cb.dataset.id);
+        const idx =
+            parseInt(c.value);
 
-            const al =
-            alarms.find(a => a.id === id);
+        if(alarmas[idx]){
 
-            if(al){
-
-                al.reviewed = true;
-
-            }
+            alarmas[idx].revisado = true;
 
         }
 
     });
 
-    guardarAlarmas();
+    localStorage.setItem(
+        "scada_alarmas",
+        JSON.stringify(alarmas)
+    );
 
     renderTabla();
 
 }
 
+/* ========================= */
+/* REVISAR TODAS */
+/* ========================= */
+
 function revisarTodas(){
 
-    abrirModal(
-    "¿Revisar TODAS las alarmas?",
-    () => {
+    alarmas.forEach(al=>{
 
-        alarms.forEach(a => {
-
-            a.reviewed = true;
-
-        });
-
-        guardarAlarmas();
-
-        renderTabla();
+        al.revisado = true;
 
     });
 
+    localStorage.setItem(
+        "scada_alarmas",
+        JSON.stringify(alarmas)
+    );
+
+    renderTabla();
+
 }
 
-/* ===== BORRAR ===== */
+/* ========================= */
+/* BORRAR REVISADAS */
+/* ========================= */
 
 function borrarRevisadas(){
 
-    abrirModal(
-    "¿Borrar alarmas revisadas?",
-    () => {
+    alarmas =
+        alarmas.filter(al=>!al.revisado);
 
-        alarms =
-        alarms.filter(a => !a.reviewed);
+    localStorage.setItem(
+        "scada_alarmas",
+        JSON.stringify(alarmas)
+    );
 
-        guardarAlarmas();
-
-        renderTabla();
-
-    });
+    renderTabla();
 
 }
+
+/* ========================= */
+/* BORRAR TODAS */
+/* ========================= */
 
 function borrarTodas(){
 
-    abrirModal(
-    "¿BORRAR TODO EL HISTORIAL?",
-    () => {
+    if(confirm("¿BORRAR TODAS LAS ALARMAS?")){
 
-        alarms = [];
+        alarmas = [];
 
-        guardarAlarmas();
+        localStorage.setItem(
+            "scada_alarmas",
+            JSON.stringify(alarmas)
+        );
 
         renderTabla();
 
-    });
+    }
 
 }
 
-/* ===== PDF ===== */
+/* ========================= */
+/* EXPORTAR PDF */
+/* ========================= */
 
 function exportarPDF(){
 
-    const element =
-    document.querySelector(".main-content");
+    const area =
+        document.getElementById("pdfArea");
 
-    html2pdf()
-    .from(element)
-    .save("alarmas_scada.pdf");
+    const opt = {
 
-}
+        margin:0.5,
 
-/* ===== MODAL ===== */
+        filename:
+            'historial_alarmas.pdf',
 
-function abrirModal(texto,callback){
+        image:{
+            type:'jpeg',
+            quality:1
+        },
 
-    document.getElementById("modal")
-    .style.display = "flex";
+        html2canvas:{
+            scale:2,
+            scrollY:0
+        },
 
-    document.getElementById("modalText")
-    .innerText = texto;
-
-    document.getElementById("btnConfirmar")
-    .onclick = function(){
-
-        callback();
-
-        cerrarModal();
+        jsPDF:{
+            unit:'in',
+            format:'a3',
+            orientation:'landscape'
+        }
 
     };
 
-}
-
-function cerrarModal(){
-
-    document.getElementById("modal")
-    .style.display = "none";
+    html2pdf()
+        .set(opt)
+        .from(area)
+        .save();
 
 }
 
-/* ===== AUTO REFRESH ===== */
+/* ========================= */
+/* SELECT ALL */
+/* ========================= */
 
-window.addEventListener("storage",function(e){
+document
+.getElementById("selectAll")
+.addEventListener("change",function(){
 
-    if(e.key === "scada_alarms"){
+    const checks =
+        document.querySelectorAll(".alarm-check");
 
-        cargarAlarmas();
+    checks.forEach(c=>{
 
-    }
+        c.checked = this.checked;
+
+    });
 
 });
 
-setInterval(() => {
+/* ========================= */
+/* ACTUALIZAR AUTOMATICO */
+/* ========================= */
+
+window.addEventListener("storage",()=>{
+
+    cargarAlarmas();
+
+});
+
+setInterval(()=>{
 
     cargarAlarmas();
 
 },10000);
 
-/* ===== INICIO ===== */
+/* ========================= */
+/* INICIO */
+/* ========================= */
 
 cargarAlarmas();
 
 </script>
 
 </body>
+
 </html>
