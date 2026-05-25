@@ -1,10 +1,10 @@
 {
-    "fecha_hora": "2026-05-25 05:59:15",
-    "voltaje_r": 232.78,
-    "voltaje_s": 228.33,
-    "voltaje_t": 224.99,
-    "corriente_r": 102.63,
-    "corriente_s": 107.22,
-    "corriente_t": 52.61,
-    "actualizado": "2026-05-25 18:06:47"
+    "fecha_hora": "2026-05-25 06:00:15",
+    "voltaje_r": 215.92,
+    "voltaje_s": 224.01,
+    "voltaje_t": 224.9,
+    "corriente_r": 102.88,
+    "corriente_s": 106.7,
+    "corriente_t": 156.4,
+    "actualizado": "2026-05-25 18:07:50"
 }
