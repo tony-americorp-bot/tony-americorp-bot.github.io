@@ -212,11 +212,10 @@ body{
     object-fit:contain;
 }
 
-
 /* ===== ALARMAS ===== */
 
 .alarmas{
-    height:140px;
+    height:170px;
     background:#ffffff;
     border-top:2px solid #9e9e9e;
     display:flex;
@@ -248,7 +247,6 @@ body{
     font-size:14px;
     font-weight:bold;
 }
-
 
 </style>
 
@@ -320,7 +318,7 @@ body{
 
     <div class="dashboard">
 
-        <!-- ===== EQUIPO 1 ===== -->
+        <!-- EQUIPO 1 -->
 
         <div class="equipo">
 
@@ -350,9 +348,7 @@ body{
                 </div>
 
                 <div class="imagen-equipo">
-
                     <img src="ventilador.png">
-
                 </div>
 
                 <div class="variables">
@@ -378,7 +374,7 @@ body{
 
         </div>
 
-        <!-- ===== EQUIPO 2 ===== -->
+        <!-- EQUIPO 2 -->
 
         <div class="equipo">
 
@@ -408,9 +404,7 @@ body{
                 </div>
 
                 <div class="imagen-equipo">
-
                     <img src="valvula.png">
-
                 </div>
 
                 <div class="variables">
@@ -436,7 +430,7 @@ body{
 
         </div>
 
-        <!-- ===== EQUIPO 3 ===== -->
+        <!-- EQUIPO 3 -->
 
         <div class="equipo">
 
@@ -466,9 +460,7 @@ body{
                 </div>
 
                 <div class="imagen-equipo">
-
                     <img src="ventilador.png">
-
                 </div>
 
                 <div class="variables">
@@ -494,7 +486,7 @@ body{
 
         </div>
 
-        <!-- ===== EQUIPO 4 ===== -->
+        <!-- EQUIPO 4 -->
 
         <div class="equipo">
 
@@ -524,9 +516,7 @@ body{
                 </div>
 
                 <div class="imagen-equipo">
-
                     <img src="valvula.png">
-
                 </div>
 
                 <div class="variables">
@@ -552,7 +542,7 @@ body{
 
         </div>
 
-        <!-- ===== EQUIPO 5 ===== -->
+        <!-- EQUIPO 5 -->
 
         <div class="equipo">
 
@@ -582,9 +572,7 @@ body{
                 </div>
 
                 <div class="imagen-equipo">
-
                     <img src="ventilador.png">
-
                 </div>
 
                 <div class="variables">
@@ -610,7 +598,7 @@ body{
 
         </div>
 
-        <!-- ===== EQUIPO 6 ===== -->
+        <!-- EQUIPO 6 -->
 
         <div class="equipo">
 
@@ -640,9 +628,7 @@ body{
                 </div>
 
                 <div class="imagen-equipo">
-
                     <img src="valvula.png">
-
                 </div>
 
                 <div class="variables">
@@ -674,17 +660,17 @@ body{
 
     <div class="alarmas">
 
-    <div class="titulo-alarmas">
-        🚨 ALARMAS ACTIVAS
-    </div>
-
-    <div class="lista-alarmas" id="listaAlarmas">
-
-        <div class="alarma-item">
-            SISTEMA INICIADO
+        <div class="titulo-alarmas">
+            🚨 ALARMAS ACTIVAS
         </div>
 
-    </div>
+        <div class="lista-alarmas" id="listaAlarmas">
+
+            <div class="alarma-item">
+                SISTEMA INICIADO
+            </div>
+
+        </div>
 
     </div>
 
@@ -721,7 +707,7 @@ setInterval(actualizarFechaHora,1000);
 
 actualizarFechaHora();
 
-/* ===== CARGAR DATOS JSON ===== */
+/* ===== CARGAR DATOS ===== */
 
 async function cargarDatos(){
 
@@ -739,7 +725,7 @@ async function cargarDatos(){
         /* ===== EQUIPO 1 ===== */
 
         document.getElementById("rpm1").innerText =
-            d.voltaje_r;
+            d.voltaje_r + " RPM";
 
         document.getElementById("temp1").innerText =
             d.voltaje_s + " °C";
@@ -759,7 +745,7 @@ async function cargarDatos(){
         /* ===== EQUIPO 2 ===== */
 
         document.getElementById("rpm2").innerText =
-            d.voltaje_s;
+            d.voltaje_s + " RPM";
 
         document.getElementById("temp2").innerText =
             d.voltaje_t + " °C";
@@ -779,7 +765,7 @@ async function cargarDatos(){
         /* ===== EQUIPO 3 ===== */
 
         document.getElementById("rpm3").innerText =
-            d.voltaje_t;
+            d.voltaje_t + " RPM";
 
         document.getElementById("temp3").innerText =
             d.voltaje_r + " °C";
@@ -799,7 +785,7 @@ async function cargarDatos(){
         /* ===== EQUIPO 4 ===== */
 
         document.getElementById("rpm4").innerText =
-            d.voltaje_r;
+            d.voltaje_r + " RPM";
 
         document.getElementById("temp4").innerText =
             d.voltaje_s + " °C";
@@ -819,7 +805,7 @@ async function cargarDatos(){
         /* ===== EQUIPO 5 ===== */
 
         document.getElementById("rpm5").innerText =
-            d.voltaje_s;
+            d.voltaje_s + " RPM";
 
         document.getElementById("temp5").innerText =
             d.voltaje_t + " °C";
@@ -839,7 +825,7 @@ async function cargarDatos(){
         /* ===== EQUIPO 6 ===== */
 
         document.getElementById("rpm6").innerText =
-            d.voltaje_t;
+            d.voltaje_t + " RPM";
 
         document.getElementById("temp6").innerText =
             d.voltaje_r + " °C";
@@ -858,81 +844,86 @@ async function cargarDatos(){
 
         console.log("SCADA ACTUALIZADO");
 
-        /* ===== LIMPIAR ALARMAS ===== */
+        /* ===== ALARMAS ===== */
 
-const listaAlarmas =
-    document.getElementById("listaAlarmas");
+        const listaAlarmas =
+            document.getElementById("listaAlarmas");
 
-listaAlarmas.innerHTML = "";
+        listaAlarmas.innerHTML = "";
 
-/* ===== FUNCION CREAR ALARMA ===== */
+        function agregarAlarma(texto){
 
-function agregarAlarma(texto){
+            const div = document.createElement("div");
 
-    const div = document.createElement("div");
+            div.className = "alarma-item";
 
-    div.className = "alarma-item";
+            div.innerText =
+                new Date().toLocaleTimeString()
+                + " | " + texto;
 
-    div.innerText =
-        new Date().toLocaleTimeString()
-        + " | " + texto;
+            listaAlarmas.prepend(div);
 
-    listaAlarmas.prepend(div);
+        }
 
-}
+        /* ===== ALARMAS DE PROCESO ===== */
 
-/* ===== ALARMAS VOLTAJE ===== */
+        if(d.voltaje_r > 223.7){
 
-if(d.voltaje_r > 223.7){
+            agregarAlarma(
+                "⚠️ RPM ALTA - VENTILADOR 1"
+            );
 
-    agregarAlarma(
-        "⚠️ RPM ALTA - VENTILADOR 1"
-    );
+        }
 
-}
+        if(d.voltaje_s > 223.7){
 
-if(d.voltaje_s > 223.7){
+            agregarAlarma(
+                "⚠️ TEMPERATURA ALTA - VÁLVULA ROTATIVA"
+            );
 
-    agregarAlarma(
-        "⚠️ TEMPERATURA ALTA - VÁLVULA ROTATIVA"
-    );
+        }
 
-}
+        if(d.voltaje_t > 223.7){
 
-if(d.voltaje_t > 223.7){
+            agregarAlarma(
+                "⚠️ VIBRACIÓN ALTA - EXTRACTOR"
+            );
 
-    agregarAlarma(
-        "⚠️ VIBRACIÓN ALTA - EXTRACTOR"
-    );
+        }
 
-}
+        if(d.corriente_r > 106.5){
 
-/* ===== ALARMAS CORRIENTE ===== */
+            agregarAlarma(
+                "🚨 CORRIENTE ALTA - MOTOR PRINCIPAL"
+            );
 
-if(d.corriente_r > 106.5){
+        }
 
-    agregarAlarma(
-        "🚨 AMP ALTA - MOTOR PRINCIPAL"
-    );
+        if(d.corriente_s > 106.5){
 
-}
+            agregarAlarma(
+                "🚨 VOLTAJE FUERA DE RANGO - PLC"
+            );
 
-if(d.corriente_s > 106.5){
+        }
 
-    agregarAlarma(
-        "🚨 VOLTAJE FUERA DE RANGO - PLC"
-    );
+        if(d.corriente_t > 106.5){
 
-}
+            agregarAlarma(
+                "🚨 POTENCIA ALTA - COLECTOR"
+            );
 
-if(d.corriente_t > 106.5){
+        }
 
-    agregarAlarma(
-        "🚨 POTENCIA kW ALTA - COLECTOR"
-    );
+        /* ===== SI NO HAY ALARMAS ===== */
 
-}
+        if(listaAlarmas.innerHTML === ""){
 
+            agregarAlarma(
+                "✅ SISTEMA OPERANDO NORMAL"
+            );
+
+        }
 
     }catch(error){
 
@@ -946,7 +937,7 @@ if(d.corriente_t > 106.5){
 
 cargarDatos();
 
-/* ===== ACTUALIZAR CADA 10 SEGUNDOS ===== */
+/* ===== ACTUALIZAR ===== */
 
 setInterval(cargarDatos,10000);
 
