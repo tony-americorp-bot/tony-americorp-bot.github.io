@@ -22,6 +22,8 @@ body{
     overflow:hidden;
 }
 
+/* ================= CONTENEDOR ================= */
+
 .container{
     display:flex;
     flex-direction:column;
@@ -38,6 +40,7 @@ body{
     justify-content:space-between;
     padding:0 25px;
     color:white;
+    position:relative;
     z-index:1000;
 }
 
@@ -50,6 +53,7 @@ body{
 .hamburguesa{
     font-size:30px;
     cursor:pointer;
+    user-select:none;
 }
 
 .logo{
@@ -74,7 +78,8 @@ body{
     transform:translateX(-100%);
     transition:0.3s;
     z-index:999;
-    border-bottom-right-radius:12px;
+    border-right:2px solid #1d4ed8;
+    border-bottom-right-radius:10px;
 }
 
 .sidebar.activo{
@@ -89,6 +94,7 @@ body{
     padding:18px 25px;
     font-size:18px;
     cursor:pointer;
+    transition:0.2s;
 }
 
 .menu-item:hover{
@@ -102,16 +108,17 @@ body{
 
 .sidebar-imagen img{
     width:180px;
+    opacity:0.95;
 }
 
 /* ================= DASHBOARD ================= */
 
 .dashboard{
     flex:1;
-    padding:18px;
+    padding:20px;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:18px;
+    gap:20px;
     overflow:auto;
 }
 
@@ -119,11 +126,13 @@ body{
 
 .equipo{
     background:white;
-    border-radius:14px;
-    border:2px solid #bdbdbd;
-    padding:14px;
+    border-radius:12px;
+    border:2px solid #b0b0b0;
+    padding:15px;
     min-height:320px;
 }
+
+/* ================= ESTADOS ================= */
 
 .estado-equipo{
     color:white;
@@ -135,8 +144,6 @@ body{
     font-size:15px;
 }
 
-/* SOLO 3 ESTADOS */
-
 .funcionando{
     background:#00c853;
 }
@@ -147,42 +154,51 @@ body{
 
 .fallo{
     background:#ffb300;
-    color:#000;
+    color:black;
 }
+
+/* ================= NOMBRE ================= */
 
 .nombre-equipo{
     text-align:center;
     font-size:20px;
     font-weight:bold;
+    margin-bottom:12px;
     color:#09234d;
-    margin-bottom:10px;
 }
+
+/* ================= CONTENIDO ================= */
 
 .equipo-contenido{
     display:flex;
+    align-items:center;
     justify-content:space-between;
-    gap:10px;
-    height:220px;
+    gap:15px;
+    height:190px;
 }
 
+/* ================= VARIABLES ================= */
+
 .variables{
-    width:125px;
+    width:120px;
     display:flex;
     flex-direction:column;
-    gap:8px;
+    gap:10px;
 }
 
 .variable{
-    background:#edf7ed;
-    border:1px solid #cfd8dc;
-    border-radius:8px;
-    padding:8px;
+    background:#e8f5e9;
+    padding:10px;
     text-align:center;
-    font-size:13px;
     font-weight:bold;
+    border-radius:8px;
+    font-size:13px;
     color:#000;
     line-height:1.5;
+    border:1px solid #cfd8dc;
 }
+
+/* ================= IMAGEN ================= */
 
 .imagen-equipo{
     flex:1;
@@ -193,12 +209,12 @@ body{
 }
 
 .imagen-equipo img{
-    width:110px;
-    height:110px;
+    width:120px;
+    height:120px;
     object-fit:contain;
 }
 
-.codigo-equipo{
+.imagen-equipo span{
     margin-top:8px;
     font-weight:bold;
     color:#09234d;
@@ -206,14 +222,16 @@ body{
 
 /* ================= ALARMAS ================= */
 
-.alarmas-panel{
+.alarmas{
     height:240px;
-    background:white;
+    background:#ffffff;
     border-top:3px solid #9e9e9e;
     display:flex;
     flex-direction:column;
     padding:12px;
 }
+
+/* HEADER */
 
 .alarmas-header{
     display:flex;
@@ -228,23 +246,25 @@ body{
     color:#d50000;
 }
 
-.btn-ir-alarmas{
+.btn-historial{
     background:#09234d;
     color:white;
     border:none;
-    padding:8px 14px;
+    padding:10px 15px;
     border-radius:8px;
     cursor:pointer;
     font-weight:bold;
 }
 
+/* LISTA */
+
 .lista-alarmas{
     flex:1;
     overflow-y:auto;
-    background:#f5f5f5;
+    background:#f3f3f3;
     border-radius:10px;
-    padding:8px;
-    border:1px solid #d0d0d0;
+    padding:10px;
+    border:1px solid #ccc;
 }
 
 /* SCROLL */
@@ -258,14 +278,15 @@ body{
     border-radius:10px;
 }
 
+/* ITEMS */
+
 .alarma-item{
     background:white;
     border-left:6px solid #d50000;
     border-radius:8px;
     padding:10px;
     margin-bottom:8px;
-    font-size:14px;
-    box-shadow:0 1px 4px rgba(0,0,0,0.12);
+    box-shadow:0 1px 4px rgba(0,0,0,0.15);
 }
 
 .alarma-fecha{
@@ -276,6 +297,7 @@ body{
 }
 
 .alarma-texto{
+    font-size:14px;
     font-weight:bold;
     color:#212121;
 }
@@ -285,7 +307,7 @@ body{
     border-left:6px solid #00c853;
 }
 
-/* ================= FOOTER ALARMAS ================= */
+/* FOOTER */
 
 .alarmas-footer{
     margin-top:10px;
@@ -295,15 +317,13 @@ body{
 }
 
 .footer-box{
-    background:#09234d;
-    color:white;
+    height:48px;
     border-radius:10px;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     gap:8px;
-    height:48px;
-    font-size:14px;
+    color:white;
     font-weight:bold;
     cursor:pointer;
     transition:0.2s;
@@ -311,10 +331,6 @@ body{
 
 .footer-box:hover{
     transform:scale(1.02);
-}
-
-.footer-box span{
-    font-size:18px;
 }
 
 .box-red{
@@ -333,28 +349,6 @@ body{
     background:#616161;
 }
 
-/* RESPONSIVE */
-
-@media(max-width:1200px){
-
-.dashboard{
-    grid-template-columns:repeat(2,1fr);
-}
-
-}
-
-@media(max-width:850px){
-
-.dashboard{
-    grid-template-columns:1fr;
-}
-
-body{
-    overflow:auto;
-}
-
-}
-
 </style>
 
 </head>
@@ -363,7 +357,7 @@ body{
 
 <div class="container">
 
-    <!-- TOPBAR -->
+    <!-- ================= TOPBAR ================= -->
 
     <div class="topbar">
 
@@ -389,7 +383,7 @@ body{
 
     </div>
 
-    <!-- SIDEBAR -->
+    <!-- ================= SIDEBAR ================= -->
 
     <div class="sidebar" id="sidebar">
 
@@ -414,12 +408,14 @@ body{
         </div>
 
         <div class="sidebar-imagen">
+
             <img src="colector.png">
+
         </div>
 
     </div>
 
-    <!-- DASHBOARD -->
+    <!-- ================= DASHBOARD ================= -->
 
     <div class="dashboard">
 
@@ -460,9 +456,7 @@ body{
 
                     <img src="motor1.png">
 
-                    <div class="codigo-equipo">
-                        MT-001
-                    </div>
+                    <span>MT-001</span>
 
                 </div>
 
@@ -526,9 +520,7 @@ body{
 
                     <img src="motor2.png">
 
-                    <div class="codigo-equipo">
-                        MT-002
-                    </div>
+                    <span>MT-002</span>
 
                 </div>
 
@@ -592,9 +584,7 @@ body{
 
                     <img src="ventilador.png">
 
-                    <div class="codigo-equipo">
-                        FAN-001
-                    </div>
+                    <span>VC-001</span>
 
                 </div>
 
@@ -611,7 +601,7 @@ body{
                     </div>
 
                     <div class="variable">
-                        Hz<br>
+                        kW<br>
                         <span id="kw3">--</span>
                     </div>
 
@@ -658,9 +648,7 @@ body{
 
                     <img src="valvula.png">
 
-                    <div class="codigo-equipo">
-                        VR-001
-                    </div>
+                    <span>VR-001</span>
 
                 </div>
 
@@ -677,7 +665,7 @@ body{
                     </div>
 
                     <div class="variable">
-                        Hz<br>
+                        kW<br>
                         <span id="kw4">--</span>
                     </div>
 
@@ -704,18 +692,18 @@ body{
                 <div class="variables">
 
                     <div class="variable">
-                        PSI<br>
+                        Presión<br>
                         <span id="rpm5">--</span>
                     </div>
 
                     <div class="variable">
-                        DIF<br>
+                        PresDif<br>
                         <span id="temp5">--</span>
                     </div>
 
                     <div class="variable">
-                        ESTADO<br>
-                        <span id="vib5">OK</span>
+                        EstadoTx<br>
+                        <span id="vib5">--</span>
                     </div>
 
                 </div>
@@ -724,16 +712,14 @@ body{
 
                     <img src="pit.png">
 
-                    <div class="codigo-equipo">
-                        PIT-001
-                    </div>
+                    <span>PIT-001</span>
 
                 </div>
 
                 <div class="variables">
 
                     <div class="variable">
-                        mA<br>
+                        AMP<br>
                         <span id="amp5">--</span>
                     </div>
 
@@ -743,8 +729,8 @@ body{
                     </div>
 
                     <div class="variable">
-                        COM<br>
-                        <span id="kw5">OK</span>
+                        Comunicación<br>
+                        <span id="kw5">--</span>
                     </div>
 
                 </div>
@@ -770,17 +756,17 @@ body{
                 <div class="variables">
 
                     <div class="variable">
-                        VDC<br>
+                        Voltaje<br>
                         <span id="rpm6">--</span>
                     </div>
 
                     <div class="variable">
-                        TEMP<br>
+                        Temperatura<br>
                         <span id="temp6">--</span>
                     </div>
 
                     <div class="variable">
-                        Hz<br>
+                        VoltDC<br>
                         <span id="vib6">--</span>
                     </div>
 
@@ -790,26 +776,24 @@ body{
 
                     <img src="vfd.png">
 
-                    <div class="codigo-equipo">
-                        VFD-001
-                    </div>
+                    <span>VFD-001</span>
 
                 </div>
 
                 <div class="variables">
 
                     <div class="variable">
-                        RPM<br>
+                        Frecuencia<br>
                         <span id="amp6">--</span>
                     </div>
 
                     <div class="variable">
-                        AMP<br>
+                        Temperatura<br>
                         <span id="volt6">--</span>
                     </div>
 
                     <div class="variable">
-                        VOLT<br>
+                        Velocidad<br>
                         <span id="kw6">--</span>
                     </div>
 
@@ -821,9 +805,9 @@ body{
 
     </div>
 
-    <!-- PANEL ALARMAS -->
+    <!-- ================= ALARMAS ================= -->
 
-    <div class="alarmas-panel">
+    <div class="alarmas">
 
         <div class="alarmas-header">
 
@@ -831,8 +815,8 @@ body{
                 🚨 REGISTRO DE ALARMAS
             </div>
 
-            <button class="btn-ir-alarmas" onclick="window.location.href='alarmas.html'">
-                VER HISTORIAL COMPLETO
+            <button class="btn-historial" onclick="window.location.href='alarmas.html'">
+                VER HISTORIAL
             </button>
 
         </div>
@@ -844,14 +828,14 @@ body{
         <div class="alarmas-footer">
 
             <div class="footer-box box-red">
-                🔔 <span id="contadorNoRevisadas">0</span>
+                🔔 <span id="contadorAlarmas">0</span>
             </div>
 
             <div class="footer-box box-green">
                 ✅ <span id="contadorRevisadas">0</span>
             </div>
 
-            <div class="footer-box box-blue" onclick="revisarAlarmasVista()">
+            <div class="footer-box box-blue" onclick="marcarRevisadas()">
                 ✔️ REVISAR
             </div>
 
@@ -866,6 +850,11 @@ body{
 </div>
 
 <script>
+
+/* ================= VARIABLES ================= */
+
+let alarmasVista = [];
+let idsMostrados = [];
 
 /* ================= MENU ================= */
 
@@ -887,21 +876,9 @@ function actualizarFechaHora(){
 }
 
 setInterval(actualizarFechaHora,1000);
-
 actualizarFechaHora();
 
-/* ================= ALARMAS ================= */
-
-let alarmasVista = [];
-
-function guardarHistorico(alarmas){
-
-    localStorage.setItem(
-        "scada_alarms",
-        JSON.stringify(alarmas)
-    );
-
-}
+/* ================= STORAGE ================= */
 
 function obtenerHistorico(){
 
@@ -911,7 +888,20 @@ function obtenerHistorico(){
 
 }
 
+function guardarHistorico(arr){
+
+    localStorage.setItem(
+        "scada_alarms",
+        JSON.stringify(arr)
+    );
+
+}
+
+/* ================= AGREGAR ALARMA ================= */
+
 function agregarAlarma(tag,mensaje){
+
+    let historico = obtenerHistorico();
 
     const ahora = new Date();
 
@@ -920,16 +910,14 @@ function agregarAlarma(tag,mensaje){
         " " +
         ahora.toLocaleTimeString('es-PE');
 
-    const textoCompleto =
-        fecha +
-        " | " +
-        tag +
-        " | " +
-        mensaje;
+    const idUnico =
+        tag + "_" + mensaje;
 
-    /* evitar repetidas */
+    /* EVITAR DUPLICADOS */
 
-    const existe = alarmasVista.some(a => a.texto === textoCompleto);
+    const existe = historico.some(a =>
+        a.idUnico === idUnico
+    );
 
     if(existe){
         return;
@@ -937,7 +925,8 @@ function agregarAlarma(tag,mensaje){
 
     const nueva = {
 
-        texto:textoCompleto,
+        id:Date.now(),
+        idUnico:idUnico,
         fecha:fecha,
         tag:tag,
         mensaje:mensaje,
@@ -945,25 +934,11 @@ function agregarAlarma(tag,mensaje){
 
     };
 
-    /* vista pequeña */
-
-    alarmasVista.unshift(nueva);
-
-    /* historico completo */
-
-    let historico = obtenerHistorico();
-
-    historico.unshift({
-
-        id:Date.now(),
-        fecha:fecha,
-        tag:tag,
-        mensaje:mensaje,
-        revisada:false
-
-    });
+    historico.unshift(nueva);
 
     guardarHistorico(historico);
+
+    alarmasVista.unshift(nueva);
 
     renderAlarmas();
 
@@ -973,25 +948,31 @@ function agregarAlarma(tag,mensaje){
 
 function renderAlarmas(){
 
-    const lista = document.getElementById("listaAlarmas");
+    const lista =
+        document.getElementById("listaAlarmas");
 
     lista.innerHTML = "";
 
     if(alarmasVista.length === 0){
 
         lista.innerHTML = `
+
             <div class="alarma-item sin-alarmas">
+
                 <div class="alarma-texto">
-                    SISTEMA SIN ALARMAS ACTIVAS
+                    SISTEMA OPERANDO NORMALMENTE
                 </div>
+
             </div>
+
         `;
 
     }else{
 
         alarmasVista.forEach(al => {
 
-            const div = document.createElement("div");
+            const div =
+                document.createElement("div");
 
             div.className = "alarma-item";
 
@@ -1021,26 +1002,36 @@ function renderAlarmas(){
 
 function actualizarContadores(){
 
-    const historico = obtenerHistorico();
+    const historico =
+        obtenerHistorico();
 
-    const noRev = historico.filter(a => !a.revisada).length;
+    const noRev =
+        historico.filter(a => !a.revisada).length;
 
-    const rev = historico.filter(a => a.revisada).length;
+    const revisadas =
+        historico.filter(a => a.revisada).length;
 
-    document.getElementById("contadorNoRevisadas").innerText = noRev;
+    document.getElementById(
+        "contadorAlarmas"
+    ).innerText = noRev;
 
-    document.getElementById("contadorRevisadas").innerText = rev;
+    document.getElementById(
+        "contadorRevisadas"
+    ).innerText = revisadas;
 
 }
 
 /* ================= REVISAR ================= */
 
-function revisarAlarmasVista(){
+function marcarRevisadas(){
 
-    let historico = obtenerHistorico();
+    let historico =
+        obtenerHistorico();
 
     historico.forEach(a => {
+
         a.revisada = true;
+
     });
 
     guardarHistorico(historico);
@@ -1066,12 +1057,15 @@ async function cargarDatos(){
     try{
 
         const response = await fetch(
-            'datos.json?t=' + new Date().getTime()
+            'datos.json?t=' + new Date().getTime(),
+            {
+                cache:"no-store"
+            }
         );
 
         const d = await response.json();
 
-        /* MOTOR 1 */
+        /* ================= VARIABLES ================= */
 
         document.getElementById("rpm1").innerText = d.voltaje_r;
         document.getElementById("temp1").innerText = d.voltaje_s + " °C";
@@ -1080,8 +1074,6 @@ async function cargarDatos(){
         document.getElementById("volt1").innerText = d.corriente_s + " V";
         document.getElementById("kw1").innerText = d.corriente_t + " kW";
 
-        /* MOTOR 2 */
-
         document.getElementById("rpm2").innerText = d.voltaje_s;
         document.getElementById("temp2").innerText = d.voltaje_t + " °C";
         document.getElementById("vib2").innerText = d.voltaje_r + " mm/s";
@@ -1089,43 +1081,37 @@ async function cargarDatos(){
         document.getElementById("volt2").innerText = d.corriente_t + " V";
         document.getElementById("kw2").innerText = d.corriente_r + " kW";
 
-        /* VENTILADOR */
-
         document.getElementById("rpm3").innerText = d.voltaje_t;
         document.getElementById("temp3").innerText = d.voltaje_r + " °C";
         document.getElementById("vib3").innerText = d.voltaje_s + " mm/s";
         document.getElementById("amp3").innerText = d.corriente_t + " A";
         document.getElementById("volt3").innerText = d.corriente_r + " V";
-        document.getElementById("kw3").innerText = "60 Hz";
-
-        /* VALVULA */
+        document.getElementById("kw3").innerText = d.corriente_s + " kW";
 
         document.getElementById("rpm4").innerText = d.voltaje_r;
         document.getElementById("temp4").innerText = d.voltaje_s + " °C";
         document.getElementById("vib4").innerText = d.voltaje_t + " mm/s";
         document.getElementById("amp4").innerText = d.corriente_r + " A";
         document.getElementById("volt4").innerText = d.corriente_s + " V";
-        document.getElementById("kw4").innerText = "50 Hz";
-
-        /* PIT */
+        document.getElementById("kw4").innerText = d.corriente_t + " kW";
 
         document.getElementById("rpm5").innerText = d.voltaje_s + " psi";
         document.getElementById("temp5").innerText = d.voltaje_t + ' "WC';
-        document.getElementById("amp5").innerText = "4-20 mA";
+        document.getElementById("vib5").innerText = "OK";
+        document.getElementById("amp5").innerText = d.corriente_s + " mA";
         document.getElementById("volt5").innerText = "24 VDC";
+        document.getElementById("kw5").innerText = "ONLINE";
 
-        /* VFD */
-
-        document.getElementById("rpm6").innerText = "540 VDC";
+        document.getElementById("rpm6").innerText = d.voltaje_t + " V";
         document.getElementById("temp6").innerText = d.voltaje_r + " °C";
-        document.getElementById("vib6").innerText = "60 Hz";
-        document.getElementById("amp6").innerText = d.corriente_t + " RPM";
-        document.getElementById("volt6").innerText = d.corriente_r + " A";
-        document.getElementById("kw6").innerText = d.corriente_s + " V";
+        document.getElementById("vib6").innerText = "540 VDC";
+        document.getElementById("amp6").innerText = "60 Hz";
+        document.getElementById("volt6").innerText = d.corriente_s + " °C";
+        document.getElementById("kw6").innerText = d.corriente_t + " RPM";
 
-        /* ================= ALARMAS REALES ================= */
+        /* ================= ALARMAS ================= */
 
-        if(d.voltaje_r > 460){
+        if(d.voltaje_r > 450){
 
             agregarAlarma(
                 "MT-001",
@@ -1146,7 +1132,7 @@ async function cargarDatos(){
         if(d.voltaje_t > 6){
 
             agregarAlarma(
-                "FAN-001",
+                "VC-001",
                 "VIBRACION ALTA : " + d.voltaje_t + " mm/s"
             );
 
@@ -1156,7 +1142,7 @@ async function cargarDatos(){
 
             agregarAlarma(
                 "VR-001",
-                "FRECUENCIA CERO / EQUIPO DETENIDO"
+                "FRECUENCIA CERO"
             );
 
         }
@@ -1174,7 +1160,7 @@ async function cargarDatos(){
 
             agregarAlarma(
                 "VFD-001",
-                "SOBRETEMPERATURA VFD : " + d.voltaje_r + " °C"
+                "TEMPERATURA ALTA : " + d.voltaje_r + " °C"
             );
 
         }
