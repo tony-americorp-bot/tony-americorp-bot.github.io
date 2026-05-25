@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TENDENCIAS SCADA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#d9d9d9;
+}
+
+/* TOPBAR */
+
+.topbar{
+    height:75px;
+    background:#09234d;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.fecha{
+    font-size:18px;
+    font-weight:bold;
+}
+
+/* CONTENIDO */
+
+.contenedor{
+    padding:20px;
+}
+
+.titulo{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    font-size:24px;
+    font-weight:bold;
+    color:#09234d;
+}
+
+/* TARJETAS */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.card h3{
+    margin-bottom:15px;
+    color:#09234d;
+}
+
+canvas{
+    width:100% !important;
+    height:300px !important;
+}
+
+.btn{
+    margin-top:20px;
+    background:#09234d;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn:hover{
+    background:#12356d;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+    <div class="logo">
+        AMERICORP
+    </div>
+
+    <div>
+        TENDENCIAS MOTOR 1
+    </div>
+
+    <div class="fecha" id="fechaHora">
+        --:--:--
+    </div>
+
+</div>
+
+<!-- CONTENIDO -->
+
+<div class="contenedor">
+
+    <div class="titulo">
+        📈 HISTÓRICO DE VARIABLES - MOTOR 1
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Voltaje</h3>
+            <canvas id="grafVolt"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Corriente</h3>
+            <canvas id="grafAmp"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Temperatura</h3>
+            <canvas id="grafTemp"></canvas>
+        </div>
+
+        <div class="card">
+            <h3>Vibración</h3>
+            <canvas id="grafVib"></canvas>
+        </div>
+
+    </div>
+
+    <button class="btn" onclick="window.location.href='index.html'">
+        ⬅ VOLVER
+    </button>
+
+</div>
+
+<script>
+
+/* ================= FECHA ================= */
+
+function actualizarHora(){
+
+    const ahora = new Date();
+
+    document.getElementById("fechaHora").innerHTML =
+        ahora.toLocaleTimeString('es-PE') +
+        " | " +
+        ahora.toLocaleDateString('es-PE');
+
+}
+
+setInterval(actualizarHora,1000);
+
+actualizarHora();
+
+/* ================= STORAGE ================= */
+
+function obtenerDatos(){
+
+    const datos = localStorage.getItem("tendencias_motor1");
+
+    return datos ? JSON.parse(datos) : [];
+
+}
+
+function guardarDatos(datos){
+
+    localStorage.setItem(
+        "tendencias_motor1",
+        JSON.stringify(datos)
+    );
+
+}
+
+/* ================= GRAFICAS ================= */
+
+const labels = [];
+
+const datosVolt = [];
+const datosAmp = [];
+const datosTemp = [];
+const datosVib = [];
+
+/* VOLTAJE */
+
+const grafVolt = new Chart(
+    document.getElementById("grafVolt"),
+    {
+        type:'line',
+        data:{
+            labels:labels,
+            datasets:[{
+                label:'Voltaje',
+                data:datosVolt,
+                borderColor:'blue',
+                tension:0.3
+            }]
+        }
+    }
+);
+
+/* CORRIENTE */
+
+const grafAmp = new Chart(
+    document.getElementById("grafAmp"),
+    {
+        type:'line',
+        data:{
+            labels:labels,
+            datasets:[{
+                label:'Corriente',
+                data:datosAmp,
+                borderColor:'green',
+                tension:0.3
+            }]
+        }
+    }
+);
+
+/* TEMPERATURA */
+
+const grafTemp = new Chart(
+    document.getElementById("grafTemp"),
+    {
+        type:'line',
+        data:{
+            labels:labels,
+            datasets:[{
+                label:'Temperatura',
+                data:datosTemp,
+                borderColor:'red',
+                tension:0.3
+            }]
+        }
+    }
+);
+
+/* VIBRACION */
+
+const grafVib = new Chart(
+    document.getElementById("grafVib"),
+    {
+        type:'line',
+        data:{
+            labels:labels,
+            datasets:[{
+                label:'Vibración',
+                data:datosVib,
+                borderColor:'orange',
+                tension:0.3
+            }]
+        }
+    }
+);
+
+/* ================= CARGAR HISTORICO ================= */
+
+function cargarHistorico(){
+
+    const historial = obtenerDatos();
+
+    historial.forEach(d => {
+
+        labels.push(d.hora);
+
+        datosVolt.push(d.voltaje);
+        datosAmp.push(d.corriente);
+        datosTemp.push(d.temperatura);
+        datosVib.push(d.vibracion);
+
+    });
+
+    grafVolt.update();
+    grafAmp.update();
+    grafTemp.update();
+    grafVib.update();
+
+}
+
+/* ================= LEER DATOS ================= */
+
+async function leerDatos(){
+
+    try{
+
+        const response = await fetch(
+            'datos.json?t=' + new Date().getTime(),
+            {
+                cache:'no-store'
+            }
+        );
+
+        const d = await response.json();
+
+        const ahora = new Date();
+
+        const hora =
+            ahora.getHours().toString().padStart(2,'0')
+            + ":" +
+            ahora.getMinutes().toString().padStart(2,'0');
+
+        /* DATOS MOTOR 1 */
+
+        const nuevoDato = {
+
+            hora:hora,
+
+            voltaje:d.voltaje_r,
+
+            corriente:d.corriente_r,
+
+            temperatura:d.voltaje_s,
+
+            vibracion:d.voltaje_t
+
+        };
+
+        /* GUARDAR */
+
+        let historial = obtenerDatos();
+
+        historial.push(nuevoDato);
+
+        /* MAXIMO 60 PUNTOS */
+
+        if(historial.length > 60){
+
+            historial.shift();
+
+        }
+
+        guardarDatos(historial);
+
+        /* ACTUALIZAR GRAFICAS */
+
+        labels.push(hora);
+
+        datosVolt.push(d.voltaje_r);
+        datosAmp.push(d.corriente_r);
+        datosTemp.push(d.voltaje_s);
+        datosVib.push(d.voltaje_t);
+
+        if(labels.length > 60){
+
+            labels.shift();
+
+            datosVolt.shift();
+            datosAmp.shift();
+            datosTemp.shift();
+            datosVib.shift();
+
+        }
+
+        grafVolt.update();
+        grafAmp.update();
+        grafTemp.update();
+        grafVib.update();
+
+    }catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+/* ================= INICIO ================= */
+
+cargarHistorico();
+
+/* LECTURA CADA 1 MINUTO */
+
+leerDatos();
+
+setInterval(leerDatos,60000);
+
+</script>
+
+</body>
+</html>
