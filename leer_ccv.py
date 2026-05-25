@@ -2,6 +2,9 @@ import pandas as pd
 import json
 import time
 import subprocess
+import math
+import random
+
 from datetime import datetime
 
 # =========================================
@@ -34,17 +37,25 @@ while True:
         # =====================================
 
         df = pd.read_csv(
+
             CSV_FILE,
+
             header=None,
+
             names=[
+
                 "timestamp",
+
                 "voltaje_r",
                 "voltaje_s",
                 "voltaje_t",
+
                 "corriente_r",
                 "corriente_s",
                 "corriente_t"
+
             ]
+
         )
 
         print("\nCSV LEIDO CORRECTAMENTE")
@@ -53,20 +64,27 @@ while True:
         # CONVERTIR TIMESTAMP
         # =====================================
 
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df["timestamp"] = pd.to_datetime(
+            df["timestamp"]
+        )
 
-        # ordenar por tiempo
+        # =====================================
+        # ORDENAR POR FECHA
+        # =====================================
+
         df = df.sort_values("timestamp")
 
         # =====================================
-        # LEER ÚLTIMO TIMESTAMP
+        # LEER ULTIMO TIMESTAMP
         # =====================================
 
         with open(TIMESTAMP_FILE, "r") as f:
 
             ultimo_timestamp = f.read().strip()
 
-        ultimo_timestamp = pd.to_datetime(ultimo_timestamp)
+        ultimo_timestamp = pd.to_datetime(
+            ultimo_timestamp
+        )
 
         print("\nULTIMO TIMESTAMP:")
         print(ultimo_timestamp)
@@ -75,7 +93,9 @@ while True:
         # FILTRAR NUEVOS
         # =====================================
 
-        nuevos = df[df["timestamp"] > ultimo_timestamp]
+        nuevos = df[
+            df["timestamp"] > ultimo_timestamp
+        ]
 
         # =====================================
         # SI HAY NUEVOS
@@ -85,36 +105,180 @@ while True:
 
             print(f"\nNUEVOS REGISTROS: {len(nuevos)}")
 
-            # TOMAR EL SIGUIENTE REGISTRO
+            # =================================
+            # TOMAR SIGUIENTE FILA
+            # =================================
+
             fila = nuevos.iloc[0]
 
             print("\nREGISTRO ENVIADO:")
             print(fila["timestamp"])
 
+            # =================================
+            # TIEMPO SIMULACION
+            # =================================
+
+            t = time.time()
+
+            # =================================
+            # VARIABLES BASE CSV
+            # =================================
+
+            voltaje_r_base = float(
+                fila["voltaje_r"]
+            )
+
+            voltaje_s_base = float(
+                fila["voltaje_s"]
+            )
+
+            voltaje_t_base = float(
+                fila["voltaje_t"]
+            )
+
+            corriente_r_base = float(
+                fila["corriente_r"]
+            )
+
+            corriente_s_base = float(
+                fila["corriente_s"]
+            )
+
+            corriente_t_base = float(
+                fila["corriente_t"]
+            )
+
+            # =================================
+            # SIMULACION INDUSTRIAL
+            # =================================
+
+            voltaje_r = (
+
+                voltaje_r_base
+                +
+                math.sin(t / 8) * 12
+                +
+                random.uniform(-1,1)
+
+            )
+
+            voltaje_s = (
+
+                voltaje_s_base
+                +
+                math.sin(t / 15) * 5
+                +
+                random.uniform(-0.5,0.5)
+
+            )
+
+            voltaje_t = (
+
+                voltaje_t_base
+                +
+                math.cos(t / 5) * 1.2
+                +
+                random.uniform(-0.2,0.2)
+
+            )
+
+            corriente_r = (
+
+                corriente_r_base
+                +
+                math.cos(t / 10) * 3
+                +
+                random.uniform(-1,1)
+
+            )
+
+            corriente_s = (
+
+                corriente_s_base
+                +
+                math.sin(t / 7) * 2
+                +
+                random.uniform(-1,1)
+
+            )
+
+            corriente_t = (
+
+                corriente_t_base
+                +
+                math.sin(t / 20) * 50
+                +
+                random.uniform(-5,5)
+
+            )
+
+            # =================================
+            # GENERAR JSON
+            # =================================
+
             datos = {
 
-                "fecha_hora": str(fila["timestamp"]),
+                "fecha_hora":
 
-                "voltaje_r": round(float(fila["voltaje_r"]), 2),
-                "voltaje_s": round(float(fila["voltaje_s"]), 2),
-                "voltaje_t": round(float(fila["voltaje_t"]), 2),
+                    str(fila["timestamp"]),
 
-                "corriente_r": round(float(fila["corriente_r"]), 2),
-                "corriente_s": round(float(fila["corriente_s"]), 2),
-                "corriente_t": round(float(fila["corriente_t"]), 2),
+                "voltaje_r":
 
-                "actualizado": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    round(voltaje_r, 2),
+
+                "voltaje_s":
+
+                    round(voltaje_s, 2),
+
+                "voltaje_t":
+
+                    round(voltaje_t, 2),
+
+                "corriente_r":
+
+                    round(corriente_r, 2),
+
+                "corriente_s":
+
+                    round(corriente_s, 2),
+
+                "corriente_t":
+
+                    round(corriente_t, 2),
+
+                "actualizado":
+
+                    datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+
             }
 
             # =================================
             # GUARDAR JSON
             # =================================
 
-            with open(JSON_FILE, "w", encoding="utf-8") as f:
+            with open(
 
-                json.dump(datos, f, indent=4)
+                JSON_FILE,
+
+                "w",
+
+                encoding="utf-8"
+
+            ) as f:
+
+                json.dump(
+                    datos,
+                    f,
+                    indent=4
+                )
 
             print("\nJSON ACTUALIZADO")
+
+            print("\nVALORES ENVIADOS:")
+
+            print(datos)
 
             # =================================
             # GUARDAR NUEVO TIMESTAMP
@@ -122,17 +286,22 @@ while True:
 
             with open(TIMESTAMP_FILE, "w") as f:
 
-                f.write(str(fila["timestamp"]))
+                f.write(
+                    str(fila["timestamp"])
+                )
 
-            print("TIMESTAMP ACTUALIZADO")
+            print("\nTIMESTAMP ACTUALIZADO")
 
             # =================================
             # GIT ADD
             # =================================
 
             subprocess.run(
+
                 ["git", "add", "."],
+
                 cwd=REPO_DIR
+
             )
 
             # =================================
@@ -140,13 +309,21 @@ while True:
             # =================================
 
             subprocess.run(
+
                 [
+
                     "git",
+
                     "commit",
+
                     "-m",
+
                     f"update {datetime.now()}"
+
                 ],
+
                 cwd=REPO_DIR
+
             )
 
             # =================================
@@ -154,16 +331,24 @@ while True:
             # =================================
 
             subprocess.run(
+
                 [
+
                     "git",
+
                     "push",
+
                     "origin",
+
                     "main"
+
                 ],
+
                 cwd=REPO_DIR
+
             )
 
-            print("PUSH OK")
+            print("\nPUSH OK")
 
         else:
 
