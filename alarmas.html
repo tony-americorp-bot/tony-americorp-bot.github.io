@@ -8,6 +8,7 @@
 
 <title>SCADA COLECTOR - HISTORIAL DE ALARMAS</title>
 
+<!-- Librería para exportar PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
@@ -21,12 +22,11 @@
 
 body{
     background:#d9d9d9;
+    height:100vh;
     overflow:hidden;
 }
 
-/* ========================= */
-/* CONTENEDOR */
-/* ========================= */
+/* ===== CONTENEDOR ===== */
 
 .container{
     display:flex;
@@ -34,9 +34,7 @@ body{
     height:100vh;
 }
 
-/* ========================= */
-/* TOPBAR */
-/* ========================= */
+/* ===== TOPBAR ===== */
 
 .topbar{
     height:75px;
@@ -46,6 +44,8 @@ body{
     justify-content:space-between;
     padding:0 25px;
     color:white;
+    position:relative;
+    z-index:1000;
 }
 
 .logo-area{
@@ -71,17 +71,20 @@ body{
 }
 
 .btn-volver{
-    background:#1565c0;
+    background:#1d4ed8;
     color:white;
-    text-decoration:none;
-    padding:10px 18px;
+    padding:8px 20px;
     border-radius:8px;
+    text-decoration:none;
     font-weight:bold;
+    transition:0.2s;
 }
 
-/* ========================= */
-/* SIDEBAR */
-/* ========================= */
+.btn-volver:hover{
+    background:#1565c0;
+}
+
+/* ===== SIDEBAR ===== */
 
 .sidebar{
     position:absolute;
@@ -109,6 +112,7 @@ body{
     padding:18px 25px;
     font-size:18px;
     cursor:pointer;
+    transition:0.2s;
 }
 
 .menu-item:hover{
@@ -124,191 +128,292 @@ body{
     width:180px;
 }
 
-/* ========================= */
-/* MAIN */
-/* ========================= */
+/* ===== MAIN CONTENT ===== */
 
-.main{
+.main-content{
     flex:1;
     padding:20px;
     overflow:auto;
 }
 
-/* ========================= */
-/* CONTADORES */
-/* ========================= */
+/* ===== CONTADORES ===== */
 
-.cards{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
+.counters-panel{
+    display:flex;
     gap:20px;
     margin-bottom:20px;
+    flex-wrap:wrap;
 }
 
-.card{
+.counter-card{
     background:white;
     border-radius:12px;
-    padding:20px;
-    text-align:center;
     border:2px solid #b0b0b0;
+    padding:20px 30px;
+    text-align:center;
+    flex:1;
+    min-width:140px;
 }
 
-.card h2{
+.counter-number{
     font-size:42px;
-}
-
-.card p{
-    margin-top:10px;
     font-weight:bold;
 }
 
-.rojo h2{
+.counter-label{
+    font-size:14px;
+    color:#555;
+    margin-top:8px;
+}
+
+.counter-card.unreviewed .counter-number{
     color:#d50000;
 }
 
-.verde h2{
+.counter-card.reviewed .counter-number{
     color:#00c853;
 }
 
-.azul h2{
+.counter-card.total .counter-number{
     color:#09234d;
 }
 
-/* ========================= */
-/* BOTONES */
-/* ========================= */
+/* ===== TOOLBAR ===== */
 
 .toolbar{
     background:white;
     border-radius:12px;
+    border:2px solid #b0b0b0;
     padding:15px;
     margin-bottom:20px;
     display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.btn-group{
+    display:flex;
     gap:10px;
     flex-wrap:wrap;
-    border:2px solid #b0b0b0;
 }
 
 .btn{
+    padding:8px 16px;
     border:none;
-    padding:10px 16px;
     border-radius:8px;
     cursor:pointer;
     font-weight:bold;
-    color:white;
-}
-
-.btn-primary{
-    background:#1565c0;
+    transition:0.2s;
+    font-size:13px;
 }
 
 .btn-success{
     background:#00c853;
+    color:white;
+}
+
+.btn-success:hover{
+    background:#00a844;
+}
+
+.btn-primary{
+    background:#1d4ed8;
+    color:white;
+}
+
+.btn-primary:hover{
+    background:#1565c0;
 }
 
 .btn-warning{
     background:#ff9800;
+    color:white;
+}
+
+.btn-warning:hover{
+    background:#e68900;
 }
 
 .btn-danger{
     background:#d50000;
+    color:white;
 }
 
-/* ========================= */
-/* TABLA */
-/* ========================= */
+.btn-danger:hover{
+    background:#b80000;
+}
 
-.table-container{
+.btn-secondary{
+    background:#6c757d;
+    color:white;
+}
+
+.btn-secondary:hover{
+    background:#5a6268;
+}
+
+/* ===== FILTROS ===== */
+
+.filters-bar{
     background:white;
     border-radius:12px;
     border:2px solid #b0b0b0;
-    overflow:auto;
-    max-height:65vh;
+    padding:15px;
+    margin-bottom:20px;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    align-items:center;
 }
 
-table{
+.filter-input, .filter-select{
+    padding:8px 12px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:13px;
+    min-width:140px;
+}
+
+/* ===== TABLA ===== */
+
+.table-wrapper{
+    background:white;
+    border-radius:12px;
+    border:2px solid #b0b0b0;
+    overflow:hidden;
+}
+
+.alarms-table{
     width:100%;
     border-collapse:collapse;
 }
 
-thead{
-    position:sticky;
-    top:0;
-    z-index:100;
+.alarms-table th,
+.alarms-table td{
+    padding:12px 10px;
+    text-align:left;
+    border-bottom:1px solid #e0e0e0;
+    font-size:13px;
 }
 
-th{
+.alarms-table th{
     background:#09234d;
     color:white;
-    padding:14px;
-    text-align:left;
+    font-weight:bold;
+    position:sticky;
+    top:0;
 }
 
-td{
-    padding:12px;
-    border-bottom:1px solid #e0e0e0;
+.alarms-table tr.unreviewed{
+    background:rgba(213,0,0,0.08);
 }
 
-tr:hover{
+.alarms-table tr.reviewed{
     background:#f5f5f5;
+    color:#888;
 }
 
-/* ========================= */
-/* SEVERIDAD */
-/* ========================= */
-
-.trip{
-    border-left:8px solid #d50000;
+.alarms-table tr.trip td:first-child{
+    border-left:3px solid #b71c1c;
 }
 
-.warning{
-    border-left:8px solid #ff9800;
+.alarms-table tr.alarm td:first-child{
+    border-left:3px solid #d50000;
 }
 
-/* ========================= */
-/* ESTADO */
-/* ========================= */
+.alarms-table tr.warning td:first-child{
+    border-left:3px solid #ff9800;
+}
 
-.badge{
-    padding:5px 10px;
+.severity-badge{
+    display:inline-block;
+    padding:4px 10px;
     border-radius:20px;
-    color:white;
-    font-size:12px;
+    font-size:11px;
     font-weight:bold;
 }
 
-.badge-warning{
+.severity-trip{
+    background:#b71c1c;
+    color:white;
+}
+
+.severity-alarm{
+    background:#d50000;
+    color:white;
+}
+
+.severity-warning{
     background:#ff9800;
+    color:black;
 }
 
-.badge-trip{
+.status-badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.status-unreviewed{
     background:#d50000;
+    color:white;
 }
 
-.badge-review{
+.status-reviewed{
     background:#00c853;
+    color:white;
 }
 
-.badge-unreview{
-    background:#d50000;
-}
-
-/* ========================= */
-/* CHECKBOX */
-/* ========================= */
-
-.alarm-check{
+.alarm-checkbox{
     width:18px;
     height:18px;
+    cursor:pointer;
 }
 
-/* ========================= */
-/* PDF */
-/* ========================= */
+.table-wrapper{
+    overflow-x:auto;
+    max-height:55vh;
+    overflow-y:auto;
+}
 
-.pdf-export{
+.alarms-table th{
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+/* ===== MODAL ===== */
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    z-index:2000;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
     background:white;
-    padding:20px;
+    border-radius:12px;
+    width:90%;
+    max-width:450px;
+    padding:25px;
+    text-align:center;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+    margin-top:20px;
 }
 
 </style>
@@ -320,529 +425,365 @@ tr:hover{
 <div class="container">
 
     <!-- TOPBAR -->
-
     <div class="topbar">
-
         <div class="logo-area">
-
-            <div class="hamburguesa" onclick="toggleMenu()">
-                ☰
-            </div>
-
-            <div class="logo">
-                AMERICORP
-            </div>
-
+            <div class="hamburguesa" onclick="toggleMenu()">☰</div>
+            <div class="logo">AMERICORP</div>
         </div>
-
-        <div>
-            HISTORIAL DE ALARMAS
+        <div>PROYECTO: COLECTOR DE POLVO | HISTORIAL DE ALARMAS</div>
+        <div style="display:flex; gap:15px; align-items:center;">
+            <div class="fecha-hora" id="fechaHora">--:--:--</div>
+            <a href="index.html" class="btn-volver">⬅ VOLVER</a>
         </div>
-
-        <div style="display:flex;align-items:center;gap:15px;">
-
-            <div class="fecha-hora" id="fechaHora">
-                --:--:--
-            </div>
-
-            <a href="index.html" class="btn-volver">
-                ⬅ VOLVER
-            </a>
-
-        </div>
-
     </div>
 
     <!-- SIDEBAR -->
-
     <div class="sidebar" id="sidebar">
-
         <div class="menu">
-
-            <div class="menu-item"
-                onclick="window.location.href='index.html'">
-                📊 Dashboard
-            </div>
-
-            <div class="menu-item"
-                onclick="window.location.href='alarmas.html'">
-                🚨 Alarmas
-            </div>
-
-            <div class="menu-item">
-                📈 Tendencias
-            </div>
-
-            <div class="menu-item">
-                ⚙️ Configuración
-            </div>
-
+            <div class="menu-item" onclick="window.location.href='index.html'">📊 Dashboard</div>
+            <div class="menu-item" style="background:#12356d;">🚨 Alarmas</div>
+            <div class="menu-item" onclick="window.location.href='tendencias.html'">📈 Tendencias</div>
         </div>
-
         <div class="sidebar-imagen">
-
             <img src="colector.png">
-
         </div>
-
     </div>
 
-    <!-- MAIN -->
-
-    <div class="main" id="pdfArea">
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-content">
 
         <!-- CONTADORES -->
-
-        <div class="cards">
-
-            <div class="card rojo">
-
-                <h2 id="noRevisadas">
-                    0
-                </h2>
-
-                <p>
-                    NO REVISADAS
-                </p>
-
+        <div class="counters-panel">
+            <div class="counter-card unreviewed">
+                <div class="counter-number" id="unreviewedCount">0</div>
+                <div class="counter-label">⚠️ NO REVISADAS</div>
             </div>
-
-            <div class="card verde">
-
-                <h2 id="revisadas">
-                    0
-                </h2>
-
-                <p>
-                    REVISADAS
-                </p>
-
+            <div class="counter-card reviewed">
+                <div class="counter-number" id="reviewedCount">0</div>
+                <div class="counter-label">✅ REVISADAS</div>
             </div>
-
-            <div class="card azul">
-
-                <h2 id="totalAlarmas">
-                    0
-                </h2>
-
-                <p>
-                    TOTAL ALARMAS
-                </p>
-
+            <div class="counter-card total">
+                <div class="counter-number" id="totalCount">0</div>
+                <div class="counter-label">📋 TOTAL</div>
             </div>
-
         </div>
 
-        <!-- TOOLBAR -->
-
+        <!-- BARRA DE HERRAMIENTAS -->
         <div class="toolbar">
-
-            <button class="btn btn-success"
-                onclick="revisarSeleccionadas()">
-                ✅ REVISAR SELECCIONADAS
-            </button>
-
-            <button class="btn btn-primary"
-                onclick="revisarTodas()">
-                🔄 REVISAR TODAS
-            </button>
-
-            <button class="btn btn-warning"
-                onclick="borrarRevisadas()">
-                🗑 BORRAR REVISADAS
-            </button>
-
-            <button class="btn btn-danger"
-                onclick="borrarTodas()">
-                ❌ BORRAR TODAS
-            </button>
-
-            <button class="btn btn-primary"
-                onclick="exportarPDF()">
-                📄 EXPORTAR PDF
-            </button>
-
+            <div class="btn-group">
+                <button class="btn btn-success" id="reviewSelectedBtn">✅ REVISAR SELECCIONADAS</button>
+                <button class="btn btn-primary" id="reviewAllBtn">🔄 REVISAR TODAS</button>
+                <button class="btn btn-warning" id="clearReviewedBtn">🗑️ BORRAR REVISADAS</button>
+                <button class="btn btn-danger" id="clearAllBtn">🗑️🗑️ BORRAR TODAS</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="exportPdfBtn">📄 EXPORTAR PDF</button>
+            </div>
         </div>
 
-        <!-- TABLA -->
+        <!-- FILTROS -->
+        <div class="filters-bar">
+            <input type="text" id="filterTag" class="filter-input" placeholder="Filtrar por TAG...">
+            <input type="text" id="filterMessage" class="filter-input" placeholder="Filtrar por mensaje...">
+            <select id="filterSeverity" class="filter-select">
+                <option value="">Todas las severidades</option>
+                <option value="trip">🚨 TRIP</option>
+                <option value="alarm">⚠️ ALARMA</option>
+                <option value="warning">⚡ ADVERTENCIA</option>
+            </select>
+            <select id="filterStatus" class="filter-select">
+                <option value="">Todos los estados</option>
+                <option value="unreviewed">No revisadas</option>
+                <option value="reviewed">Revisadas</option>
+            </select>
+            <button class="btn btn-primary" id="applyFiltersBtn">Aplicar</button>
+            <button class="btn btn-secondary" id="resetFiltersBtn">Resetear</button>
+        </div>
 
-        <div class="table-container">
-
-            <table>
-
+        <!-- TABLA DE ALARMAS -->
+        <div class="table-wrapper">
+            <table class="alarms-table" id="alarmsTable">
                 <thead>
-
                     <tr>
-
-                        <th>
-                            <input type="checkbox"
-                                id="selectAll">
-                        </th>
-
-                        <th>
-                            FECHA
-                        </th>
-
-                        <th>
-                            TAG
-                        </th>
-
-                        <th>
-                            MENSAJE
-                        </th>
-
-                        <th>
-                            SEVERIDAD
-                        </th>
-
-                        <th>
-                            ESTADO
-                        </th>
-
+                        <th style="width:30px;"><input type="checkbox" id="selectAllCheckbox"></th>
+                        <th>FECHA / HORA</th>
+                        <th>TAG</th>
+                        <th>CONDICIÓN</th>
+                        <th>SEVERIDAD</th>
+                        <th>MENSAJE</th>
+                        <th>ESTADO</th>
                     </tr>
-
                 </thead>
-
-                <tbody id="tablaAlarmas">
-
+                <tbody id="alarmsTableBody">
                 </tbody>
-
             </table>
-
         </div>
-
     </div>
+</div>
 
+<!-- MODAL DE CONFIRMACIÓN -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalMessage">¿Está seguro?</h3>
+        <div class="modal-buttons">
+            <button class="btn btn-primary" id="modalConfirmBtn">Confirmar</button>
+            <button class="btn btn-secondary" id="modalCancelBtn">Cancelar</button>
+        </div>
+    </div>
 </div>
 
 <script>
 
-/* ========================= */
-/* MENU */
-/* ========================= */
+/* ===== VARIABLES ===== */
+let alarmsArray = [];
+let pendingAction = null;
 
+/* ===== MENU ===== */
 function toggleMenu(){
-
-    document
-    .getElementById("sidebar")
-    .classList
-    .toggle("activo");
-
+    document.getElementById("sidebar").classList.toggle("activo");
 }
 
-/* ========================= */
-/* FECHA Y HORA */
-/* ========================= */
-
+/* ===== FECHA ===== */
 function actualizarFechaHora(){
-
     const ahora = new Date();
-
-    document.getElementById("fechaHora").innerHTML =
-        ahora.toLocaleTimeString() +
-        " | " +
-        ahora.toLocaleDateString();
-
+    document.getElementById("fechaHora").innerHTML = 
+        ahora.toLocaleTimeString() + " | " + ahora.toLocaleDateString();
 }
-
-setInterval(actualizarFechaHora,1000);
+setInterval(actualizarFechaHora, 1000);
 actualizarFechaHora();
 
-/* ========================= */
-/* ALARMAS */
-/* ========================= */
-
-let alarmas = [];
-
-/* ========================= */
-/* CARGAR */
-/* ========================= */
-
-function cargarAlarmas(){
-
-    alarmas =
-        JSON.parse(
-            localStorage.getItem("scada_alarmas")
-        ) || [];
-
-    renderTabla();
-
-}
-
-/* ========================= */
-/* RENDER */
-/* ========================= */
-
-function renderTabla(){
-
-    const tbody =
-        document.getElementById("tablaAlarmas");
-
-    tbody.innerHTML = "";
-
-    let noRev = 0;
-    let rev = 0;
-
-    alarmas.forEach((al,index)=>{
-
-        if(al.revisado){
-            rev++;
-        }else{
-            noRev++;
+/* ===== CARGAR ALARMAS DESDE STORAGE ===== */
+function cargarAlarmasDesdeStorage(){
+    const data = localStorage.getItem("scada_alarms");
+    if(data){
+        try{
+            const parsed = JSON.parse(data);
+            alarmsArray = parsed.map(a => ({
+                ...a,
+                timestamp: new Date(a.timestamp)
+            }));
+        }catch(e){
+            console.error("Error:", e);
+            alarmsArray = [];
         }
-
-        const tr =
-            document.createElement("tr");
-
-        tr.className = al.severidad;
-
-        tr.innerHTML = `
-
-            <td>
-                <input 
-                    type="checkbox"
-                    class="alarm-check"
-                    value="${index}">
-            </td>
-
-            <td>
-                ${al.fecha}
-            </td>
-
-            <td>
-                ${al.tag}
-            </td>
-
-            <td>
-                ${al.mensaje}
-            </td>
-
-            <td>
-
-                <span class="
-                    badge
-                    ${al.severidad === 'trip'
-                        ? 'badge-trip'
-                        : 'badge-warning'}
-                ">
-
-                    ${al.severidad.toUpperCase()}
-
-                </span>
-
-            </td>
-
-            <td>
-
-                ${
-                    al.revisado
-
-                    ?
-
-                    `<span class="badge badge-review">
-                        REVISADA
-                    </span>`
-
-                    :
-
-                    `<span class="badge badge-unreview">
-                        NO REVISADA
-                    </span>`
-                }
-
-            </td>
-
-        `;
-
-        tbody.appendChild(tr);
-
-    });
-
-    document.getElementById("noRevisadas")
-        .innerText = noRev;
-
-    document.getElementById("revisadas")
-        .innerText = rev;
-
-    document.getElementById("totalAlarmas")
-        .innerText = alarmas.length;
-
-}
-
-/* ========================= */
-/* REVISAR SELECCIONADAS */
-/* ========================= */
-
-function revisarSeleccionadas(){
-
-    const checks =
-        document.querySelectorAll(
-            ".alarm-check:checked"
-        );
-
-    checks.forEach(c=>{
-
-        const idx =
-            parseInt(c.value);
-
-        if(alarmas[idx]){
-
-            alarmas[idx].revisado = true;
-
-        }
-
-    });
-
-    localStorage.setItem(
-        "scada_alarmas",
-        JSON.stringify(alarmas)
-    );
-
-    renderTabla();
-
-}
-
-/* ========================= */
-/* REVISAR TODAS */
-/* ========================= */
-
-function revisarTodas(){
-
-    alarmas.forEach(al=>{
-
-        al.revisado = true;
-
-    });
-
-    localStorage.setItem(
-        "scada_alarmas",
-        JSON.stringify(alarmas)
-    );
-
-    renderTabla();
-
-}
-
-/* ========================= */
-/* BORRAR REVISADAS */
-/* ========================= */
-
-function borrarRevisadas(){
-
-    alarmas =
-        alarmas.filter(al=>!al.revisado);
-
-    localStorage.setItem(
-        "scada_alarmas",
-        JSON.stringify(alarmas)
-    );
-
-    renderTabla();
-
-}
-
-/* ========================= */
-/* BORRAR TODAS */
-/* ========================= */
-
-function borrarTodas(){
-
-    if(confirm("¿BORRAR TODAS LAS ALARMAS?")){
-
-        alarmas = [];
-
-        localStorage.setItem(
-            "scada_alarmas",
-            JSON.stringify(alarmas)
-        );
-
-        renderTabla();
-
+    }else{
+        alarmsArray = [];
     }
-
+    renderizarTabla();
 }
 
-/* ========================= */
-/* EXPORTAR PDF */
-/* ========================= */
-
-function exportarPDF(){
-
-    const area =
-        document.getElementById("pdfArea");
-
-    const opt = {
-
-        margin:0.5,
-
-        filename:
-            'historial_alarmas.pdf',
-
-        image:{
-            type:'jpeg',
-            quality:1
-        },
-
-        html2canvas:{
-            scale:2,
-            scrollY:0
-        },
-
-        jsPDF:{
-            unit:'in',
-            format:'a3',
-            orientation:'landscape'
-        }
-
-    };
-
-    html2pdf()
-        .set(opt)
-        .from(area)
-        .save();
-
+/* ===== GUARDAR EN STORAGE ===== */
+function guardarAlarmas(){
+    localStorage.setItem("scada_alarms", JSON.stringify(alarmsArray));
 }
 
-/* ========================= */
-/* SELECT ALL */
-/* ========================= */
+/* ===== FORMATEAR FECHA ===== */
+function formatearFecha(date){
+    return `${date.toLocaleDateString('es-PE')} ${date.toLocaleTimeString('es-PE', {hour12: false})}`;
+}
 
-document
-.getElementById("selectAll")
-.addEventListener("change",function(){
-
-    const checks =
-        document.querySelectorAll(".alarm-check");
-
-    checks.forEach(c=>{
-
-        c.checked = this.checked;
-
+/* ===== RENDERIZAR TABLA ===== */
+function renderizarTabla(){
+    // Obtener filtros
+    const filterTag = document.getElementById('filterTag').value.toLowerCase();
+    const filterMessage = document.getElementById('filterMessage').value.toLowerCase();
+    const filterSeverity = document.getElementById('filterSeverity').value;
+    const filterStatus = document.getElementById('filterStatus').value;
+    
+    let filtered = [...alarmsArray];
+    
+    if(filterTag) filtered = filtered.filter(a => a.tag.toLowerCase().includes(filterTag));
+    if(filterMessage) filtered = filtered.filter(a => a.message.toLowerCase().includes(filterMessage));
+    if(filterSeverity) filtered = filtered.filter(a => a.severity === filterSeverity);
+    if(filterStatus === 'unreviewed') filtered = filtered.filter(a => !a.reviewed);
+    if(filterStatus === 'reviewed') filtered = filtered.filter(a => a.reviewed);
+    
+    // Ordenar por fecha descendente
+    filtered.sort((a,b) => b.timestamp - a.timestamp);
+    
+    // Actualizar contadores
+    const noRev = alarmsArray.filter(a => !a.reviewed).length;
+    const rev = alarmsArray.filter(a => a.reviewed).length;
+    document.getElementById('unreviewedCount').innerText = noRev;
+    document.getElementById('reviewedCount').innerText = rev;
+    document.getElementById('totalCount').innerText = alarmsArray.length;
+    
+    const tbody = document.getElementById('alarmsTableBody');
+    tbody.innerHTML = '';
+    
+    if(filtered.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">📭 No hay alarmas registradas</td></tr>';
+        return;
+    }
+    
+    filtered.forEach(alarm => {
+        const row = tbody.insertRow();
+        row.className = alarm.reviewed ? 'reviewed' : 'unreviewed';
+        row.classList.add(alarm.severity);
+        
+        // Checkbox
+        const cellCheck = row.insertCell(0);
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'alarm-checkbox';
+        cb.dataset.id = alarm.id;
+        cellCheck.appendChild(cb);
+        
+        row.insertCell(1).innerText = formatearFecha(alarm.timestamp);
+        row.insertCell(2).innerText = alarm.tag;
+        
+        // Condición (derivada de severidad y mensaje)
+        let condicion = "";
+        if(alarm.severity === 'trip') condicion = "TRIP";
+        else if(alarm.severity === 'alarm') condicion = "ALARMA";
+        else condicion = "ADVERTENCIA";
+        row.insertCell(3).innerText = condicion;
+        
+        // Severidad con badge
+        let severityText = "";
+        if(alarm.severity === 'trip') severityText = "🚨 TRIP";
+        else if(alarm.severity === 'alarm') severityText = "⚠️ ALARMA";
+        else severityText = "⚡ ADVERTENCIA";
+        row.insertCell(4).innerHTML = `<span class="severity-badge severity-${alarm.severity}">${severityText}</span>`;
+        
+        row.insertCell(5).innerText = alarm.message;
+        
+        const estadoText = alarm.reviewed ? "REVISADA" : "NO REVISADA";
+        row.insertCell(6).innerHTML = `<span class="status-badge status-${alarm.reviewed ? 'reviewed' : 'unreviewed'}">${estadoText}</span>`;
     });
+}
 
-});
+/* ===== ACCIONES ===== */
+function reviewSelected(){
+    const checkboxes = document.querySelectorAll('#alarmsTableBody .alarm-checkbox:checked');
+    checkboxes.forEach(cb => {
+        const id = parseInt(cb.dataset.id);
+        const alarm = alarmsArray.find(a => a.id === id);
+        if(alarm && !alarm.reviewed) alarm.reviewed = true;
+    });
+    guardarAlarmas();
+    renderizarTabla();
+}
 
-/* ========================= */
-/* ACTUALIZAR AUTOMATICO */
-/* ========================= */
+function reviewAll(){
+    mostrarConfirmacion('¿Marcar TODAS las alarmas como revisadas?', () => {
+        alarmsArray.forEach(alarm => { alarm.reviewed = true; });
+        guardarAlarmas();
+        renderizarTabla();
+    });
+}
 
-window.addEventListener("storage",()=>{
+function clearReviewed(){
+    mostrarConfirmacion('¿Eliminar TODAS las alarmas que ya están REVISADAS?', () => {
+        alarmsArray = alarmsArray.filter(a => !a.reviewed);
+        guardarAlarmas();
+        renderizarTabla();
+    });
+}
 
-    cargarAlarmas();
+function clearAll(){
+    mostrarConfirmacion('⚠️ ADVERTENCIA: Esta acción eliminará TODAS las alarmas del historial. ¿Está completamente seguro?', () => {
+        alarmsArray = [];
+        guardarAlarmas();
+        renderizarTabla();
+    });
+}
 
-});
+/* ===== MODAL ===== */
+function mostrarConfirmacion(mensaje, onConfirm){
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('modalMessage').innerText = mensaje;
+    modal.style.display = 'flex';
+    
+    const confirmBtn = document.getElementById('modalConfirmBtn');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    
+    const handler = () => {
+        onConfirm();
+        modal.style.display = 'none';
+        confirmBtn.removeEventListener('click', handler);
+        cancelBtn.removeEventListener('click', cancelHandler);
+    };
+    
+    const cancelHandler = () => {
+        modal.style.display = 'none';
+        confirmBtn.removeEventListener('click', handler);
+        cancelBtn.removeEventListener('click', cancelHandler);
+    };
+    
+    confirmBtn.addEventListener('click', handler);
+    cancelBtn.addEventListener('click', cancelHandler);
+}
 
-setInterval(()=>{
+/* ===== EXPORTAR PDF ===== */
+function exportToPDF(){
+    const element = document.querySelector('.main-content');
+    const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `historial_alarmas_${new Date().toISOString().slice(0,19)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(element).save();
+}
 
-    cargarAlarmas();
+/* ===== SELECT ALL ===== */
+function setupSelectAll(){
+    const selectAll = document.getElementById('selectAllCheckbox');
+    if(!selectAll) return;
+    
+    selectAll.addEventListener('change', (e) => {
+        const checkboxes = document.querySelectorAll('#alarmsTableBody .alarm-checkbox');
+        checkboxes.forEach(cb => cb.checked = e.target.checked);
+    });
+    
+    document.getElementById('alarmsTableBody').addEventListener('change', (e) => {
+        if(e.target.classList.contains('alarm-checkbox')){
+            const checkboxes = document.querySelectorAll('#alarmsTableBody .alarm-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            selectAll.checked = allChecked;
+        }
+    });
+}
 
-},60000);
+/* ===== ESCUCHAR CAMBIOS ===== */
+function escucharCambiosStorage(){
+    window.addEventListener('storage', function(e) {
+        if(e.key === 'scada_alarms') {
+            cargarAlarmasDesdeStorage();
+        }
+    });
+}
 
-/* ========================= */
-/* INICIO */
-/* ========================= */
+/* ===== EVENT LISTENERS ===== */
+function bindEvents(){
+    document.getElementById('reviewSelectedBtn').addEventListener('click', reviewSelected);
+    document.getElementById('reviewAllBtn').addEventListener('click', reviewAll);
+    document.getElementById('clearReviewedBtn').addEventListener('click', clearReviewed);
+    document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+    document.getElementById('exportPdfBtn').addEventListener('click', exportToPDF);
+    document.getElementById('applyFiltersBtn').addEventListener('click', () => renderizarTabla());
+    document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+        document.getElementById('filterTag').value = '';
+        document.getElementById('filterMessage').value = '';
+        document.getElementById('filterSeverity').value = '';
+        document.getElementById('filterStatus').value = '';
+        renderizarTabla();
+    });
+}
 
-cargarAlarmas();
+/* ===== INICIALIZACIÓN ===== */
+cargarAlarmasDesdeStorage();
+bindEvents();
+setupSelectAll();
+escucharCambiosStorage();
+
+// Cerrar modal al hacer clic fuera
+window.onclick = (e) => {
+    const modal = document.getElementById('confirmModal');
+    if(e.target === modal) modal.style.display = 'none';
+};
 
 </script>
 
