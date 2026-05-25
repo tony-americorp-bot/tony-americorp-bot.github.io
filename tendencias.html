@@ -316,11 +316,11 @@ canvas{
 
         <div class="grid">
 
-            <!-- VOLTAJE (voltaje_r) -->
+            <!-- VOLTAJE -->
             <div class="card">
 
                 <div class="titulo">
-                    ⚡ VOLTAJE MOTOR 1 (Fase R)
+                    ⚡ VOLTAJE MOTOR 1 (V)
                 </div>
 
                 <div class="grafica">
@@ -339,11 +339,11 @@ canvas{
 
             </div>
 
-            <!-- CORRIENTE (corriente_r) -->
+            <!-- CORRIENTE -->
             <div class="card">
 
                 <div class="titulo">
-                    🔌 CORRIENTE MOTOR 1 (Fase R)
+                    🔌 CORRIENTE MOTOR 1 (A)
                 </div>
 
                 <div class="grafica">
@@ -362,11 +362,11 @@ canvas{
 
             </div>
 
-            <!-- TEMPERATURA (voltaje_s) -->
+            <!-- TEMPERATURA -->
             <div class="card">
 
                 <div class="titulo">
-                    🌡 TEMPERATURA MOTOR 1
+                    🌡 TEMPERATURA MOTOR 1 (°C)
                 </div>
 
                 <div class="grafica">
@@ -385,11 +385,11 @@ canvas{
 
             </div>
 
-            <!-- VIBRACION (voltaje_t) -->
+            <!-- VIBRACION -->
             <div class="card">
 
                 <div class="titulo">
-                    📳 VIBRACIÓN MOTOR 1
+                    📳 VIBRACIÓN MOTOR 1 (mm/s)
                 </div>
 
                 <div class="grafica">
@@ -426,6 +426,14 @@ canvas{
 
             </button>
 
+            <button class="btn"
+                    onclick="cargarDatosManual()"
+                    style="background:#ff9800;">
+
+                🔄 FORZAR ACTUALIZACIÓN
+
+            </button>
+
         </div>
 
     </div>
@@ -437,330 +445,213 @@ canvas{
 /* ================= MENU ================= */
 
 function toggleMenu(){
-
-    document
-        .getElementById("sidebar")
-        .classList.toggle("activo");
-
+    document.getElementById("sidebar").classList.toggle("activo");
 }
 
 /* ================= FECHA ================= */
 
 function actualizarFechaHora(){
-
     const ahora = new Date();
-
-    document.getElementById(
-        "fechaHora"
-    ).innerHTML =
-
-        ahora.toLocaleTimeString('es-PE')
-        + " | " +
-        ahora.toLocaleDateString('es-PE');
-
+    document.getElementById("fechaHora").innerHTML =
+        ahora.toLocaleTimeString('es-PE') + " | " + ahora.toLocaleDateString('es-PE');
 }
 
 setInterval(actualizarFechaHora,1000);
-
 actualizarFechaHora();
 
 /* ================= STORAGE ================= */
 
 function obtenerHistorico(){
-
-    const datos =
-        localStorage.getItem(
-            "tendencias_motor1"
-        );
-
-    return datos
-        ? JSON.parse(datos)
-        : [];
-
+    const datos = localStorage.getItem("tendencias_motor1_v2");
+    if(!datos){
+        // Datos de ejemplo para probar
+        return [];
+    }
+    return JSON.parse(datos);
 }
 
 function guardarHistorico(datos){
-
-    localStorage.setItem(
-        "tendencias_motor1",
-        JSON.stringify(datos)
-    );
-
+    localStorage.setItem("tendencias_motor1_v2", JSON.stringify(datos));
 }
 
 /* ================= HISTORICO ================= */
 
-let historico =
-    obtenerHistorico();
+let historico = obtenerHistorico();
 
-/* ================= CREAR GRAFICA ================= */
+/* ================= CREAR GRAFICA CON ESCALA AUTOMÁTICA ================= */
 
-function crearGrafica(
-    id,
-    titulo,
-    color,
-    unidad
-){
+function crearGrafica(id, titulo, color, unidad){
 
     return new Chart(
-
         document.getElementById(id),
-
         {
-
-            type:'line',
-
-            data:{
-
-                labels:[],
-
-                datasets:[{
-
-                    label:titulo,
-
-                    data:[],
-
-                    borderColor:color,
-
-                    backgroundColor:'transparent',
-
-                    borderWidth:2,
-
-                    pointRadius:2,
-
-                    pointHoverRadius:8,
-
-                    pointBackgroundColor:color,
-
-                    pointBorderColor:'white',
-
-                    pointBorderWidth:1,
-
-                    tension:0.2,
-
-                    fill:false
-
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: titulo,
+                    data: [],
+                    borderColor: color,
+                    backgroundColor: 'rgba(' + hexToRgb(color) + ', 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: color,
+                    pointBorderColor: 'white',
+                    pointBorderWidth: 2,
+                    tension: 0.2,
+                    fill: true
                 }]
-
             },
-
-            options:{
-
-                responsive:true,
-
-                maintainAspectRatio:false,
-
-                interaction:{
-                    mode:'index',
-                    intersect:false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
                 },
-
-                plugins:{
-
-                    legend:{
-                        display:false
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: { size: 11 },
+                            boxWidth: 12
+                        }
                     },
-
-                    tooltip:{
-
-                        backgroundColor:'#09234d',
-
-                        titleColor:'white',
-
-                        bodyColor:'white',
-
-                        borderColor:'#ffd700',
-
-                        borderWidth:1,
-
-                        callbacks:{
-
-                            title:function(context){
-
+                    tooltip: {
+                        backgroundColor: '#09234d',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: '#ffd700',
+                        borderWidth: 1,
+                        callbacks: {
+                            title: function(context) {
                                 return context[0].label;
-
                             },
-
-                            label:function(context){
-
-                                return context.parsed.y.toFixed(2)
-                                    + " "
-                                    + unidad;
-
+                            label: function(context) {
+                                return context.parsed.y.toFixed(2) + " " + unidad;
                             }
-
                         }
-
                     },
-
-                    zoom:{
-
-                        pan:{
-                            enabled:true,
-                            mode:'x'
-                        },
-
-                        zoom:{
-
-                            wheel:{
-                                enabled:true
-                            },
-
-                            pinch:{
-                                enabled:true
-                            },
-
-                            mode:'x'
-
+                    zoom: {
+                        pan: { enabled: true, mode: 'x' },
+                        zoom: {
+                            wheel: { enabled: true },
+                            pinch: { enabled: true },
+                            mode: 'x'
                         }
-
                     }
-
                 },
-
-                scales:{
-
-                    x:{
-
-                        title:{
-                            display:true,
-                            text:'HORA',
-                            color:'#09234d',
-                            font:{
-                                weight:'bold',
-                                size:10
-                            }
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'HORA',
+                            color: '#09234d',
+                            font: { weight: 'bold', size: 10 }
                         },
-
-                        ticks:{
-                            maxTicksLimit:10,
-                            maxRotation:45,
-                            minRotation:45,
-                            autoSkip:true
+                        ticks: {
+                            maxTicksLimit: 10,
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: true
                         }
-
                     },
-
-                    y:{
-
-                        title:{
-                            display:true,
-                            text:unidad,
-                            color:'#09234d',
-                            font:{
-                                weight:'bold',
-                                size:10
-                            }
+                    y: {
+                        title: {
+                            display: true,
+                            text: unidad,
+                            color: '#09234d',
+                            font: { weight: 'bold', size: 10 }
                         },
-
-                        beginAtZero:false,
-
-                        grid:{
-                            color:'#e0e0e0'
+                        beginAtZero: false,  // IMPORTANTE: No forzar inicio en cero
+                        grid: { color: '#e0e0e0' },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(1) + " " + unidad;
+                            }
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     );
+}
 
+// Función auxiliar para convertir hex a rgb
+function hexToRgb(hex) {
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+        parseInt(result[1], 16) + ", " + 
+        parseInt(result[2], 16) + ", " + 
+        parseInt(result[3], 16) : 
+        "0, 0, 0";
 }
 
 /* ================= GRAFICAS ================= */
 
-const grafVolt =
-    crearGrafica(
-        "grafVolt",
-        "Voltaje",
-        "#1565c0",
-        "V"
-    );
-
-const grafAmp =
-    crearGrafica(
-        "grafAmp",
-        "Corriente",
-        "#00a844",
-        "A"
-    );
-
-const grafTemp =
-    crearGrafica(
-        "grafTemp",
-        "Temperatura",
-        "#d50000",
-        "°C"
-    );
-
-const grafVib =
-    crearGrafica(
-        "grafVib",
-        "Vibración",
-        "#ff9800",
-        "mm/s"
-    );
+const grafVolt = crearGrafica("grafVolt", "Voltaje", "#1565c0", "V");
+const grafAmp = crearGrafica("grafAmp", "Corriente", "#00a844", "A");
+const grafTemp = crearGrafica("grafTemp", "Temperatura", "#d50000", "°C");
+const grafVib = crearGrafica("grafVib", "Vibración", "#ff9800", "mm/s");
 
 /* ================= ACTUALIZAR GRAFICAS ================= */
 
 function actualizarGraficas(){
 
+    console.log("Actualizando gráficas. Datos en histórico:", historico.length);
+
     if(historico.length === 0){
-        // Mostrar mensaje si no hay datos
+        console.log("No hay datos en el histórico");
         return;
     }
 
-    // Mostrar últimos 30 puntos para mejor visualización
-    const ultimos =
-        historico.slice(-30);
-
-    const labels =
-        ultimos.map(d => {
-            // Extraer solo la hora para etiquetas más limpias
+    // Mostrar últimos 30 puntos
+    const ultimos = historico.slice(-30);
+    
+    const labels = ultimos.map(d => {
+        // Extraer hora para etiquetas
+        if(d.fechaCompleta){
             const partes = d.fechaCompleta.split(' ');
-            return partes.length === 2 ? partes[1] : d.fechaCompleta;
-        });
-
+            if(partes.length >= 2){
+                return partes[1]; // Solo la hora
+            }
+        }
+        return d.fechaCompleta || "Sin hora";
+    });
+    
     // Actualizar VOLTAJE
     grafVolt.data.labels = labels;
-    grafVolt.data.datasets[0].data =
-        ultimos.map(d => d.voltaje);
-    grafVolt.update('none');
-
+    grafVolt.data.datasets[0].data = ultimos.map(d => d.voltaje || 0);
+    grafVolt.update();
+    
     // Actualizar CORRIENTE
     grafAmp.data.labels = labels;
-    grafAmp.data.datasets[0].data =
-        ultimos.map(d => d.corriente);
-    grafAmp.update('none');
-
+    grafAmp.data.datasets[0].data = ultimos.map(d => d.corriente || 0);
+    grafAmp.update();
+    
     // Actualizar TEMPERATURA
     grafTemp.data.labels = labels;
-    grafTemp.data.datasets[0].data =
-        ultimos.map(d => d.temperatura);
-    grafTemp.update('none');
-
+    grafTemp.data.datasets[0].data = ultimos.map(d => d.temperatura || 0);
+    grafTemp.update();
+    
     // Actualizar VIBRACION
     grafVib.data.labels = labels;
-    grafVib.data.datasets[0].data =
-        ultimos.map(d => d.vibracion);
-    grafVib.update('none');
+    grafVib.data.datasets[0].data = ultimos.map(d => d.vibracion || 0);
+    grafVib.update();
 
-    // Auto-scroll al final en todas las gráficas
-    document.querySelectorAll(
-        ".chart-wrapper"
-    ).forEach(wrapper => {
-
-        wrapper.scrollLeft =
-            wrapper.scrollWidth;
-
+    // Auto-scroll al final
+    document.querySelectorAll(".chart-wrapper").forEach(wrapper => {
+        wrapper.scrollLeft = wrapper.scrollWidth;
     });
 
-    console.log("📊 Gráficas actualizadas - Puntos:", historico.length);
-
+    console.log("Gráficas actualizadas. Últimos valores:", 
+        "V:" + (ultimos[ultimos.length-1]?.voltaje || 0),
+        "A:" + (ultimos[ultimos.length-1]?.corriente || 0),
+        "°C:" + (ultimos[ultimos.length-1]?.temperatura || 0),
+        "mm/s:" + (ultimos[ultimos.length-1]?.vibracion || 0)
+    );
 }
 
 /* ================= LEER DATOS DESDE JSON ================= */
@@ -769,147 +660,161 @@ async function cargarDatos(){
 
     try{
 
+        console.log("Cargando datos desde datos.json...");
+
         const response = await fetch(
-
-            'datos.json?t='
-            + new Date().getTime(),
-
-            {
-                cache:'no-store'
-            }
-
+            'datos.json?t=' + new Date().getTime(),
+            { cache: 'no-store' }
         );
 
         if (!response.ok) {
-            throw new Error('Error al cargar datos.json');
+            throw new Error('Error al cargar datos.json: ' + response.status);
         }
 
-        const d =
-            await response.json();
+        const d = await response.json();
+        
+        console.log("Datos recibidos:", d);
 
-        const ahora =
-            new Date();
-
-        const fechaCompleta =
-
-            ahora.toLocaleDateString('es-PE')
-            + " " +
+        const ahora = new Date();
+        
+        // Formato de fecha completo
+        const fechaCompleta = 
+            ahora.toLocaleDateString('es-PE') + " " + 
             ahora.toLocaleTimeString('es-PE');
 
-        // Mapeo CORRECTO según tu index.html original:
-        // - voltaje_r: Voltaje Motor 1
-        // - corriente_r: Corriente Motor 1  
-        // - voltaje_s: Temperatura
-        // - voltaje_t: Vibración
+        // Crear nuevo punto de datos con los valores correctos
         const nuevo = {
-
             fechaCompleta: fechaCompleta,
-
-            voltaje: Number(d.voltaje_r) || 0,
-
-            corriente: Number(d.corriente_r) || 0,
-
-            temperatura: Number(d.voltaje_s) || 0,
-
-            vibracion: Number(d.voltaje_t) || 0
-
+            voltaje: parseFloat(d.voltaje_r) || 0,
+            corriente: parseFloat(d.corriente_r) || 0,
+            temperatura: parseFloat(d.voltaje_s) || 0,
+            vibracion: parseFloat(d.voltaje_t) || 0
         };
 
-        // Verificar si es un nuevo registro (evitar duplicados)
-        const ultimo =
-            historico[historico.length - 1];
+        console.log("Nuevo dato a guardar:", nuevo);
 
+        // Verificar duplicados (mismo minuto)
         let esDuplicado = false;
-        
-        if(ultimo) {
-            // Comparar si es el mismo segundo exacto
-            const diffTiempo = Math.abs(
-                new Date(ahora).getTime() - 
-                new Date(ultimo.fechaCompleta.split(' ').join('T')).getTime()
-            );
-            esDuplicado = diffTiempo < 1000; // Menos de 1 segundo
+        if(historico.length > 0) {
+            const ultimo = historico[historico.length - 1];
+            if(ultimo.fechaCompleta === fechaCompleta) {
+                esDuplicado = true;
+                console.log("Dato duplicado, no se guarda");
+            }
         }
 
         if(!esDuplicado){
-
             historico.push(nuevo);
-
-            // Limitar a 200 puntos máximo para rendimiento óptimo
+            
+            // Limitar a 200 puntos
             if(historico.length > 200){
-
-                historico =
-                    historico.slice(-200);
-
+                historico = historico.slice(-200);
             }
-
-            guardarHistorico(
-                historico
-            );
-
+            
+            guardarHistorico(historico);
             actualizarGraficas();
             
-            console.log("✅ Nuevo dato guardado:", nuevo.voltaje + "V,", nuevo.corriente + "A,", nuevo.temperatura + "°C,", nuevo.vibracion + "mm/s");
-
-        } else {
-            console.log("⏱ Dato duplicado, no se guardó");
+            console.log("✅ Dato guardado correctamente. Total puntos:", historico.length);
         }
 
-    }
-
-    catch(error){
-
+    } catch(error){
         console.error("❌ Error cargando datos:", error);
-
     }
+}
 
+/* ================= CARGA MANUAL PARA PRUEBA ================= */
+
+function cargarDatosManual() {
+    // Crear datos de ejemplo para probar las gráficas
+    const ahora = new Date();
+    const fechaCompleta = ahora.toLocaleDateString('es-PE') + " " + ahora.toLocaleTimeString('es-PE');
+    
+    const datosEjemplo = {
+        voltaje_r: 220 + Math.random() * 10,
+        corriente_r: 15 + Math.random() * 5,
+        voltaje_s: 45 + Math.random() * 10,
+        voltaje_t: 2 + Math.random() * 4
+    };
+    
+    const nuevo = {
+        fechaCompleta: fechaCompleta,
+        voltaje: parseFloat(datosEjemplo.voltaje_r),
+        corriente: parseFloat(datosEjemplo.corriente_r),
+        temperatura: parseFloat(datosEjemplo.voltaje_s),
+        vibracion: parseFloat(datosEjemplo.voltaje_t)
+    };
+    
+    historico.push(nuevo);
+    
+    if(historico.length > 200){
+        historico = historico.slice(-200);
+    }
+    
+    guardarHistorico(historico);
+    actualizarGraficas();
+    
+    console.log("📊 Dato de prueba agregado manualmente:", nuevo);
 }
 
 /* ================= LIMPIAR HISTORICO ================= */
 
 function limpiarHistorico(){
-
     if(confirm('⚠️ ¿Seguro que deseas borrar TODO el histórico de tendencias?\n\nEsta acción no se puede deshacer.')){
-        
         historico = [];
-
         guardarHistorico([]);
-
         actualizarGraficas();
-        
         console.log("🗑 Histórico limpiado");
     }
-
 }
 
 /* ================= INICIALIZAR ================= */
 
-// Cargar datos existentes del storage
-if(historico.length > 0){
-    actualizarGraficas();
+// Verificar si hay datos, si no, cargar algunos de ejemplo
+if(historico.length === 0){
+    console.log("No hay datos guardados. Creando datos de ejemplo...");
+    // Crear 5 datos de ejemplo
+    for(let i = 5; i >= 0; i--){
+        const fecha = new Date();
+        fecha.setMinutes(fecha.getMinutes() - i * 5);
+        const fechaStr = fecha.toLocaleDateString('es-PE') + " " + fecha.toLocaleTimeString('es-PE');
+        
+        historico.push({
+            fechaCompleta: fechaStr,
+            voltaje: 215 + Math.random() * 15,
+            corriente: 12 + Math.random() * 8,
+            temperatura: 40 + Math.random() * 15,
+            vibracion: 1 + Math.random() * 5
+        });
+    }
+    guardarHistorico(historico);
 }
 
-// Cargar datos actuales
+// Mostrar datos actuales en consola
+console.log("Histórico cargado:", historico.length, "puntos");
+console.log("Último dato:", historico[historico.length - 1]);
+
+// Inicializar gráficas
+actualizarGraficas();
+
+// Cargar datos reales
 cargarDatos();
 
-// Actualizar cada 30 segundos (coherente con index.html)
-setInterval(
-    cargarDatos,
-    30000
-);
+// Actualizar cada 30 segundos
+setInterval(cargarDatos, 30000);
 
-// Cerrar sidebar al hacer clic fuera (mejora UX)
+// Cerrar sidebar al hacer clic fuera
 document.addEventListener('click', function(event) {
     const sidebar = document.getElementById('sidebar');
     const hamburguesa = document.querySelector('.hamburguesa');
     
-    if(sidebar.classList.contains('activo')) {
+    if(sidebar && sidebar.classList.contains('activo')) {
         if(!sidebar.contains(event.target) && !hamburguesa.contains(event.target)) {
             sidebar.classList.remove('activo');
         }
     }
 });
 
-console.log("📊 Página de tendencias inicializada correctamente");
+console.log("📊 Página de tendencias inicializada");
 
 </script>
 
