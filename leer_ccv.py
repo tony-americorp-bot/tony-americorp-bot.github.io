@@ -30,12 +30,16 @@ INTERVALO = 60
 # =====================================================
 
 if not os.path.exists(ALARMAS_ACTIVAS):
-    with open(ALARMAS_ACTIVAS, "w") as f:
+    with open(ALARMAS_ACTIVAS, "w", encoding="utf-8") as f:
         json.dump([], f)
 
 if not os.path.exists(HISTORIAL_ALARMAS):
-    with open(HISTORIAL_ALARMAS, "w") as f:
+    with open(HISTORIAL_ALARMAS, "w", encoding="utf-8") as f:
         json.dump([], f)
+
+if not os.path.exists(TIMESTAMP_FILE):
+    with open(TIMESTAMP_FILE, "w") as f:
+        f.write("2000-01-01 00:00:00")
 
 # =====================================================
 # FUNCIONES
@@ -75,6 +79,67 @@ def segundos_a_texto(segundos):
     seg = int(segundos % 60)
 
     return f"{horas:02}:{minutos:02}:{seg:02}"
+
+# =====================================================
+
+def ejecutar_git():
+
+    try:
+
+        print("GIT ADD...")
+
+        subprocess.run(
+            ["git", "add", "."],
+            cwd=REPO_DIR,
+            check=True
+        )
+
+        print("GIT COMMIT...")
+
+        subprocess.run(
+            [
+                "git",
+                "commit",
+                "-m",
+                f"update {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            ],
+            cwd=REPO_DIR,
+            check=False
+        )
+
+        print("GIT PULL REBASE...")
+
+        subprocess.run(
+            [
+                "git",
+                "pull",
+                "origin",
+                "main",
+                "--rebase"
+            ],
+            cwd=REPO_DIR,
+            check=True
+        )
+
+        print("GIT PUSH...")
+
+        subprocess.run(
+            [
+                "git",
+                "push",
+                "origin",
+                "main"
+            ],
+            cwd=REPO_DIR,
+            check=True
+        )
+
+        print("PUSH OK")
+
+    except Exception as e:
+
+        print("ERROR GIT:")
+        print(e)
 
 # =====================================================
 # LOOP PRINCIPAL
@@ -142,34 +207,31 @@ while True:
 
             fecha_csv = fila["timestamp"]
 
-
-
-
-
-            # =========================
-            # SIMULACION DINAMICA /////////////////////////////////////////////////////////////////////////////
-            # =========================
+            # =================================================
+            # SIMULACION DINAMICA
+            # =================================================
 
             voltaje_r = float(fila["voltaje_r"])
             voltaje_s = float(fila["voltaje_s"])
             voltaje_t = float(fila["voltaje_t"])
+
             corriente_r = float(fila["corriente_r"])
             corriente_s = float(fila["corriente_s"])
             corriente_t = float(fila["corriente_t"])
+
             segundo = time.time()
-            voltaje_r = voltaje_r + math.sin(segundo / 20) * 4
-            voltaje_s = voltaje_s + math.cos(segundo / 25) * 3
-            voltaje_t = voltaje_t + math.sin(segundo / 30) * 2
-            corriente_r = corriente_r + math.cos(segundo / 18) * 5
-            corriente_s = corriente_s + math.sin(segundo / 22) * 4
-            corriente_t = corriente_t + math.cos(segundo / 28) * 3
 
+            voltaje_r += math.sin(segundo / 20) * 4
+            voltaje_s += math.cos(segundo / 25) * 3
+            voltaje_t += math.sin(segundo / 30) * 2
 
+            corriente_r += math.cos(segundo / 18) * 5
+            corriente_s += math.sin(segundo / 22) * 4
+            corriente_t += math.cos(segundo / 28) * 3
 
-
-            # =============================================
+            # =================================================
             # DATOS TIEMPO REAL
-            # =============================================
+            # =================================================
 
             datos = {
 
@@ -186,85 +248,74 @@ while True:
                 "actualizado": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             }
-            #datos = {
-
-             #   "fecha_hora": str(fecha_csv),
-
-             #   "voltaje_r": round(float(fila["voltaje_r"]), 2),
-             #   "voltaje_s": round(float(fila["voltaje_s"]), 2),
-              #  "voltaje_t": round(float(fila["voltaje_t"]), 2),
-
-               # "corriente_r": round(float(fila["corriente_r"]), 2),
-                #"corriente_s": round(float(fila["corriente_s"]), 2),
-                #"corriente_t": round(float(fila["corriente_t"]), 2),
-
-                #"actualizado": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            #}
-
-            # =============================================
-            # GUARDAR DATOS.JSON
-            # =============================================
 
             guardar_json(JSON_FILE, datos)
 
             print("DATOS.JSON ACTUALIZADO")
 
-            # =============================================
+            # =================================================
             # CARGAR ALARMAS
-            # =============================================
+            # =================================================
 
             activas = cargar_json(ALARMAS_ACTIVAS)
 
             historial = cargar_json(HISTORIAL_ALARMAS)
 
-            # =============================================
+            # =================================================
             # DEFINIR ALARMAS
-            # =============================================
+            # =================================================
 
             condiciones = [
 
                 {
                     "tag": "MT-001",
+                    "equipo": "MOTOR PRINCIPAL",
                     "mensaje": "VOLTAJE ALTO",
-                    "valor": datos["voltaje_r"],
+                    "valor": round(datos["voltaje_r"], 2),
                     "unidad": "V",
+                    "condicion_texto": "Voltaje > 223.80 V",
                     "condicion": datos["voltaje_r"] > 223.80,
                     "severity": "WARNING"
                 },
 
                 {
                     "tag": "MT-002",
+                    "equipo": "MOTOR PRINCIPAL",
                     "mensaje": "CORRIENTE ALTA",
-                    "valor": datos["corriente_r"],
+                    "valor": round(datos["corriente_r"], 2),
                     "unidad": "A",
+                    "condicion_texto": "Corriente > 106.10 A",
                     "condicion": datos["corriente_r"] > 106.10,
                     "severity": "ALARM"
                 },
 
                 {
                     "tag": "VC-001",
+                    "equipo": "VENTILADOR COLECTOR",
                     "mensaje": "VIBRACION ALTA",
-                    "valor": datos["voltaje_t"],
+                    "valor": round(datos["voltaje_t"], 2),
                     "unidad": "mm/s",
+                    "condicion_texto": "Vibración > 3 mm/s",
                     "condicion": datos["voltaje_t"] > 3,
                     "severity": "WARNING"
                 },
 
                 {
                     "tag": "VFD-001",
+                    "equipo": "VARIADOR VFD",
                     "mensaje": "TEMPERATURA ALTA",
-                    "valor": datos["voltaje_s"],
+                    "valor": round(datos["voltaje_s"], 2),
                     "unidad": "°C",
+                    "condicion_texto": "Temperatura > 70 °C",
                     "condicion": datos["voltaje_s"] > 70,
                     "severity": "TRIP"
                 }
 
             ]
 
-            # =============================================
+            # =================================================
             # PROCESAR ALARMAS
-            # =============================================
+            # =================================================
 
             for c in condiciones:
 
@@ -272,7 +323,6 @@ while True:
 
                     (
                         a for a in activas
-
                         if a["tag"] == c["tag"]
                         and a["mensaje"] == c["mensaje"]
                     ),
@@ -281,15 +331,15 @@ while True:
 
                 )
 
-                # =========================================
-                # SI CONDICION ACTIVA
-                # =========================================
+                # =================================================
+                # SI LA CONDICION ESTA ACTIVA
+                # =================================================
 
                 if c["condicion"]:
 
-                    # =====================================
-                    # CREAR NUEVA
-                    # =====================================
+                    # =================================================
+                    # CREAR NUEVA ALARMA
+                    # =================================================
 
                     if alarma_existente is None:
 
@@ -299,15 +349,23 @@ while True:
 
                             "tag": c["tag"],
 
+                            "equipo": c["equipo"],
+
                             "mensaje": c["mensaje"],
 
                             "valor": f'{c["valor"]} {c["unidad"]}',
 
+                            "valor_numero": c["valor"],
+
+                            "unidad": c["unidad"],
+
+                            "condicion": c["condicion_texto"],
+
                             "inicio": str(fecha_csv),
 
-                            "duracion": "00:00:00",
+                            "fin": "",
 
-                            "reviewed": False,
+                            "duracion": "00:00:00",
 
                             "severity": c["severity"],
 
@@ -321,9 +379,9 @@ while True:
 
                         print(f'ALARMA NUEVA: {c["mensaje"]}')
 
-                    # =====================================
-                    # ACTUALIZAR DURACION
-                    # =====================================
+                    # =================================================
+                    # ACTUALIZAR ALARMA EXISTENTE
+                    # =================================================
 
                     else:
 
@@ -339,9 +397,7 @@ while True:
 
                         alarma_existente["valor"] = f'{c["valor"]} {c["unidad"]}'
 
-                        # =================================
-                        # ACTUALIZAR HISTORIAL
-                        # =================================
+                        alarma_existente["valor_numero"] = c["valor"]
 
                         for h in historial:
 
@@ -351,9 +407,11 @@ while True:
 
                                 h["valor"] = alarma_existente["valor"]
 
-                # =========================================
-                # SI CONDICION DESAPARECE
-                # =========================================
+                                h["valor_numero"] = c["valor"]
+
+                # =================================================
+                # SI LA CONDICION DESAPARECE
+                # =================================================
 
                 else:
 
@@ -373,10 +431,6 @@ while True:
 
                         alarma_existente["duracion"] = segundos_a_texto(segundos)
 
-                        # =================================
-                        # ACTUALIZAR HISTORIAL
-                        # =================================
-
                         for h in historial:
 
                             if h["id"] == alarma_existente["id"]:
@@ -387,29 +441,30 @@ while True:
 
                                 h["duracion"] = alarma_existente["duracion"]
 
-                        # =================================
-                        # ELIMINAR DE ACTIVAS
-                        # =================================
-
                         activas = [
 
                             a for a in activas
-
                             if a["id"] != alarma_existente["id"]
 
                         ]
 
                         print(f'ALARMA RESUELTA: {c["mensaje"]}')
 
-            # =============================================
-            # MAXIMO 50 ACTIVAS
-            # =============================================
+            # =================================================
+            # MAXIMO ACTIVAS
+            # =================================================
 
-            activas = activas[-50:]
+            activas = activas[-200:]
 
-            # =============================================
+            # =================================================
+            # MAXIMO HISTORIAL
+            # =================================================
+
+            historial = historial[-5000:]
+
+            # =================================================
             # GUARDAR JSONS
-            # =============================================
+            # =================================================
 
             guardar_json(ALARMAS_ACTIVAS, activas)
 
@@ -417,58 +472,19 @@ while True:
 
             print("ALARMAS ACTUALIZADAS")
 
-            # =============================================
+            # =================================================
             # GUARDAR TIMESTAMP
-            # =============================================
+            # =================================================
 
             with open(TIMESTAMP_FILE, "w") as f:
 
                 f.write(str(fecha_csv))
 
-            # =============================================
-            # GIT ADD
-            # =============================================
+            # =================================================
+            # SUBIR A GITHUB
+            # =================================================
 
-            subprocess.run(
-                [
-                    "git",
-                    "add",
-                    "datos.json",
-                    "alarmas_activas.json",
-                    "historial_alarmas.json"
-                ],
-                cwd=REPO_DIR
-            )
-
-            # =============================================
-            # COMMIT
-            # =============================================
-
-            subprocess.run(
-                [
-                    "git",
-                    "commit",
-                    "-m",
-                    f"update {datetime.now()}"
-                ],
-                cwd=REPO_DIR
-            )
-
-            # =============================================
-            # PUSH
-            # =============================================
-
-            subprocess.run(
-                [
-                    "git",
-                    "push",
-                    "origin",
-                    "main"
-                ],
-                cwd=REPO_DIR
-            )
-
-            print("PUSH OK")
+            ejecutar_git()
 
         else:
 

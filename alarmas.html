@@ -31,6 +31,8 @@ body{
     height:100vh;
 }
 
+/* ================= TOPBAR ================= */
+
 .topbar{
     height:75px;
     background:#09234d;
@@ -39,6 +41,7 @@ body{
     justify-content:space-between;
     padding:0 25px;
     color:white;
+    z-index:1000;
 }
 
 .logo-area{
@@ -71,6 +74,8 @@ body{
     font-weight:bold;
 }
 
+/* ================= SIDEBAR ================= */
+
 .sidebar{
     position:absolute;
     top:75px;
@@ -81,6 +86,7 @@ body{
     transform:translateX(-100%);
     transition:0.3s;
     z-index:999;
+    border-right:2px solid #1d4ed8;
 }
 
 .sidebar.activo{
@@ -110,11 +116,15 @@ body{
     width:180px;
 }
 
+/* ================= MAIN ================= */
+
 .main-content{
     flex:1;
     padding:20px;
     overflow:auto;
 }
+
+/* ================= CONTADORES ================= */
 
 .counters-panel{
     display:flex;
@@ -129,7 +139,7 @@ body{
     border:2px solid #b0b0b0;
     padding:20px;
     flex:1;
-    min-width:150px;
+    min-width:180px;
     text-align:center;
 }
 
@@ -143,17 +153,19 @@ body{
     font-size:14px;
 }
 
-.unreviewed .counter-number{
+.alarmas-color .counter-number{
     color:#d50000;
 }
 
-.reviewed .counter-number{
+.activas-color .counter-number{
     color:#00c853;
 }
 
-.total .counter-number{
+.total-color .counter-number{
     color:#09234d;
 }
+
+/* ================= TOOLBAR ================= */
 
 .toolbar{
     background:white;
@@ -182,11 +194,16 @@ body{
     color:white;
 }
 
-.btn-success{ background:#00c853; }
 .btn-primary{ background:#1d4ed8; }
-.btn-warning{ background:#ff9800; }
+.btn-success{ background:#00c853; }
 .btn-danger{ background:#d50000; }
 .btn-secondary{ background:#6c757d; }
+
+.btn:hover{
+    opacity:0.9;
+}
+
+/* ================= FILTROS ================= */
 
 .filters-bar{
     background:white;
@@ -195,28 +212,33 @@ body{
     padding:15px;
     margin-bottom:20px;
     display:flex;
-    gap:10px;
     flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
 }
 
 .filter-input,
 .filter-select{
-    padding:8px;
+    padding:10px;
     border-radius:6px;
     border:1px solid #ccc;
+    min-width:170px;
 }
+
+/* ================= TABLA ================= */
 
 .table-wrapper{
     background:white;
     border-radius:12px;
     border:2px solid #b0b0b0;
     overflow:auto;
-    max-height:60vh;
+    max-height:78vh;
 }
 
 .alarms-table{
     width:100%;
     border-collapse:collapse;
+    min-width:1800px;
 }
 
 .alarms-table th{
@@ -225,6 +247,8 @@ body{
     padding:12px;
     position:sticky;
     top:0;
+    z-index:10;
+    font-size:13px;
 }
 
 .alarms-table td{
@@ -233,11 +257,15 @@ body{
     font-size:13px;
 }
 
-.unreviewed-row{
+tbody tr{
+    height:42px;
+}
+
+.activa-row{
     background:#ffebee;
 }
 
-.reviewed-row{
+.finalizada-row{
     background:#f5f5f5;
 }
 
@@ -263,49 +291,27 @@ body{
     color:black;
 }
 
-.status-badge{
-    padding:5px 10px;
-    border-radius:20px;
-    font-size:11px;
+.estado-activa{
+    color:#00c853;
     font-weight:bold;
 }
 
-.status-reviewed{
-    background:#00c853;
-    color:white;
+.estado-finalizada{
+    color:#d50000;
+    font-weight:bold;
 }
 
-.status-unreviewed{
-    background:#d50000;
-    color:white;
-}
+/* ================= RESPONSIVE ================= */
 
-.modal{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.5);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
+@media(max-width:1200px){
 
-.modal-content{
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    width:400px;
-    text-align:center;
-}
+    .topbar{
+        flex-direction:column;
+        height:auto;
+        padding:10px;
+        gap:10px;
+    }
 
-.modal-buttons{
-    margin-top:20px;
-    display:flex;
-    justify-content:center;
-    gap:10px;
 }
 
 </style>
@@ -316,6 +322,8 @@ body{
 
 <div class="container">
 
+<!-- ================= TOPBAR ================= -->
+
 <div class="topbar">
 
     <div class="logo-area">
@@ -323,7 +331,9 @@ body{
         <div class="logo">AMERICORP</div>
     </div>
 
-    <div>PROYECTO: COLECTOR DE POLVO | HISTORIAL DE ALARMAS</div>
+    <div>
+        PROYECTO: COLECTOR DE POLVO | HISTORIAL DE ALARMAS
+    </div>
 
     <div style="display:flex; gap:15px; align-items:center;">
         <div class="fecha-hora" id="fechaHora"></div>
@@ -332,12 +342,33 @@ body{
 
 </div>
 
+<!-- ================= SIDEBAR ================= -->
+
 <div class="sidebar" id="sidebar">
 
     <div class="menu">
-        <div class="menu-item" onclick="window.location.href='index.html'">📊 Dashboard</div>
-        <div class="menu-item" style="background:#12356d;">🚨 Alarmas</div>
-        <div class="menu-item" onclick="window.location.href='tendencias.html'">📈 Tendencias</div>
+
+        <div class="menu-item"
+             onclick="window.location.href='index.html'">
+
+            📊 Dashboard
+
+        </div>
+
+        <div class="menu-item"
+             style="background:#12356d;">
+
+            🚨 Alarmas
+
+        </div>
+
+        <div class="menu-item"
+             onclick="window.location.href='tendencias.html'">
+
+            📈 Tendencias
+
+        </div>
+
     </div>
 
     <div class="sidebar-imagen">
@@ -346,78 +377,151 @@ body{
 
 </div>
 
+<!-- ================= MAIN ================= -->
+
 <div class="main-content">
+
+<!-- ================= CONTADORES ================= -->
 
 <div class="counters-panel">
 
-    <div class="counter-card unreviewed">
-        <div class="counter-number" id="unreviewedCount">0</div>
-        <div class="counter-label">⚠️ NO REVISADAS</div>
+    <div class="counter-card alarmas-color">
+
+        <div class="counter-number" id="alarmCount">0</div>
+
+        <div class="counter-label">
+            ⚠️ ALARMAS
+        </div>
+
     </div>
 
-    <div class="counter-card reviewed">
-        <div class="counter-number" id="reviewedCount">0</div>
-        <div class="counter-label">✅ REVISADAS</div>
+    <div class="counter-card activas-color">
+
+        <div class="counter-number" id="activeCount">0</div>
+
+        <div class="counter-label">
+            🟢 ACTIVAS
+        </div>
+
     </div>
 
-    <div class="counter-card total">
+    <div class="counter-card total-color">
+
         <div class="counter-number" id="totalCount">0</div>
-        <div class="counter-label">📋 TOTAL</div>
+
+        <div class="counter-label">
+            📋 TOTAL HISTÓRICO
+        </div>
+
     </div>
 
 </div>
+
+<!-- ================= TOOLBAR ================= -->
 
 <div class="toolbar">
 
-<div class="btn-group">
-    <button class="btn btn-success" id="reviewSelectedBtn">✅ REVISAR SELECCIONADAS</button>
-    <button class="btn btn-primary" id="reviewAllBtn">🔄 REVISAR TODAS</button>
-    <button class="btn btn-warning" id="clearReviewedBtn">🗑️ BORRAR REVISADAS</button>
-    <button class="btn btn-danger" id="clearAllBtn">🗑️🗑️ BORRAR TODAS</button>
+    <div class="btn-group">
+
+        <button class="btn btn-primary"
+                onclick="exportarPDF()">
+
+            📄 EXPORTAR PDF
+
+        </button>
+
+        <button class="btn btn-success"
+                onclick="exportarCSV()">
+
+            📥 EXPORTAR CSV
+
+        </button>
+
+    </div>
+
 </div>
 
-<div class="btn-group">
-    <button class="btn btn-secondary" id="exportPdfBtn">📄 EXPORTAR PDF</button>
-</div>
-
-</div>
+<!-- ================= FILTROS ================= -->
 
 <div class="filters-bar">
 
-<input type="text" id="filterTag" class="filter-input" placeholder="TAG">
-<input type="text" id="filterMessage" class="filter-input" placeholder="MENSAJE">
+    <input type="text"
+           id="filterTag"
+           class="filter-input"
+           placeholder="FILTRAR TAG">
 
-<select id="filterSeverity" class="filter-select">
-    <option value="">SEVERIDAD</option>
-    <option value="trip">TRIP</option>
-    <option value="alarm">ALARMA</option>
-    <option value="warning">WARNING</option>
-</select>
+    <input type="text"
+           id="filterMensaje"
+           class="filter-input"
+           placeholder="FILTRAR MENSAJE">
 
-<select id="filterStatus" class="filter-select">
-    <option value="">ESTADO</option>
-    <option value="reviewed">REVISADAS</option>
-    <option value="unreviewed">NO REVISADAS</option>
-</select>
+    <select id="filterSeverity"
+            class="filter-select">
 
-<button class="btn btn-primary" id="applyFiltersBtn">APLICAR</button>
-<button class="btn btn-secondary" id="resetFiltersBtn">RESET</button>
+        <option value="">SEVERIDAD</option>
+
+        <option value="trip">TRIP</option>
+
+        <option value="alarm">ALARMA</option>
+
+        <option value="warning">WARNING</option>
+
+    </select>
+
+    <input type="date"
+           id="fechaInicio"
+           class="filter-input">
+
+    <input type="date"
+           id="fechaFin"
+           class="filter-input">
+
+    <button class="btn btn-primary"
+            onclick="renderizarTabla()">
+
+        APLICAR
+
+    </button>
+
+    <button class="btn btn-secondary"
+            onclick="resetFiltros()">
+
+        RESET
+
+    </button>
 
 </div>
 
-<div class="table-wrapper">
+<!-- ================= TABLA ================= -->
+
+<div class="table-wrapper" id="tablaExportar">
 
 <table class="alarms-table">
 
 <thead>
 
 <tr>
-<th><input type="checkbox" id="selectAllCheckbox"></th>
-<th>FECHA</th>
+
+<th>FECHA-HORA</th>
+
 <th>TAG</th>
+
+<th>NOMBRE ALARMA</th>
+
 <th>SEVERIDAD</th>
-<th>MENSAJE</th>
+
+<th>VALOR</th>
+
+<th>TIEMPO INICIO</th>
+
+<th>TIEMPO FIN</th>
+
+<th>DURACIÓN</th>
+
 <th>ESTADO</th>
+
+<th>MENSAJE</th>
+
 </tr>
 
 </thead>
@@ -432,43 +536,42 @@ body{
 
 </div>
 
-<div id="confirmModal" class="modal">
-
-<div class="modal-content">
-
-<h3 id="modalMessage">¿Está seguro?</h3>
-
-<div class="modal-buttons">
-    <button class="btn btn-primary" id="modalConfirmBtn">CONFIRMAR</button>
-    <button class="btn btn-secondary" id="modalCancelBtn">CANCELAR</button>
-</div>
-
-</div>
-
-</div>
-
 <script>
 
 let alarmsArray = [];
 
+/* ================= MENU ================= */
+
 function toggleMenu(){
-    document.getElementById("sidebar").classList.toggle("activo");
+
+    document
+    .getElementById("sidebar")
+    .classList.toggle("activo");
+
 }
+
+/* ================= FECHA ================= */
 
 function actualizarFechaHora(){
 
     const ahora = new Date();
 
     document.getElementById("fechaHora").innerHTML =
-        ahora.toLocaleTimeString() + " | " +
-        ahora.toLocaleDateString();
+        ahora.toLocaleTimeString("es-PE",{
+            hour12:false
+        }) +
+        " | " +
+        ahora.toLocaleDateString("es-PE");
 
 }
 
 setInterval(actualizarFechaHora,1000);
+
 actualizarFechaHora();
 
-async function cargarAlarmasDesdeStorage(){
+/* ================= CARGAR JSON ================= */
+
+async function cargarAlarmas(){
 
     try{
 
@@ -480,18 +583,25 @@ async function cargarAlarmasDesdeStorage(){
 
         alarmsArray = data.map(a => ({
 
-            id:a.id,
-            tag:a.tag,
+            fechaHora: a.inicio || "",
 
-            timestamp:new Date(a.inicio),
+            tag: a.tag || "",
 
-            message:a.mensaje,
+            nombre: a.mensaje || "",
 
-            severity:a.severity.toLowerCase(),
+            severity: (a.severity || "warning").toLowerCase(),
 
-            reviewed:a.reviewed,
+            valor: a.valor || "",
 
-            activa:a.activa
+            inicio: a.inicio || "",
+
+            fin: a.fin || "-",
+
+            duracion: a.duracion || "",
+
+            activa: a.activa,
+
+            mensaje: a.mensaje || ""
 
         }));
 
@@ -499,135 +609,179 @@ async function cargarAlarmasDesdeStorage(){
 
     }catch(error){
 
-        console.error(error);
-
-        alarmsArray=[];
-
-        renderizarTabla();
+        console.error("ERROR CARGANDO ALARMAS:", error);
 
     }
 
 }
 
-function formatearFecha(date){
-
-    return `${date.toLocaleDateString('es-PE')}
-    ${date.toLocaleTimeString('es-PE',{hour12:false})}`;
-
-}
+/* ================= FILTRAR ================= */
 
 function getAlarmasFiltradas(){
 
     const filterTag =
-        document.getElementById("filterTag").value.toLowerCase();
+        document.getElementById("filterTag")
+        .value.toLowerCase();
 
-    const filterMessage =
-        document.getElementById("filterMessage").value.toLowerCase();
+    const filterMensaje =
+        document.getElementById("filterMensaje")
+        .value.toLowerCase();
 
     const filterSeverity =
-        document.getElementById("filterSeverity").value;
+        document.getElementById("filterSeverity")
+        .value;
 
-    const filterStatus =
-        document.getElementById("filterStatus").value;
+    const fechaInicio =
+        document.getElementById("fechaInicio")
+        .value;
+
+    const fechaFin =
+        document.getElementById("fechaFin")
+        .value;
 
     let filtered = [...alarmsArray];
 
     if(filterTag){
+
         filtered = filtered.filter(a =>
             a.tag.toLowerCase().includes(filterTag)
         );
+
     }
 
-    if(filterMessage){
+    if(filterMensaje){
+
         filtered = filtered.filter(a =>
-            a.message.toLowerCase().includes(filterMessage)
+            a.mensaje.toLowerCase().includes(filterMensaje)
         );
+
     }
 
     if(filterSeverity){
+
         filtered = filtered.filter(a =>
             a.severity === filterSeverity
         );
+
     }
 
-    if(filterStatus === "reviewed"){
-        filtered = filtered.filter(a => a.reviewed);
+    if(fechaInicio){
+
+        filtered = filtered.filter(a => {
+
+            const fecha =
+                new Date(a.inicio);
+
+            return fecha >= new Date(fechaInicio);
+
+        });
+
     }
 
-    if(filterStatus === "unreviewed"){
-        filtered = filtered.filter(a => !a.reviewed);
+    if(fechaFin){
+
+        filtered = filtered.filter(a => {
+
+            const fecha =
+                new Date(a.inicio);
+
+            return fecha <=
+                new Date(fechaFin + "T23:59:59");
+
+        });
+
     }
 
-    filtered.sort((a,b)=>b.timestamp-a.timestamp);
+    filtered.sort((a,b)=>
+        new Date(b.inicio) - new Date(a.inicio)
+    );
 
     return filtered;
 
 }
+
+/* ================= TABLA ================= */
 
 function renderizarTabla(){
 
     const tbody =
         document.getElementById("alarmsTableBody");
 
-    tbody.innerHTML="";
+    tbody.innerHTML = "";
 
-    const filtered = getAlarmasFiltradas();
+    const filtered =
+        getAlarmasFiltradas();
 
-    document.getElementById("unreviewedCount").innerText =
-        alarmsArray.filter(a=>!a.reviewed).length;
+    document.getElementById("alarmCount")
+    .innerText =
+        alarmsArray.filter(a =>
+            a.severity === "alarm"
+        ).length;
 
-    document.getElementById("reviewedCount").innerText =
-        alarmsArray.filter(a=>a.reviewed).length;
+    document.getElementById("activeCount")
+    .innerText =
+        alarmsArray.filter(a =>
+            a.activa
+        ).length;
 
-    document.getElementById("totalCount").innerText =
+    document.getElementById("totalCount")
+    .innerText =
         alarmsArray.length;
 
-    if(filtered.length===0){
+    if(filtered.length === 0){
 
-        tbody.innerHTML=`
+        tbody.innerHTML = `
         <tr>
-            <td colspan="6" style="text-align:center;padding:40px;">
+            <td colspan="10"
+                style="
+                    text-align:center;
+                    padding:40px;
+                ">
+
                 📭 NO HAY ALARMAS
+
             </td>
         </tr>
         `;
 
         return;
+
     }
 
-    filtered.forEach(alarm=>{
+    filtered.forEach(alarm => {
 
         const row = tbody.insertRow();
 
         row.className =
-            alarm.reviewed ?
-            "reviewed-row" :
-            "unreviewed-row";
+            alarm.activa
+            ? "activa-row"
+            : "finalizada-row";
 
-        let severityText="";
+        let severityText = "";
 
-        if(alarm.severity==="trip"){
-            severityText="🚨 TRIP";
+        if(alarm.severity === "trip"){
+
+            severityText = "🚨 TRIP";
+
         }
-        else if(alarm.severity==="alarm"){
-            severityText="⚠️ ALARMA";
+        else if(alarm.severity === "alarm"){
+
+            severityText = "⚠️ ALARMA";
+
         }
         else{
-            severityText="⚡ WARNING";
+
+            severityText = "⚡ WARNING";
+
         }
 
         row.innerHTML = `
 
-        <td>
-            <input
-                type="checkbox"
-                class="alarm-checkbox"
-                data-id="${alarm.id}">
-        </td>
-
-        <td>${formatearFecha(alarm.timestamp)}</td>
+        <td>${formatearFecha(alarm.fechaHora)}</td>
 
         <td>${alarm.tag}</td>
+
+        <td>${alarm.nombre}</td>
 
         <td>
             <span class="severity-badge ${alarm.severity}">
@@ -635,21 +789,31 @@ function renderizarTabla(){
             </span>
         </td>
 
-        <td>${alarm.message}</td>
+        <td>${alarm.valor}</td>
+
+        <td>${formatearFecha(alarm.inicio)}</td>
 
         <td>
-            <span class="status-badge ${
-                alarm.reviewed ?
-                'status-reviewed' :
-                'status-unreviewed'
-            }">
-                ${
-                    alarm.reviewed ?
-                    'REVISADA' :
-                    'NO REVISADA'
-                }
-            </span>
+            ${
+                alarm.fin === "-"
+                ? "-"
+                : formatearFecha(alarm.fin)
+            }
         </td>
+
+        <td>${alarm.duracion}</td>
+
+        <td>
+            ${
+                alarm.activa
+                ?
+                '<span class="estado-activa">ACTIVA</span>'
+                :
+                '<span class="estado-finalizada">FINALIZADA</span>'
+            }
+        </td>
+
+        <td>${alarm.mensaje}</td>
 
         `;
 
@@ -657,116 +821,135 @@ function renderizarTabla(){
 
 }
 
-function guardarAlarmas(){
+/* ================= FORMATO FECHA ================= */
 
-    console.log("Cambios locales");
+function formatearFecha(fecha){
+
+    if(!fecha || fecha === "-"){
+        return "-";
+    }
+
+    const d = new Date(fecha);
+
+    return d.toLocaleDateString("es-PE") +
+    " " +
+    d.toLocaleTimeString("es-PE",{
+        hour12:false
+    });
 
 }
 
-function reviewSelected(){
+/* ================= RESET ================= */
 
-    const checkboxes =
-        document.querySelectorAll(
-            ".alarm-checkbox:checked"
-        );
+function resetFiltros(){
 
-    checkboxes.forEach(cb=>{
+    document.getElementById("filterTag").value = "";
 
-        const id = cb.dataset.id;
+    document.getElementById("filterMensaje").value = "";
 
-        const alarm =
-            alarmsArray.find(a=>a.id===id);
+    document.getElementById("filterSeverity").value = "";
 
-        if(alarm){
-            alarm.reviewed=true;
+    document.getElementById("fechaInicio").value = "";
+
+    document.getElementById("fechaFin").value = "";
+
+    renderizarTabla();
+
+}
+
+/* ================= PDF ================= */
+
+function exportarPDF(){
+
+    const elemento =
+        document.getElementById("tablaExportar");
+
+    const opciones = {
+
+        margin:0.3,
+
+        filename:"historial_alarmas.pdf",
+
+        image:{
+            type:"jpeg",
+            quality:1
+        },
+
+        html2canvas:{
+            scale:2,
+            scrollX:0,
+            scrollY:0
+        },
+
+        jsPDF:{
+            unit:"in",
+            format:"a3",
+            orientation:"landscape"
+        },
+
+        pagebreak:{
+            mode:['avoid-all','css','legacy']
         }
 
+    };
+
+    html2pdf()
+        .set(opciones)
+        .from(elemento)
+        .save();
+
+}
+
+/* ================= CSV ================= */
+
+function exportarCSV(){
+
+    const filtered =
+        getAlarmasFiltradas();
+
+    let csv =
+`FECHA_HORA,TAG,NOMBRE_ALARMA,SEVERIDAD,VALOR,TIEMPO_INICIO,TIEMPO_FIN,DURACION,ESTADO,MENSAJE\n`;
+
+    filtered.forEach(a => {
+
+        csv += `"${a.fechaHora}","${a.tag}","${a.nombre}","${a.severity}","${a.valor}","${a.inicio}","${a.fin}","${a.duracion}","${a.activa ? 'ACTIVA':'FINALIZADA'}","${a.mensaje}"\n`;
+
     });
 
-    renderizarTabla();
+    const blob =
+        new Blob(
+            ["\ufeff" + csv],
+            {
+                type:"text/csv;charset=utf-8;"
+            }
+        );
+
+    const url =
+        window.URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "historial_alarmas.csv";
+
+    a.click();
 
 }
 
-function reviewAll(){
+/* ================= AUTO UPDATE ================= */
 
-    alarmsArray.forEach(a=>{
-        a.reviewed=true;
-    });
-
-    renderizarTabla();
-
-}
-
-function clearReviewed(){
-
-    alarmsArray =
-        alarmsArray.filter(a=>!a.reviewed);
-
-    renderizarTabla();
-
-}
-
-function clearAll(){
-
-    alarmsArray=[];
-
-    renderizarTabla();
-
-}
-
-function exportToPDF(){
-
-    html2pdf(document.body);
-
-}
-
-document.getElementById("reviewSelectedBtn")
-.addEventListener("click",reviewSelected);
-
-document.getElementById("reviewAllBtn")
-.addEventListener("click",reviewAll);
-
-document.getElementById("clearReviewedBtn")
-.addEventListener("click",clearReviewed);
-
-document.getElementById("clearAllBtn")
-.addEventListener("click",clearAll);
-
-document.getElementById("exportPdfBtn")
-.addEventListener("click",exportToPDF);
-
-document.getElementById("applyFiltersBtn")
-.addEventListener("click",renderizarTabla);
-
-document.getElementById("resetFiltersBtn")
-.addEventListener("click",()=>{
-
-    document.getElementById("filterTag").value="";
-    document.getElementById("filterMessage").value="";
-    document.getElementById("filterSeverity").value="";
-    document.getElementById("filterStatus").value="";
-
-    renderizarTabla();
-
-});
-
-document.getElementById("selectAllCheckbox")
-.addEventListener("change",(e)=>{
-
-    document.querySelectorAll(".alarm-checkbox")
-    .forEach(cb=>{
-        cb.checked=e.target.checked;
-    });
-
-});
-
-cargarAlarmasDesdeStorage();
+cargarAlarmas();
 
 setInterval(
-    cargarAlarmasDesdeStorage,
-    5000
+    cargarAlarmas,
+    10000
 );
 
 </script>
 
 </body>
+
+</html>
