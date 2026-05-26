@@ -15,25 +15,25 @@
         "id": "e32f45b7-a712-4fe0-9928-5cc9a10b1c34",
         "tag": "VC-001",
         "mensaje": "VIBRACION ALTA",
-        "valor": "222.11 mm/s",
+        "valor": "225.57 mm/s",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "21:28:01",
+        "duracion": "21:29:01",
         "reviewed": false,
         "severity": "WARNING",
         "activa": true,
-        "valor_numero": 222.11
+        "valor_numero": 225.57
     },
     {
         "id": "a34f208d-f8cf-4891-b50e-233ba4fa2931",
         "tag": "VFD-001",
         "mensaje": "TEMPERATURA ALTA",
-        "valor": "226.8 °C",
+        "valor": "221.21 °C",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "21:28:01",
+        "duracion": "21:29:01",
         "reviewed": false,
         "severity": "TRIP",
         "activa": true,
-        "valor_numero": 226.8
+        "valor_numero": 221.21
     },
     {
         "id": "a782f43f-6365-4169-9fd9-29407cc72c00",
@@ -2137,5 +2137,20 @@
         "duracion": "00:01:00",
         "severity": "ALARM",
         "activa": false
+    },
+    {
+        "id": "a7a84dde-ad2b-4040-ba4c-e3b043f3ca9a",
+        "tag": "MT-001",
+        "equipo": "MOTOR PRINCIPAL",
+        "mensaje": "VOLTAJE ALTO",
+        "valor": "227.61 V",
+        "valor_numero": 227.61,
+        "unidad": "V",
+        "condicion": "Voltaje > 223.80 V",
+        "inicio": "2026-05-26 03:40:16",
+        "fin": "",
+        "duracion": "00:00:00",
+        "severity": "WARNING",
+        "activa": true
     }
 ]
