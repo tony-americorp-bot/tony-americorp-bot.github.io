@@ -13,54 +13,24 @@
         "id": "e32f45b7-a712-4fe0-9928-5cc9a10b1c34",
         "tag": "VC-001",
         "mensaje": "VIBRACION ALTA",
-        "valor": "224.06 mm/s",
+        "valor": "221.88 mm/s",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "21:09:01",
+        "duracion": "21:10:01",
         "reviewed": false,
         "severity": "WARNING",
         "activa": true,
-        "valor_numero": 224.06
+        "valor_numero": 221.88
     },
     {
         "id": "a34f208d-f8cf-4891-b50e-233ba4fa2931",
         "tag": "VFD-001",
         "mensaje": "TEMPERATURA ALTA",
-        "valor": "221.76 °C",
+        "valor": "224.18 °C",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "21:09:01",
+        "duracion": "21:10:01",
         "reviewed": false,
         "severity": "TRIP",
         "activa": true,
-        "valor_numero": 221.76
-    },
-    {
-        "id": "e6625a86-95b4-40b5-9158-1a28e4f87643",
-        "tag": "MT-001",
-        "equipo": "MOTOR PRINCIPAL",
-        "mensaje": "VOLTAJE ALTO",
-        "valor": "227.54 V",
-        "valor_numero": 227.54,
-        "unidad": "V",
-        "condicion": "Voltaje > 223.80 V",
-        "inicio": "2026-05-26 03:20:16",
-        "fin": "",
-        "duracion": "00:00:00",
-        "severity": "WARNING",
-        "activa": true
-    },
-    {
-        "id": "0acc6255-1938-4a2b-92eb-2feb43e83fb4",
-        "tag": "MT-002",
-        "equipo": "MOTOR PRINCIPAL",
-        "mensaje": "CORRIENTE ALTA",
-        "valor": "109.62 A",
-        "valor_numero": 109.62,
-        "unidad": "A",
-        "condicion": "Corriente > 106.10 A",
-        "inicio": "2026-05-26 03:20:16",
-        "fin": "",
-        "duracion": "00:00:00",
-        "severity": "ALARM",
-        "activa": true
+        "valor_numero": 224.18
     }
 ]
