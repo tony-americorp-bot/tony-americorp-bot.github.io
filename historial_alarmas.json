@@ -15,9 +15,9 @@
         "id": "e32f45b7-a712-4fe0-9928-5cc9a10b1c34",
         "tag": "VC-001",
         "mensaje": "VIBRACION ALTA",
-        "valor": "225.75 mm/s",
+        "valor": "222.66 mm/s",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "19:24:01",
+        "duracion": "19:25:01",
         "reviewed": false,
         "severity": "WARNING",
         "activa": true
@@ -26,9 +26,9 @@
         "id": "a34f208d-f8cf-4891-b50e-233ba4fa2931",
         "tag": "VFD-001",
         "mensaje": "TEMPERATURA ALTA",
-        "valor": "226.25 °C",
+        "valor": "222.7 °C",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "19:24:01",
+        "duracion": "19:25:01",
         "reviewed": false,
         "severity": "TRIP",
         "activa": true
@@ -651,9 +651,21 @@
         "mensaje": "CORRIENTE ALTA",
         "valor": "110.41 A",
         "inicio": "2026-05-26 01:35:16",
-        "duracion": "00:00:00",
+        "duracion": "00:01:00",
         "reviewed": false,
         "severity": "ALARM",
+        "activa": false,
+        "fin": "2026-05-26 01:36:16"
+    },
+    {
+        "id": "e9b8f8c3-9761-4910-a63b-56745354f3d5",
+        "tag": "MT-001",
+        "mensaje": "VOLTAJE ALTO",
+        "valor": "226.23 V",
+        "inicio": "2026-05-26 01:36:16",
+        "duracion": "00:00:00",
+        "reviewed": false,
+        "severity": "WARNING",
         "activa": true
     }
 ]
