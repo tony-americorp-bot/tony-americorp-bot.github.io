@@ -15,7 +15,7 @@
         "mensaje": "VIBRACION ALTA",
         "valor": "223.75 mm/s",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "17:50:01",
+        "duracion": "17:51:01",
         "reviewed": false,
         "severity": "WARNING",
         "activa": true
@@ -26,7 +26,7 @@
         "mensaje": "TEMPERATURA ALTA",
         "valor": "223.82 °C",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "17:50:01",
+        "duracion": "17:51:01",
         "reviewed": false,
         "severity": "TRIP",
         "activa": true
