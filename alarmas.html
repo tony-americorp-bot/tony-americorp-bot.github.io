@@ -859,44 +859,302 @@ function resetFiltros(){
 
 /* ================= PDF ================= */
 
-function exportarPDF(){
+/* ================= EXPORTAR PDF ================= */
 
-    const elemento =
-        document.getElementById("tablaExportar");
+async function exportarPDF(){
 
-    const opciones = {
+    const btns =
+        document.querySelectorAll(".btn");
 
-        margin:0.3,
+    btns.forEach(b => b.disabled = true);
 
-        filename:"historial_alarmas.pdf",
+    try{
 
-        image:{
-            type:"jpeg",
-            quality:1
-        },
+        const filtered =
+            getAlarmasFiltradas();
 
-        html2canvas:{
-            scale:2,
-            scrollX:0,
-            scrollY:0
-        },
+        const pdfContent =
+            document.createElement("div");
 
-        jsPDF:{
-            unit:"in",
-            format:"a3",
-            orientation:"landscape"
-        },
+        pdfContent.style.padding = "20px";
+        pdfContent.style.background = "white";
+        pdfContent.style.fontFamily = "Arial";
 
-        pagebreak:{
-            mode:['avoid-all','css','legacy']
-        }
+        pdfContent.innerHTML = `
 
-    };
+        <div style="
+            text-align:center;
+            margin-bottom:25px;
+            border-bottom:3px solid #09234d;
+            padding-bottom:15px;
+        ">
 
-    html2pdf()
-        .set(opciones)
-        .from(elemento)
-        .save();
+            <h1 style="
+                color:#09234d;
+                margin-bottom:10px;
+            ">
+                AMERICORP
+            </h1>
+
+            <h2 style="
+                color:#d50000;
+                margin-bottom:10px;
+            ">
+                HISTORIAL DE ALARMAS
+            </h2>
+
+            <p>
+                Fecha exportación:
+                ${new Date().toLocaleString("es-PE")}
+            </p>
+
+            <p>
+                Total registros:
+                ${filtered.length}
+            </p>
+
+        </div>
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            font-size:10px;
+        ">
+
+            <thead>
+
+                <tr style="
+                    background:#09234d;
+                    color:white;
+                ">
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        FECHA-HORA
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        TAG
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        NOMBRE ALARMA
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        SEVERIDAD
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        VALOR
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        TIEMPO INICIO
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        TIEMPO FIN
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        DURACIÓN
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        ESTADO
+                    </th>
+
+                    <th style="padding:8px;border:1px solid #ccc;">
+                        MENSAJE
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                ${filtered.map(alarm => {
+
+                    let severidad = "";
+
+                    if(alarm.severity === "trip"){
+
+                        severidad = "🚨 TRIP";
+
+                    }
+                    else if(alarm.severity === "alarm"){
+
+                        severidad = "⚠️ ALARMA";
+
+                    }
+                    else{
+
+                        severidad = "⚡ WARNING";
+
+                    }
+
+                    const estado =
+                        alarm.activa
+                        ? "ACTIVA"
+                        : "FINALIZADA";
+
+                    const colorFila =
+                        alarm.activa
+                        ? "#ffebee"
+                        : "#f5f5f5";
+
+                    return `
+
+                    <tr style="
+                        background:${colorFila};
+                    ">
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${formatearFecha(alarm.fechaHora)}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${alarm.tag}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${alarm.nombre}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${severidad}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${alarm.valor}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${formatearFecha(alarm.inicio)}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${
+                                alarm.fin === "-"
+                                ? "-"
+                                : formatearFecha(alarm.fin)
+                            }
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${alarm.duracion}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                            font-weight:bold;
+                        ">
+                            ${estado}
+                        </td>
+
+                        <td style="
+                            padding:6px;
+                            border:1px solid #ccc;
+                        ">
+                            ${alarm.mensaje}
+                        </td>
+
+                    </tr>
+
+                    `;
+
+                }).join("")}
+
+            </tbody>
+
+        </table>
+
+        <div style="
+            margin-top:25px;
+            text-align:center;
+            font-size:10px;
+            color:#666;
+            border-top:1px solid #ccc;
+            padding-top:10px;
+        ">
+
+            Documento generado automáticamente por SCADA
+
+        </div>
+
+        `;
+
+        const opt = {
+
+            margin:[10,10,10,10],
+
+            filename:
+                "historial_alarmas.pdf",
+
+            image:{
+                type:"jpeg",
+                quality:1
+            },
+
+            html2canvas:{
+                scale:2,
+                scrollY:0
+            },
+
+            jsPDF:{
+                unit:"mm",
+                format:"a3",
+                orientation:"landscape"
+            }
+
+        };
+
+        await html2pdf()
+            .set(opt)
+            .from(pdfContent)
+            .save();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "ERROR GENERANDO PDF"
+        );
+
+    }
+    finally{
+
+        btns.forEach(b => b.disabled = false);
+
+    }
 
 }
 
