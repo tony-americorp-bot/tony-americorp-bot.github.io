@@ -15,25 +15,25 @@
         "id": "e32f45b7-a712-4fe0-9928-5cc9a10b1c34",
         "tag": "VC-001",
         "mensaje": "VIBRACION ALTA",
-        "valor": "223.54 mm/s",
+        "valor": "222.17 mm/s",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "41:49:02",
+        "duracion": "41:50:02",
         "reviewed": false,
         "severity": "WARNING",
         "activa": true,
-        "valor_numero": 223.54
+        "valor_numero": 222.17
     },
     {
         "id": "a34f208d-f8cf-4891-b50e-233ba4fa2931",
         "tag": "VFD-001",
         "mensaje": "TEMPERATURA ALTA",
-        "valor": "224.37 °C",
+        "valor": "221.7 °C",
         "inicio": "2026-05-25 06:11:15",
-        "duracion": "41:49:02",
+        "duracion": "41:50:02",
         "reviewed": false,
         "severity": "TRIP",
         "activa": true,
-        "valor_numero": 224.37
+        "valor_numero": 221.7
     },
     {
         "id": "a782f43f-6365-4169-9fd9-29407cc72c00",
@@ -2248,13 +2248,13 @@
         "tag": "MT-002",
         "equipo": "MOTOR PRINCIPAL",
         "mensaje": "CORRIENTE ALTA",
-        "valor": "107.78 A",
-        "valor_numero": 107.78,
+        "valor": "106.32 A",
+        "valor_numero": 106.32,
         "unidad": "A",
         "condicion": "Corriente > 106.10 A",
         "inicio": "2026-05-26 03:47:16",
         "fin": "",
-        "duracion": "20:13:01",
+        "duracion": "20:14:01",
         "severity": "ALARM",
         "activa": true
     },
@@ -2268,9 +2268,9 @@
         "unidad": "V",
         "condicion": "Voltaje > 223.80 V",
         "inicio": "2026-05-27 00:00:17",
-        "fin": "",
-        "duracion": "00:00:00",
+        "fin": "2026-05-27 00:01:17",
+        "duracion": "00:01:00",
         "severity": "WARNING",
-        "activa": true
+        "activa": false
     }
 ]
